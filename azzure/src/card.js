@@ -5,7 +5,8 @@ import './card.css'
 function CardItem(props) {
   return (
     <Card style={{ width: '18rem', margin: 'auto' }}>
-      <Card.Img variant="top" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_Images_2015_logo.svg/1280px-Google_Images_2015_logo.svg.png" />
+      {/* <Card.Img variant="top" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_Images_2015_logo.svg/1280px-Google_Images_2015_logo.svg.png" /> */}
+      <i className={props.img} style={{ fontSize: '5rem', margin: 'auto', marginTop: '1rem' }}></i>
       <Card.Body>
         <Card.Title>{props.title}</Card.Title>
         <Card.Text>{props.text}</Card.Text>

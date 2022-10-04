@@ -1,9 +1,10 @@
 import Col from 'react-bootstrap/Col';
+import './sidebar.css';
 
 function SidebarItem(props) {
     return (
-        <Col>
-            <a href={props.link}>{props.name}</a>
+        <Col className='sidebar-item'>
+            <a href={props.link}><i className={props.img}></i> {props.name}</a>
         </Col>
     );
 }
@@ -11,11 +12,11 @@ function SidebarItem(props) {
 function Sidebar() {
     return (
         <Col xs={2}>
-            <SidebarItem name="Home" link="/" />
-            <SidebarItem name="About" link="/about" />
-            <SidebarItem name="Contact" link="/contact" />
-            <SidebarItem name="Dashboard" link="/dashboard" />
-            <SidebarItem name="My VMs" link="/vm" />
+            <SidebarItem name="Home" link="/" img="fas fa-home" />
+            <SidebarItem name="About" link="/about" img="fas fa-info-circle" />
+            <SidebarItem name="Contact" link="/contact" img="fas fa-envelope" />
+            <SidebarItem name="Dashboard" link="/dashboard" img="fas fa-chart-line" />
+            <SidebarItem name="My VMs" link="/vm" img="fas fa-desktop" />
         </Col>
     );
 }

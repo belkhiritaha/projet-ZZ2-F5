@@ -21,9 +21,11 @@ function Mainbar() {
                     <h2>Clermont INP's IoT VM Manager</h2>
                 </Container>
                 <Row>
-                    <CardItem title="Create a VM" text="Create a customized VM to process your IoT data" />
-                    <CardItem title="View my VMs" text="View your existing VMs" />
-                    <CardItem title="Dashboard" text="Vizualise your IoT data" />
+                    <CardItem title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt"/>
+                    <CardItem title="View my VMs" text="View your existing VMs" img="fas fa-desktop"/>
+                    <CardItem title="Run a Python script" text="Run a Python script on your VM" img="fas fa-terminal"/>
+                    <CardItem title="View my Sensors" text="View your existing sensors" img="fas fa-microchip"/>
+                    <CardItem title="Dashboard" text="Vizualise your IoT data" img="fas fa-chart-line"/>
                 </Row>
 
             </Col>
