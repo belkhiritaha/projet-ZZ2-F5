@@ -7,4 +7,15 @@
 
 .card {
     transition: 0.1s;
+    margin-top: 0% !important;
+    margin-bottom: 5% !important;
+}
+
+.list-group-item {
+    transition: 0.1s;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    transition:all 0.1s ease-in-out;
 }
