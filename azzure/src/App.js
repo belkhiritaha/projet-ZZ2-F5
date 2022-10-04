@@ -1,15 +1,22 @@
 import logo from './logo.svg';
 import './App.css';
-import BasicExample from './navbar';
+import NavbarBasicExample from './navbar';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row'
+import Sidebar from './sidebar';
+import Mainbar from './mainbar';
 
 function App() {
     // return navbar
     return (
         <>
-            <BasicExample />
-            <Container>
-                <h1>Test</h1>
+            <NavbarBasicExample />
+            <Container fluid>
+                <Row>
+                    <Sidebar />
+
+                    <Mainbar />
+                </Row>
             </Container>
         </>
     );
