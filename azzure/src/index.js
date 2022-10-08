@@ -14,7 +14,9 @@ function Router() {
             <BrowserRouter>
                 <Routes>
                     <Route index path="/home" element={<App  page='home' />}/>
-                    <Route path="/create" element={<App page='create' />}/>
+                    <Route path="/create" element={<App page='create' />}>
+                        <Route path=":id" element={<App page='create' id={this} /> }/>
+                    </Route>
                     <Route path="/manage" element={<App page='manage' />}/>
                     <Route path="/" element={<App page='home' />}/>
                     <Route path="/*" element={<NotFound />}/>

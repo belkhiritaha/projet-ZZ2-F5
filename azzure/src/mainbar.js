@@ -48,15 +48,30 @@ function Mainbar(props) {
         function CustomListGroup(props) {
             const nbItems = props.nbFields;
         
+            const [open, setOpen] = useState(props.open);
+
             const items = [];
+
 
             function handleListItemClick(i){
                 console.log("item"+i);
-                window.location.href = props['title'];
+                let title = props["title"];
+                // get fist word of title
+                let firstWord = title.split(" ")[0];
+                // get the id of the clicked item
+                console.log("/"+firstWord+"/"+i);
+                setOpen(!open);
+                // window.location.href = "/"+firstWord+"/"+i;
             }
         
             for (let i = 1; i <= nbItems; i++) {
-                items.push(<ListGroup.Item key={items.length + 1} onClick={handleListItemClick}>{props['item' + i]}</ListGroup.Item>);
+                items.push(<ListGroup.Item key={items.length + 1} onClick={() => { handleListItemClick(i) }}>{props['item' + i]}</ListGroup.Item>);
+                items.push(<Collapse key={items.length + 1} in={open}>
+                                <div id="example-collapse-text">
+                                    <UploadForm />
+                                    <Switch />
+                                </div>
+                            </Collapse>);
             }
             // console.log(items);
             return (
@@ -71,9 +86,13 @@ function Mainbar(props) {
         function handleCardClick(id) {
             // change props.open to true
             console.log(id);
+            console.log(menu);
             //this.setState({open: "true"});
             if (id == 1) {
                 setMenu('create');
+            }
+            else if (id == 2) {
+                setMenu('manage');
             }
         }
     
@@ -103,6 +122,10 @@ function Mainbar(props) {
 
         case 'create':
             rowContent.push(<CardItem key={rowContent.length + 1} card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" item1="Import a configuration" item2="Create a new configuration" nbFields="2" open={true}/>);
+            break;
+
+        case 'manage':
+            rowContent.push(<CardItem key={rowContent.length + 1} card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" item1="Start a VM" item2="Stop a VM" item3="Delete a VM" nbFields="3" open={true}/>);
             break;
     
         default:

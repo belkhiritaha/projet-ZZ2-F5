@@ -6,9 +6,16 @@
 }
 
 .card {
-    transition: 0.1s;
+    transition: 1s;
     margin-top: 0% !important;
     margin-bottom: 5% !important;
+    cursor: pointer;
+}
+
+.card.show {
+    transform: scale(1.02);
+    transform: translate3d(-5px, 5px, 0);
+    transition:all 0.1s ease-in-out;
 }
 
 .list-group-item {
