@@ -17,9 +17,27 @@ function MainbarItem(props) {
     );
 }
 
-function Mainbar() {
+function Mainbar(props) {
     // shown menu state
-    const [menu, setMenu] = useState('home');
+    const [menu, setMenu] = useState(props.page);
+
+    switch (props.page) {
+        case 'home':
+            console.log('home');
+            // setMenu('home');
+            break;
+        case 'create':
+            console.log('create');
+            // setMenu('create');
+            break;
+        case 'manage':
+            console.log('manage');
+            // setMenu('manage');
+            break;
+        default:
+            console.log('home');
+            setMenu('home');
+    }
 
     const rowContent = [];
     // menu items

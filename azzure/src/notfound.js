@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row'
 import Sidebar from './sidebar';
 import Mainbar from './mainbar';
 
-function App(props) {
+function NotFound(props) {
     // return navbar
     return (
         <>
@@ -14,11 +14,12 @@ function App(props) {
                 <Row>
                     <Sidebar />
 
-                    <Mainbar {...props} />
+                    <h1>404</h1>
+                    <h2>Page not found</h2>
                 </Row>
             </Container>
         </>
     );
 }
 
-export default App;
+export default NotFound;
