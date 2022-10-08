@@ -19,3 +19,9 @@
     background-color: #f8f9fa;
     transition:all 0.1s ease-in-out;
 }
+
+.i {
+    font-size: '5rem';
+    margin: 'auto';
+    margin-top: '1rem';
+}

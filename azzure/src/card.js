@@ -33,6 +33,12 @@ function CustomListGroup(props) {
 
 
 function CardItem(props) {
+
+    function handleClick() {
+        console.log("clicked");
+    }
+
+
     const nbItems = props.nbFields;
 
     return (

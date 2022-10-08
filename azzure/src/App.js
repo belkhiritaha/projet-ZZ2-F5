@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import NavbarBasicExample from './navbar';
 import Container from 'react-bootstrap/Container';
