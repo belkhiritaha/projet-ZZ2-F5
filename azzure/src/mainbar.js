@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
@@ -7,7 +7,10 @@ import Card from 'react-bootstrap/Card';
 import Collapse from 'react-bootstrap/Collapse';
 import ListGroup from 'react-bootstrap/ListGroup';
 import UploadForm, { Switch } from './form';
+import Fade from 'react-bootstrap/Fade';
 import './card.css'
+import { Form } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 
 function MainbarItem(props) {
     return (
@@ -41,96 +44,57 @@ function Mainbar(props) {
 
     const rowContent = [];
     // menu items
-    
-    
+
+
     function CardItem(props) {
-
-        function CustomListGroup(props) {
-            const nbItems = props.nbFields;
-        
-            const [open, setOpen] = useState(props.open);
-
-            const items = [];
-
-
-            function handleListItemClick(i){
-                console.log("item"+i);
-                let title = props["title"];
-                // get fist word of title
-                let firstWord = title.split(" ")[0];
-                // get the id of the clicked item
-                console.log("/"+firstWord+"/"+i);
-                setOpen(!open);
-                // window.location.href = "/"+firstWord+"/"+i;
-            }
-        
-            for (let i = 1; i <= nbItems; i++) {
-                items.push(<ListGroup.Item key={items.length + 1} onClick={() => { handleListItemClick(i) }}>{props['item' + i]}</ListGroup.Item>);
-                items.push(<Collapse key={items.length + 1} in={open}>
-                                <div id="example-collapse-text">
-                                    <UploadForm />
-                                    <Switch />
-                                </div>
-                            </Collapse>);
-            }
-            // console.log(items);
-            return (
-                <ListGroup className="list-group-flush">
-                    {items}
-                </ListGroup>
-            );
-        }
-        
-
 
         function handleCardClick(id) {
             // change props.open to true
             console.log(id);
             console.log(menu);
             //this.setState({open: "true"});
-            if (id == 1) {
-                setMenu('create');
+            if (menu !== "home") {
+                setMenu("home");
             }
-            else if (id == 2) {
-                setMenu('manage');
+            else {
+                if (id == 1) {
+                    setMenu('create');
+                }
+                else if (id == 2) {
+                    setMenu('manage');
+                }
+                else if (id == 3) {
+                    setMenu('run');
+                }
+                else if (id == 4) {
+                    setMenu('view');
+                }
+                else if (id == 5) {
+                    setMenu('dashboard');
+                }
             }
         }
-    
-    
+
+
         const nbItems = props.nbFields;
-    
+
         return (
-            <Card onClick={() => {handleCardClick(props.card_id)}} style={{ width: '18rem', margin: 'auto', textAlign: 'center' }}>
+            <Card onClick={() => { handleCardClick(props.card_id) }} style={{ width: '18rem', margin: 'auto', textAlign: 'center' }}>
                 <i className={props.img} style={{ fontSize: '5rem', margin: 'auto', marginTop: '1rem' }}></i>
                 <Card.Body>
                     <Card.Title>{props.title}</Card.Title>
                     <Card.Text>{props.text}</Card.Text>
                 </Card.Body>
-                <div>{<CustomListGroup {...props} />}</div>
             </Card>
         );
     }
-    
-    switch (menu) {
-        case 'home':
-            rowContent.push(<CardItem  style={{ cursor: "pointer"}} key={rowContent.length + 1} card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" item1="Import a configuration" item2="Create a new configuration" nbFields="2" open={false}/>);
-            rowContent.push(<CardItem key={rowContent.length + 1} card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" item1="Start a VM" item2="Stop a VM" item3="Delete a VM" nbFields="3"/>);
-            rowContent.push(<CardItem key={rowContent.length + 1} card_id='3' title="Run a Python script" text="Run a Python script on your VM" img="fas fa-terminal" item1="Select a script" item2="Upload a new script" nbFields="2" />);
-            rowContent.push(<CardItem key={rowContent.length + 1} card_id='4' title="View my Sensors" text="View your existing sensors" img="fas fa-microchip" item1="View 'sensor_name1'" item2="View 'sensor_name2'" item3="View 'sensor_name3'" item4="View 'sensor_name4'" nbFields="4" />);
-            rowContent.push(<CardItem key={rowContent.length + 1} card_id='5' title="Dashboard" text="Vizualise your IoT data" img="fas fa-chart-line"/>);
-            break;
 
-        case 'create':
-            rowContent.push(<CardItem key={rowContent.length + 1} card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" item1="Import a configuration" item2="Create a new configuration" nbFields="2" open={true}/>);
-            break;
-
-        case 'manage':
-            rowContent.push(<CardItem key={rowContent.length + 1} card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" item1="Start a VM" item2="Stop a VM" item3="Delete a VM" nbFields="3" open={true}/>);
-            break;
-    
-        default:
-            break;
-    }
+    let isHomeActive = (menu == 'home');
+    let isCreateActive = (menu == 'create');
+    let isManageActive = (menu == 'manage');
+    let isRunActive = (menu == 'run');
+    let isViewActive = (menu == 'view');
+    let isDashboardActive = (menu == 'dashboard');
 
     return (
         <>
@@ -141,7 +105,99 @@ function Mainbar(props) {
                 </Container>
 
                 <Row>
-                    {rowContent}
+                    <Collapse key={rowContent.length} in={(isHomeActive || isCreateActive)}>
+                        <div className="col">
+                            <CardItem key={rowContent.length + 1} card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" />
+                            <Collapse key={rowContent.length} in={isCreateActive}>
+                                <div className="col" style={{ width: "50%", margin: "auto", textAlign: "center", justifyContent: "space-between" }}>
+                                    <h1>Create a VM</h1>
+                                    <hr />
+                                    <h2>From an existing configuration file:</h2>
+                                    <UploadForm style={{ margin: "5%" }} />
+                                    
+                                    <hr />
+
+                                    <h2>From scratch</h2>
+                                    <div style={{ width: "50%", margin: "auto", textAlign: "center" }}>
+                                        <h3>Databases:</h3>
+                                        <Form style={{ margin: "5%" }}>
+                                            <Form.Check type="switch" id="custom-switch" label="InfluxDB" />
+                                            <Form.Check type="switch" id="custom-switch" label="MongoDB" />
+                                            <Form.Check type="switch" id="custom-switch" label="MySQL" />
+                                        </Form>
+
+                                        <h3>Web servers:</h3>
+                                        <Form style={{ margin: "5%" }}>
+                                            <Form.Check type="switch" id="custom-switch" label="Grafana" />
+                                            <Form.Check type="switch" id="custom-switch" label="Node-RED" />
+                                            <Form.Check type="switch" id="custom-switch" label="Apache" />
+                                        </Form>
+
+                                        <h3>Programming languages:</h3>
+                                        <Form style={{ margin: "5%" }}>
+                                            <Form.Check type="switch" id="custom-switch" label="Python" />
+                                            <Form.Check type="switch" id="custom-switch" label="Java" />
+                                            <Form.Check type="switch" id="custom-switch" label="C++" />
+                                        </Form>
+
+                                        <h3>Other:</h3>
+                                        <Form style={{ margin: "5%" }}>
+                                            <Form.Check type="switch" id="custom-switch" label="MQTT" />
+                                            <Form.Check type="switch" id="custom-switch" label="MQTT" />
+                                            <Form.Check type="switch" id="custom-switch" label="MQTT" />
+                                        </Form>
+
+                                        <h3>VM name:</h3>
+                                        <Form style={{ margin: "5%" }}>
+                                            <Form.Control type="text" placeholder="Enter a name" />
+                                        </Form>
+
+                                        <h3>VM description:</h3>
+                                        <Form style={{ margin: "5%" }}>
+                                            <Form.Control type="text" placeholder="Enter a description" />
+                                        </Form>
+
+                                        <Form style={{ margin: "5%" }}>
+                                            <Form.Group className="mb-3" controlId="formBasicCheckbox">
+                                                <Form.Control style={{ width: "100%", height: "200px" }} type="text" label="Enter the configuration" placeholder="{name:'myVM'&#10;; services: {db: 'influxdb'; web: 'grafana'};" />
+                                            </Form.Group>
+                                        </Form>
+
+                                        <h3>Confirm configuration</h3>
+                                        <Button style={{ margin: "5%" }} variant="primary" type="submit">
+                                            Submit
+                                        </Button>
+                                    </div>
+
+                                </div>
+                            </Collapse>
+                        </div>
+                    </Collapse>
+
+                    <Collapse key={rowContent.length} in={(isHomeActive || isManageActive)}>
+                        <div className="col">
+                            <CardItem key={rowContent.length + 1} card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" />
+                        </div>
+                    </Collapse>
+
+                    <Collapse key={rowContent.length} in={(isHomeActive || isRunActive)}>
+                        <div className="col">
+                            <CardItem key={rowContent.length + 1} card_id='3' title="Run a VM" text="Run a VM" img="fas fa-play" />
+                        </div>
+                    </Collapse>
+
+                    <Collapse key={rowContent.length} in={(isHomeActive || isViewActive)}>
+                        <div className="col">
+                            <CardItem key={rowContent.length + 1} card_id='4' title="View your VMs" text="View your VMs" img="fas fa-eye" />
+                        </div>
+                    </Collapse>
+
+                    <Collapse key={rowContent.length} in={(isHomeActive || isDashboardActive)}>
+                        <div className="col">
+                            <CardItem key={rowContent.length + 1} card_id='5' title="Dashboard" text="Dashboard" img="fas fa-chart-line" />
+                        </div>
+                    </Collapse>
+
                 </Row>
 
             </Col>
