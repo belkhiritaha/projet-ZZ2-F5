@@ -118,11 +118,11 @@ function CreateForm(props) {
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMdb">
                         <h3>Databases:</h3>
-                        <Form.Check onChange={e => { setServicesState("db", "influxdb") }} type="switch" id="custom-switch" label="InfluxDB" />
-                        <Form.Check onChange={e => { setServicesState("db", "mongodb") }} type="switch" id="custom-switch" label="MongoDB" />
-                        <Form.Check onChange={e => { setServicesState("db", "mysql") }} type="switch" id="custom-switch" label="MySQL" />
-                        <Form.Check onChange={e => { setServicesState("db", "postgresql") }} type="switch" id="custom-switch" label="PostgreSQL" />
-                        <Form.Check onChange={e => { setServicesState("db", "redis") }} type="switch" id="custom-switch" label="Redis" />
+                        <Form.Check onChange={e => {setServicesState("db", "influxdb")}} type="switch" id="custom-switch" label="InfluxDB" />
+                        <Form.Check onChange={e => {setServicesState("db", "mongodb")}} type="switch" id="custom-switch" label="MongoDB" />
+                        <Form.Check onChange={e => {setServicesState("db", "mysql")}} type="switch" id="custom-switch" label="MySQL" />
+                        <Form.Check onChange={e => {setServicesState("db", "postgresql")}} type="switch" id="custom-switch" label="PostgreSQL" />
+                        <Form.Check onChange={e => {setServicesState("db", "redis")}} type="switch" id="custom-switch" label="Redis" />
                     </Form.Group>
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMweb">

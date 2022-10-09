@@ -6,17 +6,116 @@ import { Button } from 'react-bootstrap';
 import UploadForm, { Switch } from './form';
 import './card.css'
 
-
 function Manage() {
-    // about this section:
-    // this section is for managing the VMs
-    // it will be a list of VMs with a button to delete them
-    // and a button to edit them
-    // it will also have a button to refresh the list of VMs
-    // it will also have a button to start all VMs
-    // it will also have a button to stop all VMs
-    // it will also have a button to restart all VMs
-    // it will also have a button to delete all VMs
+    function ManageCard(props) {
+        const [open, setOpen] = useState(false);
+        console.log(props);
+
+        function deleteVM() {
+        };
+
+        function editVM() {
+            // setOpen(!open);
+        };
+
+        function createVM() {
+
+        };
+
+        function submitChanges() {
+
+        };
+
+
+        return (
+            <div className="manage-card">
+                <div style={{ textAlign: "center", margin: "5%" }} key={props.VM.name}>
+                    <Card>
+                        <Card.Header>
+                            <div onClick={() => {setOpen(!open)}} className='row'>
+                                <h3 className="mr-sm-2">
+                                    {props.VM.name}
+                                </h3>
+                                <Button style={{ width: "25%", margin: "1% auto" }} variant="danger" className="mr-sm-2" onClick={deleteVM}>
+                                    Delete
+                                </Button>
+                                <Button style={{ width: "25%", margin: "1% auto" }} variant="primary" className="mr-sm-2" onClick={editVM}>
+                                    Edit
+                                </Button>
+                            </div>
+                        </Card.Header>
+                        <Collapse style={{ textAlign: "center", margin: "5% auto", width: "50%" }} in={open}>
+                            <Card.Body>
+                                <Form onSubmit={submitChanges}>
+                                    <Form.Group controlId="formBasicEmail">
+                                        <h3>Description</h3>
+                                        <Form.Control onChange={e => { props.VM.desc = e.target.value }} type="text" placeholder="Enter description" defaultValue={props.VM.desc} />
+                                    </Form.Group>
+                                    <Form.Group controlId="formBasicEmail">
+                                        <h3>RAM</h3>
+                                        <Form.Control type="text" placeholder="Enter RAM" defaultValue={props.VM.ram} />
+                                    </Form.Group>
+                                    <Form.Group controlId="formBasicEmail">
+                                        <h3>CPU</h3>
+                                        <Form.Control type="text" placeholder="Enter CPU" defaultValue={props.VM.cpu} />
+                                    </Form.Group>
+                                    <Form.Group controlId="formBasicEmail">
+                                        <h3>Disk</h3>
+                                        <Form.Control type="text" placeholder="Enter Disk" defaultValue={props.VM.disk} />
+                                    </Form.Group>
+                                    <Form.Group controlId="formBasicEmail">
+                                        <h3>Network</h3>
+                                        <Form.Control type="text" placeholder="Enter Network" defaultValue={props.VM.network} />
+                                    </Form.Group>
+                                    <Form.Group controlId="formBasicEmail">
+                                        <h3>Image</h3>
+                                        <Form.Control type="text" placeholder="Enter Image" defaultValue={props.VM.image} />
+                                    </Form.Group>
+                                    <Form.Group controlId="formBasicEmail">
+                                        <h3>Services</h3>
+                                        <Form.Group controlId="formBasicEmail">
+                                            <h3>Database</h3>
+                                            <Form.Check type="switch" label="InfluxDB" defaultChecked={props.VM.services.db.influxdb} onChange={e => { props.VM.services.db.influxdb = e.target.checked }} />
+                                            <Form.Check type="switch" label="MongoDB" defaultChecked={props.VM.services.db.mongodb} onChange={e => { props.VM.services.db.mongodb = e.target.checked }} />
+                                            <Form.Check type="switch" label="MySQL" defaultChecked={props.VM.services.db.mysql} onChange={e => { props.VM.services.db.mysql = e.target.checked }} />
+                                            <Form.Check type="switch" label="PostgreSQL" defaultChecked={props.VM.services.db.postgresql} onChange={e => { props.VM.services.db.postgresql = e.target.checked }} />
+                                            <Form.Check type="switch" label="Redis" defaultChecked={props.VM.services.db.redis} onChange={e => { props.VM.services.db.redis = e.target.checked }} />
+                                            <Form.Check type="switch" label="MariaDB" defaultChecked={props.VM.services.db.mariadb} onChange={e => { props.VM.services.db.mariadb = e.target.checked }} />
+                                            <Form.Check type="switch" label="SQLite" defaultChecked={props.VM.services.db.sqlite} onChange={e => { props.VM.services.db.sqlite = e.target.checked }} />
+                                            <Form.Check type="switch" label="Oracle" defaultChecked={props.VM.services.db.oracle} onChange={e => { props.VM.services.db.oracle = e.target.checked }} />
+                                        </Form.Group>
+                                        <Form.Group controlId="formBasicEmail">
+                                            <h3>Web</h3>
+                                            <Form.Check type="switch" label="Grafana" defaultChecked={props.VM.services.web.grafana} onChange={e => { props.VM.services.web.grafana = e.target.checked }} />
+                                            <Form.Check type="switch" label="Node-RED" defaultChecked={props.VM.services.web.nodered} onChange={e => { props.VM.services.web.nodered = e.target.checked }} />
+                                            <Form.Check type="switch" label="Apache" defaultChecked={props.VM.services.web.apache} onChange={e => { props.VM.services.web.apache = e.target.checked }} />
+                                            <Form.Check type="switch" label="Nginx" defaultChecked={props.VM.services.web.nginx} onChange={e => { props.VM.services.web.nginx = e.target.checked }} />
+                                            <Form.Check type="switch" label="Tomcat" defaultChecked={props.VM.services.web.tomcat} onChange={e => { props.VM.services.web.tomcat = e.target.checked }} />
+                                        </Form.Group>
+                                        <Form.Group controlId="formBasicEmail">
+                                            <h3>Other</h3>
+                                            <Form.Check type="switch" label="MQTT" defaultChecked={props.VM.services.other.mqtt} onChange={e => { props.VM.services.other.mqtt = e.target.checked }} />
+                                            <Form.Check type="switch" label="SSH" defaultChecked={props.VM.services.other.ssh} onChange={e => { props.VM.services.other.ssh = e.target.checked }} />
+                                            <Form.Check type="switch" label="HTTP" defaultChecked={props.VM.services.other.http} onChange={e => { props.VM.services.other.http = e.target.checked }} />
+                                            <Form.Check type="switch" label="HTTPS" defaultChecked={props.VM.services.other.https} onChange={e => { props.VM.services.other.https = e.target.checked }} />
+                                            <Form.Check type="switch" label="FTP" defaultChecked={props.VM.services.other.ftp} onChange={e => { props.VM.services.other.ftp = e.target.checked }} />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="formBasicEmail">
+                                            <h3>Submit changes</h3>
+                                            <Button variant="primary" type="submit" onClick={submitChanges}>
+                                                Submit
+                                            </Button>
+                                        </Form.Group>
+                                    </Form.Group>
+                                </Form>
+                            </Card.Body>
+                        </Collapse>
+                    </Card>
+                </div>
+            </div>
+        );
+    }
 
     // state
     const [open, setOpen] = useState(false);
@@ -74,20 +173,20 @@ function Manage() {
     function refreshVMs() {
         setVMs([
             {
-                name: "test",
-                desc: "test",
-                ram: "test",
-                cpu: "test",
-                disk: "test",
-                network: "test",
-                image: "test",
+                name: "My Super VM 1",
+                desc: "My super vm to test my super IOT project",
+                ram: "1024",
+                cpu: "1",
+                disk: "10",
+                network: "bridge",
+                image: "ubuntu",
                 services: {
                     db: {
                         influxdb: false,
                         mongodb: false,
                         mysql: false,
                         postgresql: false,
-                        redis: false,
+                        redis: true,
                         mariadb: false,
                         sqlite: false,
                         oracle: false,
@@ -96,20 +195,55 @@ function Manage() {
                         grafana: false,
                         nodered: false,
                         apache: false,
-                        nginx: false,
+                        nginx: true,
                         tomcat: false,
                     },
                     other: {
                         mqtt: false,
                         ssh: false,
-                        http: false,
+                        http: true,
+                        https: false,
+                        ftp: false,
+                    }
+                }
+            },
+            {
+                name: "My Super VM 2",
+                desc: "My super vm to test my super IOT project",
+                ram: "1024",
+                cpu: "1",
+                disk: "10",
+                network: "bridge",
+                image: "ubuntu",
+                services: {
+                    db: {
+                        influxdb: false,
+                        mongodb: false,
+                        mysql: false,
+                        postgresql: false,
+                        redis: true,
+                        mariadb: false,
+                        sqlite: false,
+                        oracle: false,
+                    },
+                    web: {
+                        grafana: false,
+                        nodered: false,
+                        apache: false,
+                        nginx: true,
+                        tomcat: false,
+                    },
+                    other: {
+                        mqtt: false,
+                        ssh: false,
+                        http: true,
                         https: false,
                         ftp: false,
                     }
                 }
             }
         ]);
-    
+
     };
 
     function deleteVM() {
@@ -120,106 +254,36 @@ function Manage() {
     };
 
     function createVM() {
-        
+
     };
 
-    const VMsList = VMs.map((VM) =>
-        <div style={{textAlign: "center", margin: "5%"}} key={VM.name}>
-            <Card>
-                <Card.Header>
-                    <Form style={{textAlign: "center", margin: "auto", justifyContent: "space-between"}} inline>
-                        <Form.Label className="mr-sm-2">
-                            {VM.name}
-                        </Form.Label>
-                        <Button variant="danger" className="mr-sm-2" onClick={deleteVM}>
-                            Delete
-                        </Button>
-                        <Button variant="primary" className="mr-sm-2" onClick={editVM}>
-                            Edit
-                        </Button>
-                    </Form>
-                </Card.Header>
-                <Collapse style={{textAlign: "center", margin: "5%"}} in={open}>
-                    <Card.Body>
-                        <Form>
-                            <Form.Group controlId="formBasicEmail">
-                                <Form.Label>Description</Form.Label>
-                                <Form.Control type="text" placeholder="Enter description" value={VM.desc} />
-                            </Form.Group>
-                            <Form.Group controlId="formBasicEmail">
-                                <Form.Label>RAM</Form.Label>
-                                <Form.Control type="text" placeholder="Enter RAM" value={VM.ram} />
-                            </Form.Group>
-                            <Form.Group controlId="formBasicEmail">
-                                <Form.Label>CPU</Form.Label>
-                                <Form.Control type="text" placeholder="Enter CPU" value={VM.cpu} />
-                            </Form.Group>
-                            <Form.Group controlId="formBasicEmail">
-                                <Form.Label>Disk</Form.Label>
-                                <Form.Control type="text" placeholder="Enter Disk" value={VM.disk} />
-                            </Form.Group>
-                            <Form.Group controlId="formBasicEmail">
-                                <Form.Label>Network</Form.Label>
-                                <Form.Control type="text" placeholder="Enter Network" value={VM.network} />
-                            </Form.Group>
-                            <Form.Group controlId="formBasicEmail">
-                                <Form.Label>Image</Form.Label>
-                                <Form.Control type="text" placeholder="Enter Image" value={VM.image} />
-                            </Form.Group>
-                            <Form.Group controlId="formBasicEmail">
-                                <Form.Label>Services</Form.Label>
-                                <Form.Group controlId="formBasicEmail">
-                                    <Form.Label>Database</Form.Label>
-                                    <Switch label="InfluxDB" checked={VM.services.db.influxdb} />
-                                    <Switch label="MongoDB" checked={VM.services.db.mongodb} />
-                                    <Switch label="MySQL" checked={VM.services.db.mysql} />
-                                    <Switch label="PostgreSQL" checked={VM.services.db.postgresql} />
-                                    <Switch label="Redis" checked={VM.services.db.redis} />
-                                    <Switch label="MariaDB" checked={VM.services.db.mariadb} />
-                                    <Switch label="SQLite" checked={VM.services.db.sqlite} />
-                                    <Switch label="Oracle" checked={VM.services.db.oracle} />
-                                </Form.Group>
-                                <Form.Group controlId="formBasicEmail">
-                                    <Form.Label>Web</Form.Label>
-                                    <Switch label="Grafana" checked={VM.services.web.grafana} />
-                                    <Switch label="Node-RED" checked={VM.services.web.nodered} />
-                                    <Switch label="Apache" checked={VM.services.web.apache} />
-                                    <Switch label="Nginx" checked={VM.services.web.nginx} />
-                                    <Switch label="Tomcat" checked={VM.services.web.tomcat} />
-                                </Form.Group>
-                                <Form.Group controlId="formBasicEmail">
-                                    <Form.Label>Other</Form.Label>
-                                    <Switch label="MQTT" checked={VM.services.other.mqtt} />
-                                    <Switch label="SSH" checked={VM.services.other.ssh} />
-                                    <Switch label="HTTP" checked={VM.services.other.http} />
-                                    <Switch label="HTTPS" checked={VM.services.other.https} />
-                                    <Switch label="FTP" checked={VM.services.other.ftp} />
-                                </Form.Group>
-                            </Form.Group>
-                        </Form>
-                    </Card.Body>
-                </Collapse>
-            </Card>
-        </div>
-    );
+    function submitChanges() {
 
-    console.log("vms: "+ VMs);
+    };
+
+    // create new ManageCard for each VM in VMs
+    const cards = VMs.map((VM) => {
+        return (
+            <ManageCard VM={VM} key={VM.name} />
+        );
+    });
+
+    // return
+
+    console.log("vms: " + VMs);
 
     // render
     return (
-        <div>
+        <div style={{ margin: "auto", textAlign: "center", alignContent: "space-between" }}>
             <h1>Virtual Machines</h1>
-            <Button variant="primary" className="mr-sm-2" onClick={() => setOpen(!open)}>
-                {open ? 'Hide' : 'Show'} VMs
-            </Button>
-            <Button variant="primary" className="mr-sm-2" onClick={refreshVMs}>
+            <Button style={{margin:"1%"}} variant="primary" className="mr-sm-2" onClick={refreshVMs}>
                 Refresh
             </Button>
-            <Button variant="primary" className="mr-sm-2" onClick={createVM}>
+            <Button style={{margin:"1%"}} variant="primary" className="mr-sm-2" onClick={createVM}>
                 Create
             </Button>
             <div>
-                {VMsList}
+                {cards}
             </div>
         </div>
     );
