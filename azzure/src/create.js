@@ -29,6 +29,7 @@ function CreateForm(props) {
             },
             web: {
                 grafana: false,
+                nodered: false,
                 apache: false,
                 nginx: false,
                 tomcat: false,
@@ -41,7 +42,7 @@ function CreateForm(props) {
                 ftp: false,
             }
         }
-        
+
     }
 
     function setState(name, value) {
@@ -52,6 +53,12 @@ function CreateForm(props) {
         const value = !state.VMservices[name][field];
         state.VMservices[name][field] = value;
         console.log("set " + name + " " + field + " to " + value);
+    }
+
+    function getCurrentConfig(){
+        // return state to string
+        console.log(JSON.stringify(state));
+        return JSON.stringify(state);
     }
 
     function onsubmit(event) {
@@ -76,78 +83,71 @@ function CreateForm(props) {
                 <Form style={{ margin: "5%" }}>
                     <Form.Group controlId="VMname">
                         <Form.Label>VM Name</Form.Label>
-                        <Form.Control onChange={e => {setState("VMname", e.target.value)}} type="text" placeholder="Enter VM name" />
+                        <Form.Control onChange={e => { setState("VMname", e.target.value) }} type="text" placeholder="Enter VM name" />
                     </Form.Group>
 
                     <Form.Group controlId="VMdesc">
                         <Form.Label>VM Description</Form.Label>
-                        <Form.Control onChange={e => {setState("VMdesc", e.target.value)}} type="text" placeholder="Enter VM name" />
+                        <Form.Control onChange={e => { setState("VMdesc", e.target.value) }} type="text" placeholder="Enter VM name" />
                     </Form.Group>
 
                     <Form.Group controlId="VMram">
                         <Form.Label>RAM</Form.Label>
-                        <Form.Control onChange={e => {setState("VMram", e.target.value)}} type="text" placeholder="Enter RAM" />
+                        <Form.Control onChange={e => { setState("VMram", e.target.value) }} type="text" placeholder="Enter RAM" />
                     </Form.Group>
 
                     <Form.Group controlId="VMcpu">
                         <Form.Label>Number of CPUs</Form.Label>
-                        <Form.Control onChange={e => {setState("VMcpu", e.target.value)}} type="text" placeholder="Enter number of CPUs" />
+                        <Form.Control onChange={e => { setState("VMcpu", e.target.value) }} type="text" placeholder="Enter number of CPUs" />
                     </Form.Group>
 
                     <Form.Group controlId="VMdisk">
                         <Form.Label>Storage</Form.Label>
-                        <Form.Control onChange={e => {setState("VMdisk", e.target.value)}} type="text" placeholder="Enter storage" />
+                        <Form.Control onChange={e => { setState("VMdisk", e.target.value) }} type="text" placeholder="Enter storage" />
                     </Form.Group>
 
                     <Form.Group controlId="VMnetwork">
                         <Form.Label>Network</Form.Label>
-                        <Form.Control onChange={e => {setState("VMnetwork", e.target.value)}} type="text" placeholder="Enter network" />
+                        <Form.Control onChange={e => { setState("VMnetwork", e.target.value) }} type="text" placeholder="Enter network" />
                     </Form.Group>
 
                     <Form.Group controlId="VMos">
                         <Form.Label>OS</Form.Label>
-                        <Form.Control onChange={e => {setState("VMimage", e.target.value)}} type="text" placeholder="Enter OS" />
+                        <Form.Control onChange={e => { setState("VMimage", e.target.value) }} type="text" placeholder="Enter OS" />
                     </Form.Group>
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMdb">
                         <h3>Databases:</h3>
-                        <Form.Check onChange={e => {setServicesState("db", "influxdb")}} type="switch" id="custom-switch" label="InfluxDB" />
-                        <Form.Check onChange={e => {setServicesState("db", "mongodb")}} type="switch" id="custom-switch" label="MongoDB" />
-                        <Form.Check onChange={e => {setServicesState("db", "mysql")}} type="switch" id="custom-switch" label="MySQL" />
-                        <Form.Check onChange={e => {setServicesState("db", "postgresql")}} type="switch" id="custom-switch" label="PostgreSQL" />
-                        <Form.Check onChange={e => {setServicesState("db", "redis")}} type="switch" id="custom-switch" label="Redis" />
+                        <Form.Check onChange={e => { setServicesState("db", "influxdb") }} type="switch" id="custom-switch" label="InfluxDB" />
+                        <Form.Check onChange={e => { setServicesState("db", "mongodb") }} type="switch" id="custom-switch" label="MongoDB" />
+                        <Form.Check onChange={e => { setServicesState("db", "mysql") }} type="switch" id="custom-switch" label="MySQL" />
+                        <Form.Check onChange={e => { setServicesState("db", "postgresql") }} type="switch" id="custom-switch" label="PostgreSQL" />
+                        <Form.Check onChange={e => { setServicesState("db", "redis") }} type="switch" id="custom-switch" label="Redis" />
                     </Form.Group>
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMweb">
                         <h3>Web servers:</h3>
-                        <Form.Check type="switch" id="custom-switch" label="Grafana" />
-                        <Form.Check type="switch" id="custom-switch" label="Node-RED" />
-                        <Form.Check type="switch" id="custom-switch" label="Apache" />
-                        <Form.Check type="switch" id="custom-switch" label="Nginx" />
-                        <Form.Check type="switch" id="custom-switch" label="Tomcat" />
-                    </Form.Group>
-
-                    <Form.Group style={{ margin: "5%" }} controlId="VMapp">
-                        <h3>Programming languages:</h3>
-                        <Form.Check type="switch" id="custom-switch" label="Python" />
-                        <Form.Check type="switch" id="custom-switch" label="Java" />
-                        <Form.Check type="switch" id="custom-switch" label="C++" />
-                        <Form.Check type="switch" id="custom-switch" label="C#" />
-                        <Form.Check type="switch" id="custom-switch" label="Go" />
-                        <Form.Check type="switch" id="custom-switch" label="Rust" />
-                        <Form.Check type="switch" id="custom-switch" label="Ruby" />
+                        <Form.Check onChange={e => { setServicesState("web", "grafana") }} type="switch" id="custom-switch" label="Grafana" />
+                        <Form.Check onChange={e => { setServicesState("web", "nodered") }} type="switch" id="custom-switch" label="Node-RED" />
+                        <Form.Check onChange={e => { setServicesState("web", "apache") }} type="switch" id="custom-switch" label="Apache" />
+                        <Form.Check onChange={e => { setServicesState("web", "nginx") }} type="switch" id="custom-switch" label="Nginx" />
+                        <Form.Check onChange={e => { setServicesState("web", "tomcat") }} type="switch" id="custom-switch" label="Tomcat" />
                     </Form.Group>
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMother">
                         <h3>Other:</h3>
-                        <Form.Check type="switch" id="custom-switch" label="MQTT" />
-                        <Form.Check type="switch" id="custom-switch" label="MQTT" />
-                        <Form.Check type="switch" id="custom-switch" label="MQTT" />
-                        <Form.Check type="switch" id="custom-switch" label="MQTT" />
+                        <Form.Check onChange={e => { setServicesState("other", "mqtt") }} type="switch" id="custom-switch" label="MQTT" />
+                        <Form.Check onChange={e => { setServicesState("other", "ssh") }} type="switch" id="custom-switch" label="SSH" />
+                        <Form.Check onChange={e => { setServicesState("other", "http") }} type="switch" id="custom-switch" label="HTTP" />
+                        <Form.Check onChange={e => { setServicesState("other", "https") }} type="switch" id="custom-switch" label="HTTPS" />
+                        <Form.Check onChange={e => { setServicesState("other", "ftp") }} type="switch" id="custom-switch" label="FTP" />
                     </Form.Group>
 
 
                     <h3>Confirm configuration</h3>
+                    <Form.Group className="mb-3" controlId="formBasicCheckbox">
+                        <Form.Control style={{ width: "100%", height: "200px" }} type="text" label="Enter the configuration" />
+                    </Form.Group>
                     <Button onClick={onsubmit} style={{ margin: "5%" }} variant="primary" type="submit">
                         Submit
                     </Button>
