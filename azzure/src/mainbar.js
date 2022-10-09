@@ -11,6 +11,7 @@ import Fade from 'react-bootstrap/Fade';
 import './card.css'
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
+import CreateForm from './create';
 
 function MainbarItem(props) {
     return (
@@ -105,96 +106,38 @@ function Mainbar(props) {
                 </Container>
 
                 <Row>
-                    <Collapse key={rowContent.length} in={(isHomeActive || isCreateActive)}>
+                    <Collapse  in={(isHomeActive || isCreateActive)}>
                         <div className="col">
-                            <CardItem key={rowContent.length + 1} card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" />
-                            <Collapse key={rowContent.length} in={isCreateActive}>
-                                <div className="col" style={{ width: "50%", margin: "auto", textAlign: "center", justifyContent: "space-between" }}>
-                                    <h1>Create a VM</h1>
-                                    <hr />
-                                    <h2>From an existing configuration file:</h2>
-                                    <UploadForm style={{ margin: "5%" }} />
-                                    
-                                    <hr />
-
-                                    <h2>From scratch</h2>
-                                    <div style={{ width: "50%", margin: "auto", textAlign: "center" }}>
-                                        <h3>Databases:</h3>
-                                        <Form style={{ margin: "5%" }}>
-                                            <Form.Check type="switch" id="custom-switch" label="InfluxDB" />
-                                            <Form.Check type="switch" id="custom-switch" label="MongoDB" />
-                                            <Form.Check type="switch" id="custom-switch" label="MySQL" />
-                                        </Form>
-
-                                        <h3>Web servers:</h3>
-                                        <Form style={{ margin: "5%" }}>
-                                            <Form.Check type="switch" id="custom-switch" label="Grafana" />
-                                            <Form.Check type="switch" id="custom-switch" label="Node-RED" />
-                                            <Form.Check type="switch" id="custom-switch" label="Apache" />
-                                        </Form>
-
-                                        <h3>Programming languages:</h3>
-                                        <Form style={{ margin: "5%" }}>
-                                            <Form.Check type="switch" id="custom-switch" label="Python" />
-                                            <Form.Check type="switch" id="custom-switch" label="Java" />
-                                            <Form.Check type="switch" id="custom-switch" label="C++" />
-                                        </Form>
-
-                                        <h3>Other:</h3>
-                                        <Form style={{ margin: "5%" }}>
-                                            <Form.Check type="switch" id="custom-switch" label="MQTT" />
-                                            <Form.Check type="switch" id="custom-switch" label="MQTT" />
-                                            <Form.Check type="switch" id="custom-switch" label="MQTT" />
-                                        </Form>
-
-                                        <h3>VM name:</h3>
-                                        <Form style={{ margin: "5%" }}>
-                                            <Form.Control type="text" placeholder="Enter a name" />
-                                        </Form>
-
-                                        <h3>VM description:</h3>
-                                        <Form style={{ margin: "5%" }}>
-                                            <Form.Control type="text" placeholder="Enter a description" />
-                                        </Form>
-
-                                        <Form style={{ margin: "5%" }}>
-                                            <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                                                <Form.Control style={{ width: "100%", height: "200px" }} type="text" label="Enter the configuration" placeholder="{name:'myVM'&#10;; services: {db: 'influxdb'; web: 'grafana'};" />
-                                            </Form.Group>
-                                        </Form>
-
-                                        <h3>Confirm configuration</h3>
-                                        <Button style={{ margin: "5%" }} variant="primary" type="submit">
-                                            Submit
-                                        </Button>
-                                    </div>
-
+                            <CardItem  card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" />
+                            <Collapse  in={isCreateActive}>
+                                <div className="col">
+                                    <CreateForm />
                                 </div>
                             </Collapse>
                         </div>
                     </Collapse>
 
-                    <Collapse key={rowContent.length} in={(isHomeActive || isManageActive)}>
+                    <Collapse  in={(isHomeActive || isManageActive)}>
                         <div className="col">
-                            <CardItem key={rowContent.length + 1} card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" />
+                            <CardItem  card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" />
                         </div>
                     </Collapse>
 
-                    <Collapse key={rowContent.length} in={(isHomeActive || isRunActive)}>
+                    <Collapse  in={(isHomeActive || isRunActive)}>
                         <div className="col">
-                            <CardItem key={rowContent.length + 1} card_id='3' title="Run a VM" text="Run a VM" img="fas fa-play" />
+                            <CardItem  card_id='3' title="Run a VM" text="Run a VM" img="fas fa-play" />
                         </div>
                     </Collapse>
 
-                    <Collapse key={rowContent.length} in={(isHomeActive || isViewActive)}>
+                    <Collapse  in={(isHomeActive || isViewActive)}>
                         <div className="col">
-                            <CardItem key={rowContent.length + 1} card_id='4' title="View your VMs" text="View your VMs" img="fas fa-eye" />
+                            <CardItem  card_id='4' title="View your VMs" text="View your VMs" img="fas fa-eye" />
                         </div>
                     </Collapse>
 
-                    <Collapse key={rowContent.length} in={(isHomeActive || isDashboardActive)}>
+                    <Collapse  in={(isHomeActive || isDashboardActive)}>
                         <div className="col">
-                            <CardItem key={rowContent.length + 1} card_id='5' title="Dashboard" text="Dashboard" img="fas fa-chart-line" />
+                            <CardItem  card_id='5' title="Dashboard" text="Dashboard" img="fas fa-chart-line" />
                         </div>
                     </Collapse>
 
