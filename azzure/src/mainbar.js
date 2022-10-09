@@ -12,6 +12,7 @@ import './card.css'
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import CreateForm from './create';
+import Manage from './manage';
 
 function MainbarItem(props) {
     return (
@@ -120,6 +121,11 @@ function Mainbar(props) {
                     <Collapse  in={(isHomeActive || isManageActive)}>
                         <div className="col">
                             <CardItem  card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" />
+                            <Collapse  in={isManageActive}>
+                                <div className="col">
+                                    <Manage />
+                                </div>
+                            </Collapse>
                         </div>
                     </Collapse>
 
