@@ -1,0 +1,12 @@
+.box {
+
+    background-color: rgb(182, 144, 144);
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all 1s;
+}
+
+.row {
+    transition: all 1s;
+}
