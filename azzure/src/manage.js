@@ -26,6 +26,13 @@ function Manage() {
 
         };
 
+        function runVM() {
+
+        };
+
+        function stopVM() {
+
+        };
 
         return (
             <div className="manage-card">
@@ -36,11 +43,17 @@ function Manage() {
                                 <h3 className="mr-sm-2">
                                     {props.VM.name}
                                 </h3>
-                                <Button style={{ width: "25%", margin: "1% auto" }} variant="danger" className="mr-sm-2" onClick={deleteVM}>
+                                <Button style={{ width: "12%", margin: "1% auto" }} variant="danger" className="mr-sm-2" onClick={deleteVM}>
                                     Delete
                                 </Button>
-                                <Button style={{ width: "25%", margin: "1% auto" }} variant="primary" className="mr-sm-2" onClick={editVM}>
+                                <Button style={{ width: "12%", margin: "1% auto" }} variant="primary" className="mr-sm-2" onClick={editVM}>
                                     Edit
+                                </Button>
+                                <Button style={{ width: "12%", margin: "1% auto" }} variant="success" className="mr-sm-2" onClick={runVM}>
+                                    Run
+                                </Button>
+                                <Button style={{ width: "12%", margin: "1% auto" }} variant="warning" className="mr-sm-2" onClick={stopVM}>
+                                    Stop
                                 </Button>
                             </div>
                         </Card.Header>
@@ -276,11 +289,8 @@ function Manage() {
     return (
         <div style={{ margin: "auto", textAlign: "center", alignContent: "space-between" }}>
             <h1>Virtual Machines</h1>
-            <Button style={{margin:"1%"}} variant="primary" className="mr-sm-2" onClick={refreshVMs}>
+            <Button style={{margin:"1%", width: "25%"}} variant="primary" className="mr-sm-2" onClick={refreshVMs}>
                 Refresh
-            </Button>
-            <Button style={{margin:"1%"}} variant="primary" className="mr-sm-2" onClick={createVM}>
-                Create
             </Button>
             <div>
                 {cards}
