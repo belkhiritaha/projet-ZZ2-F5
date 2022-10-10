@@ -8,7 +8,8 @@ import './card.css'
 
 
 function CreateForm(props) {
-    const state = {
+
+    const [state, setConfig] = useState({
         VMname: "",
         VMdesc: "",
         VMram: "",
@@ -42,8 +43,12 @@ function CreateForm(props) {
                 ftp: false,
             }
         }
+    });
 
-    }
+    console.log("state to string", JSON.stringify(state));
+    console.log("state", state);
+
+
 
     function setState(name, value) {
         state[name] = value;
@@ -55,7 +60,7 @@ function CreateForm(props) {
         console.log("set " + name + " " + field + " to " + value);
     }
 
-    function getCurrentConfig(){
+    function getCurrentConfig() {
         // return state to string
         console.log(JSON.stringify(state));
         return JSON.stringify(state);
@@ -74,7 +79,7 @@ function CreateForm(props) {
             <h2>From an existing configuration file:</h2>
             <UploadForm style={{ margin: "5%" }} />
             <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                <Form.Control style={{ width: "100%", height: "200px" }} type="text" label="Enter the configuration" placeholder="{name:'myVM'&#10;; services: {db: 'influxdb'; web: 'grafana'};" />
+                <Form.Control style={{ width: "100%", height: "200px" }} type="text" label="Enter the configuration" placeholder="{name:'myVM'; services: {db: 'influxdb'; web: 'grafana'};" />
             </Form.Group>
             <hr />
 
@@ -118,11 +123,11 @@ function CreateForm(props) {
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMdb">
                         <h3>Databases:</h3>
-                        <Form.Check onChange={e => {setServicesState("db", "influxdb")}} type="switch" id="custom-switch" label="InfluxDB" />
-                        <Form.Check onChange={e => {setServicesState("db", "mongodb")}} type="switch" id="custom-switch" label="MongoDB" />
-                        <Form.Check onChange={e => {setServicesState("db", "mysql")}} type="switch" id="custom-switch" label="MySQL" />
-                        <Form.Check onChange={e => {setServicesState("db", "postgresql")}} type="switch" id="custom-switch" label="PostgreSQL" />
-                        <Form.Check onChange={e => {setServicesState("db", "redis")}} type="switch" id="custom-switch" label="Redis" />
+                        <Form.Check onChange={e => { setServicesState("db", "influxdb") }} type="switch" id="custom-switch" label="InfluxDB" />
+                        <Form.Check onChange={e => { setServicesState("db", "mongodb") }} type="switch" id="custom-switch" label="MongoDB" />
+                        <Form.Check onChange={e => { setServicesState("db", "mysql") }} type="switch" id="custom-switch" label="MySQL" />
+                        <Form.Check onChange={e => { setServicesState("db", "postgresql") }} type="switch" id="custom-switch" label="PostgreSQL" />
+                        <Form.Check onChange={e => { setServicesState("db", "redis") }} type="switch" id="custom-switch" label="Redis" />
                     </Form.Group>
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMweb">
@@ -146,7 +151,7 @@ function CreateForm(props) {
 
                     <h3>Confirm configuration</h3>
                     <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                        <Form.Control style={{ width: "100%", height: "200px" }} type="text" label="Enter the configuration" />
+                        <Form.Control style={{ width: "100%", height: "200px" }} type="text" label="Enter the configuration" value={JSON.stringify(state)} onChange={e => { setConfig(JSON.parse(e.target.value)); console.log(JSON.stringify(state)) }} />
                     </Form.Group>
                     <Button onClick={onsubmit} style={{ margin: "5%" }} variant="primary" type="submit">
                         Submit
