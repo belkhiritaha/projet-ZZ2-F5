@@ -1,0 +1,11 @@
+version: "3"
+services:
+  monapp:
+    image: grafana/grafana
+    ports:
+      - "80:80"
+    networks:
+      - monreseau
+
+networks:
+  monreseau:
