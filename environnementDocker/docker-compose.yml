@@ -1,11 +1,32 @@
-version: "3"
+version: '2'
+volumes:
+  grafana-pgdata:
 services:
-  monapp:
+  # Grafana dedicated storage
+  #
+  grafana-storage:
+    image: postgres:10-alpine
+    volumes:
+      - grafana-pgdata:/var/lib/postegresql/data
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=grafana
+  # Grafana Server
+  #
+  grafana:
     image: grafana/grafana
-    ports:
-      - "80:80"
-    networks:
-      - monreseau
+    ports: 
+      - "3000:3000"
+    environment:
+      - GF_DATABASE_TYPE=postgres
+      - GF_DATABASE_HOST=grafana-storage
+      - GF_DATABASE_NAME=grafana
+      - GF_DATABASE_USER=admin
+      - GF_DATABASE_PASSWORD=password
 
-networks:
-  monreseau:
+
+
+
+
+
