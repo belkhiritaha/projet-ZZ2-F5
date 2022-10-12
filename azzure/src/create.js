@@ -10,6 +10,7 @@ import './card.css'
 function CreateForm(props) {
 
     const [state, setConfig] = useState({
+        VMid : 0,
         VMname: "",
         VMdesc: "",
         VMram: "",
@@ -69,7 +70,9 @@ function CreateForm(props) {
     function onsubmit(event) {
         event.preventDefault();
         console.log("submitted");
+        state.VMid = Math.floor(Math.random() * 1000000);
         console.log(state);
+
     }
 
     return (

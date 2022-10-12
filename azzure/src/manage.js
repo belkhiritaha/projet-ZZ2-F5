@@ -22,9 +22,11 @@ function Manage() {
 
         };
 
-        function submitChanges() {
-
-        };
+        function onsubmit(event, VM) {
+            event.preventDefault();
+            console.log("submit nothing");
+            console.log(VM);
+        }
 
         function runVM() {
 
@@ -59,30 +61,30 @@ function Manage() {
                         </Card.Header>
                         <Collapse style={{ textAlign: "center", margin: "5% auto", width: "50%" }} in={open}>
                             <Card.Body>
-                                <Form onSubmit={submitChanges}>
+                                <Form onSubmit={() => {this.event.preventDefault();}}>
                                     <Form.Group controlId="formBasicEmail">
                                         <h3>Description</h3>
                                         <Form.Control onChange={e => { props.VM.desc = e.target.value }} type="text" placeholder="Enter description" defaultValue={props.VM.desc} />
                                     </Form.Group>
                                     <Form.Group controlId="formBasicEmail">
                                         <h3>RAM</h3>
-                                        <Form.Control type="text" placeholder="Enter RAM" defaultValue={props.VM.ram} />
+                                        <Form.Control onChange={e => { props.VM.ram = e.target.value }} type="text" placeholder="Enter RAM" defaultValue={props.VM.ram} />
                                     </Form.Group>
                                     <Form.Group controlId="formBasicEmail">
                                         <h3>CPU</h3>
-                                        <Form.Control type="text" placeholder="Enter CPU" defaultValue={props.VM.cpu} />
+                                        <Form.Control onChange={e => { props.VM.cpu = e.target.value }} type="text" placeholder="Enter CPU" defaultValue={props.VM.cpu} />
                                     </Form.Group>
                                     <Form.Group controlId="formBasicEmail">
                                         <h3>Disk</h3>
-                                        <Form.Control type="text" placeholder="Enter Disk" defaultValue={props.VM.disk} />
+                                        <Form.Control onChange={e => { props.VM.disk = e.target.value }} type="text" placeholder="Enter Disk" defaultValue={props.VM.disk} />
                                     </Form.Group>
                                     <Form.Group controlId="formBasicEmail">
                                         <h3>Network</h3>
-                                        <Form.Control type="text" placeholder="Enter Network" defaultValue={props.VM.network} />
+                                        <Form.Control onChange={e => { props.VM.network = e.target.value }} type="text" placeholder="Enter Network" defaultValue={props.VM.network} />
                                     </Form.Group>
                                     <Form.Group controlId="formBasicEmail">
                                         <h3>Image</h3>
-                                        <Form.Control type="text" placeholder="Enter Image" defaultValue={props.VM.image} />
+                                        <Form.Control onChange={e => { props.VM.image = e.target.value }} type="text" placeholder="Enter Image" defaultValue={props.VM.image} />
                                     </Form.Group>
                                     <Form.Group controlId="formBasicEmail">
                                         <h3>Services</h3>
@@ -116,7 +118,7 @@ function Manage() {
 
                                         <Form.Group controlId="formBasicEmail">
                                             <h3>Submit changes</h3>
-                                            <Button variant="primary" type="submit" onClick={submitChanges}>
+                                            <Button variant="primary" type="submit" onClick={(e) => {onsubmit(e, props.VM)}}>
                                                 Submit
                                             </Button>
                                         </Form.Group>
@@ -137,9 +139,6 @@ function Manage() {
 
     // functions
     function getAllVMs() {
-        // get all VMs
-        // set VMs state to the list of VMs
-        // set refresh state to false
         setRefresh(false);
         //return fetch('http://localhost:3000/api/vms')
         return {
@@ -267,10 +266,6 @@ function Manage() {
     };
 
     function createVM() {
-
-    };
-
-    function submitChanges() {
 
     };
 
