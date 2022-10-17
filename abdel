@@ -1,0 +1,70 @@
+17/oct recherche technique
+
+
+
+
+Docker compose
+    interets, pourquoi ?
+
+    +- lancer des conteneurs a coordonner c'est pas facile 
+    +- meilleur gestion des dependances(reseau, volumes...)
+    +- un service comprend 1 a plusieurs conteneurs
+    +- comme pour dockerfile : partage facile, versionning...
+                              Instalation 
+
+
+
+
+                              Principale commande
+
+
+    +- un repertoir avec docker-compose.yml     
+    +- commandes similaires a docker (intuitives)
+
+
+    Lancement du service :
+
+    +- docker-compose build 
+        +- contruction uniquement des images 
+
+    +-docker-compose up
+        +- build et run des images
+    
+    +- docker-compose up -dependances   
+        +-mode detache (docker run -d)
+
+
+
+ GESTION DU SERVICES 
+
+
+  
+  +- docker-compose ps 
+        +- etats des SERVICES
+  +- docker compose start
+  +- docker compose stop
+  +- docker compose rm
+
+
+  plus fort
+
+
+  +- docker-compose scale SERVICE=3
+    +- lancer 3 instances
+
+  +- docker-compose pull 
+    +- maj des images 
+
+
+
+      EXEMPLE  docker-compose.yml 
+   
+   version: '3'
+
+   services:
+    myfirstservice:
+        images: alpine                                    |
+        restart: always                                   |les 4 ligne c'est un container
+        container_name: MyAlpine                          |
+        entrypoint: ps aux                                |
+
