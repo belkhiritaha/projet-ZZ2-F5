@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+  influxdb:
+    image: influxdb
+    container_name: influxdb
+    restart: always
+    hostname: influxdb
+    environment:
+      INFLUX_DB: $INFLUX_DB  # nom de la base de données créée à l'initialisation d'InfluxDB
+      INFLUXDB_USER: $INFLUXDB_USER  # nom de l'utilisateur pour gérer cette base de données
+      INFLUXDB_USER_PASSWORD: $INFLUXDB_USER_PASSWORD  # mot de passe de l'utilisateur pour gérer cette base de données
+    volumes:
+      - ./influxdb:/var/lib/influxdb  # volume pour stocker la base de données InfluxDB
+
+  telegraf:
+    image: telegraf
+    depends_on:
+      - influxdb  # indique que le service influxdb est nécessaire
+    container_name: telegraf
+    restart: always
+    links:
+      - influxdb:influxdb
+    tty: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # nécessaire pour remonter les données du démon Docker
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf  # fichier de configuration de Telegraf
+
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - influxdb  # indique que le service influxdb est nécessaire
+    container_name: grafana
+    restart: always
+    ports:
+      - 3000:3000  # port pour accéder à l'interface web de Grafana
+    links:
+      - influxdb:influxdb
+    environment:
+      GF_INSTALL_PLUGINS: "grafana-clock-panel,\
+                          grafana-influxdb-08-datasource,\
+                          grafana-kairosdb-datasource,\
+                          grafana-piechart-panel,\
+                          grafana-simple-json-datasource,\
+                          grafana-worldmap-panel"
+      GF_SECURITY_ADMIN_USER: $GF_SECURITY_ADMIN_USER  # nom de l'utilisateur créé par défaut pour accéder à Grafana
+      GF_SECURITY_ADMIN_PASSWORD: $GF_SECURITY_ADMIN_PASSWORD  # mot de passe de l'utilisateur créé par défaut pour accéder à Grafana
+    volumes:
+      - ./grafana:/var/lib/grafana
