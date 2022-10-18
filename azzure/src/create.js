@@ -71,6 +71,20 @@ function CreateForm(props) {
         event.preventDefault();
         console.log("submitted");
         state.VMid = Math.floor(Math.random() * 1000000);
+        // // send to localhost:8000
+        // fetch('http://localhost:8000/create', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: getCurrentConfig(),
+        // }).then(response => response.json())
+        //     .then(data => {
+        //         console.log('Success:', data);
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error:', error);
+        //     });
         console.log(state);
 
     }
