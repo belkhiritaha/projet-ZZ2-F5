@@ -4,20 +4,23 @@ import Collapse from 'react-bootstrap/Collapse';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import UploadForm, { Switch } from './form';
+import { JsonEditor as Editor } from 'jsoneditor-react';
+import 'jsoneditor-react/es/editor.min.css';
 import './card.css'
+import './create.css'
 
 
 function CreateForm(props) {
 
     const [state, setConfig] = useState({
-        VMid : 0,
-        VMname: "",
-        VMdesc: "",
-        VMram: "",
-        VMcpu: "",
-        VMdisk: "",
-        VMnetwork: "",
-        VMimage: "",
+        VMid: 0,
+        VMname: "test",
+        VMdesc: "test",
+        VMram: "test",
+        VMcpu: "test",
+        VMdisk: "test",
+        VMnetwork: "test",
+        VMimage: "test",
         VMservices: {
             db: {
                 influxdb: false,
@@ -70,7 +73,20 @@ function CreateForm(props) {
     function onsubmit(event) {
         event.preventDefault();
         console.log("submitted");
-        state.VMid = Math.floor(Math.random() * 1000000);
+
+        // check if VMram, VMcpu, VMdisk are numbers and if all fields are filled
+        if (isNaN(state.VMram) || isNaN(state.VMcpu) || isNaN(state.VMdisk) || state.VMid === 0 || state.VMname === "" || state.VMdesc === "" || state.VMnetwork === "" || state.VMimage === "") {
+            document.getElementById("button").classList.add("shake");
+            // add p element with error message
+            document.getElementById("error").innerHTML = "Please fill all fields with valid values";
+            setTimeout(() => {
+                document.getElementById("button").classList.remove("shake");
+                document.getElementById("error").innerHTML = "";
+            }
+                , 5000);
+            return false;
+        }
+
         // // send to localhost:8000
         // fetch('http://localhost:8000/create', {
         //     method: 'POST',
@@ -86,6 +102,7 @@ function CreateForm(props) {
         //         console.error('Error:', error);
         //     });
         console.log(state);
+        return true;
 
     }
 
@@ -95,9 +112,24 @@ function CreateForm(props) {
             <hr />
             <h2>From an existing configuration file:</h2>
             <UploadForm style={{ margin: "5%" }} />
-            <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                <Form.Control style={{ width: "100%", height: "200px" }} type="text" label="Enter the configuration" placeholder="{name:'myVM'; services: {db: 'influxdb'; web: 'grafana'};" />
-            </Form.Group>
+            <Editor
+                value={state}
+                onChange={
+                    (value) => {
+                        setConfig(value);
+                        console.log("value", value);
+                    }
+                }
+            />
+            <Button id="button" onClick={
+                (event) => {
+                    onsubmit(event);
+                }
+            }
+                style={{ margin: "5%" }} variant="primary" type="submit">
+                Submit
+            </Button>
+            <p id="error" style={{ color: "red" }}></p>
             <hr />
 
             <h2>From scratch</h2>
@@ -115,17 +147,17 @@ function CreateForm(props) {
 
                     <Form.Group controlId="VMram">
                         <Form.Label>RAM</Form.Label>
-                        <Form.Control onChange={e => { setState("VMram", e.target.value) }} type="text" placeholder="Enter RAM" />
+                        <Form.Control onChange={e => { setState("VMram", parseInt(e.target.value)) }} type="text" placeholder="Enter RAM" />
                     </Form.Group>
 
                     <Form.Group controlId="VMcpu">
                         <Form.Label>Number of CPUs</Form.Label>
-                        <Form.Control onChange={e => { setState("VMcpu", e.target.value) }} type="text" placeholder="Enter number of CPUs" />
+                        <Form.Control onChange={e => { setState("VMcpu", parseInt(e.target.value)) }} type="text" placeholder="Enter number of CPUs" />
                     </Form.Group>
 
                     <Form.Group controlId="VMdisk">
                         <Form.Label>Storage</Form.Label>
-                        <Form.Control onChange={e => { setState("VMdisk", e.target.value) }} type="text" placeholder="Enter storage" />
+                        <Form.Control onChange={e => { setState("VMdisk", parseInt(e.target.value)) }} type="text" placeholder="Enter storage" />
                     </Form.Group>
 
                     <Form.Group controlId="VMnetwork">
@@ -167,9 +199,16 @@ function CreateForm(props) {
 
 
                     <h3>Confirm configuration</h3>
-                    <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                        <Form.Control style={{ width: "100%", height: "200px" }} type="text" label="Enter the configuration" value={JSON.stringify(state)} onChange={e => { setConfig(JSON.parse(e.target.value)); console.log(JSON.stringify(state)) }} />
-                    </Form.Group>
+                    <Editor
+                        value={state}
+                        onChange={
+                            (value) => {
+                                setConfig(value);
+                                console.log("value", value);
+                            }
+                        }
+                    />
+
                     <Button onClick={onsubmit} style={{ margin: "5%" }} variant="primary" type="submit">
                         Submit
                     </Button>
