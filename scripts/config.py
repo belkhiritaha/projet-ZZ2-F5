@@ -1,3 +1,4 @@
+from initializeDockerCompose import *
 from configDatabase import *
 from configDataVisualisation import *
 from configDataRetrieving import * 
@@ -8,13 +9,8 @@ from configDataRetrieving import *
     #         technology of data retrieving1,technology of data retrieving2,...)
 def createDockerCompose(*args) :
 
-    fichier = open("docker-compose.yml", "w")
-
-    fichier.write("version : '" + str(args[0]) + "'\n")
-    fichier.write("\tservice:\n")
-
-    fichier.close()
-
+    initializeDockerCompose ( str( args[0]) )
+    
     configDatabase( args[2] )
 
     configDataVisualisation( args[1] )
@@ -32,5 +28,5 @@ def createDockerCompose(*args) :
 #   MAKE SOME FUNCTIONS ABOUT CONFIGURING EACH SOFTWARE
 #   MAKE A FUNCTION THAT
 
-createDockerCompose(3, influxdb, 2, 3, 4, 5, 6, 23, 12, 1, 1, 1, 1, 1, 1, 1)
+createDockerCompose(3, "influxdb", 2, 3, 4, 5, 6, 23, 12, 1, 1, 1, 1, 1, 1, 1)
 
