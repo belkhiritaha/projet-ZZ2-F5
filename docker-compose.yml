@@ -1,9 +1,12 @@
-version: '3'
-
+version: '2'
 services:
-  myfirstservice:
-    image: alpine
-    restart: always
-    container_name: myalpine
-    entrypoint: ps aux
+  app:
+    build: .
+    image: flask-redis:1.0
+    environment:
+      - FLASK_ENV=development
+    ports:
+      - 80:80
+  redis:
+    image: redis:4.0.11-alpine
 
