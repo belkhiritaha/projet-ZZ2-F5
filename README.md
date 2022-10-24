@@ -18,3 +18,8 @@ This project contains:
     GALPIN Thomas - ZZ2 F5  
     MOUHALHAL Abdelmonaim - ZZ2 F5  
     EL KHALIDY Lotfi - ZZ2 F5  
+
+###Tasks :
+   MOUHALHAL Abdelmonaim : déploiement automatisé avec Graphana
+
+ 
