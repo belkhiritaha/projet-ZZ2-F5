@@ -20,6 +20,6 @@ This project contains:
     EL KHALIDY Lotfi - ZZ2 F5  
 
 ### TASKS:
-   MOUHALHAL Abdelmonaim : déploiement automatisé avec Graphana
+   MOUHALHAL Abdelmonaim : déploiement automatisé avec Prometheus/Graphana
 
  
