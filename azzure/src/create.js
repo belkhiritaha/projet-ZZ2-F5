@@ -5,6 +5,10 @@ import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import UploadForm, { Switch } from './form';
 import { JsonEditor as Editor } from 'jsoneditor-react';
+
+import JSONInput from 'react-json-editor-ajrm';
+import locale    from 'react-json-editor-ajrm/locale/en';
+
 import 'jsoneditor-react/es/editor.min.css';
 import './card.css'
 import './create.css'
@@ -49,7 +53,6 @@ function CreateForm(props) {
         }
     });
 
-    console.log("state to string", JSON.stringify(state));
     console.log("state", state);
 
 
@@ -70,37 +73,54 @@ function CreateForm(props) {
         return JSON.stringify(state);
     }
 
-    function onsubmit(event) {
+    function onsubmit(event, id) {
         event.preventDefault();
         console.log("submitted");
 
         // check if VMram, VMcpu, VMdisk are numbers and if all fields are filled
         if (isNaN(state.VMram) || isNaN(state.VMcpu) || isNaN(state.VMdisk) || state.VMid === 0 || state.VMname === "" || state.VMdesc === "" || state.VMnetwork === "" || state.VMimage === "") {
-            document.getElementById("button").classList.add("shake");
+            document.getElementById(id).classList.add("shake");
+            console.log(isNaN(state.VMram));
+            console.log(isNaN(state.VMcpu));
+            console.log(isNaN(state.VMdisk));
+            console.log(state.VMid === 0);
+            console.log(state.VMname === "");
+            console.log(state.VMdesc === "");
+            console.log(state.VMnetwork === "");
+            console.log(state.VMimage === "");
+            
+
             // add p element with error message
             document.getElementById("error").innerHTML = "Please fill all fields with valid values";
             setTimeout(() => {
-                document.getElementById("button").classList.remove("shake");
+                document.getElementById(id).classList.remove("shake");
+            }
+                , 500);
+
+            setTimeout(() => {
                 document.getElementById("error").innerHTML = "";
             }
                 , 5000);
+
             return false;
         }
-
-        // // send to localhost:8000
-        // fetch('http://localhost:8000/create', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: getCurrentConfig(),
-        // }).then(response => response.json())
-        //     .then(data => {
-        //         console.log('Success:', data);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error:', error);
-        //     });
+        else {
+            // // send to localhost:8000
+    
+            fetch('http://localhost:8000/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: getCurrentConfig(),
+            }).then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
         console.log(state);
         return true;
 
@@ -110,26 +130,28 @@ function CreateForm(props) {
         <div className="col" style={{ width: "100%", margin: "auto", textAlign: "center", justifyContent: "space-between" }}>
             <h1>Create a VM</h1>
             <hr />
-            <h2>From an existing configuration file:</h2>
-            <UploadForm style={{ margin: "5%" }} />
-            <Editor
-                value={state}
-                onChange={
-                    (value) => {
-                        setConfig(value);
-                        console.log("value", value);
+            <div style={{ width: "80%", margin: "auto", textAlign: "center", justifyContent: "space-between" }}>
+                <h2>From an existing configuration file:</h2>
+                <UploadForm style={{ margin: "5%" }} />
+                <Editor
+                    value={state}
+                    onChange={
+                        (value) => {
+                            console.log(value);
+                            setConfig(value);
+                        }
+                    }
+                />
+                <Button id="button" onClick={
+                    (event) => {
+                        onsubmit(event, "button");
                     }
                 }
-            />
-            <Button id="button" onClick={
-                (event) => {
-                    onsubmit(event);
-                }
-            }
-                style={{ margin: "5%" }} variant="primary" type="submit">
-                Submit
-            </Button>
-            <p id="error" style={{ color: "red" }}></p>
+                    style={{ margin: "5%" }} variant="primary" type="submit">
+                    Submit
+                </Button>
+                <p id="error" style={{ color: "red" }}></p>
+            </div>
             <hr />
 
             <h2>From scratch</h2>
@@ -198,18 +220,12 @@ function CreateForm(props) {
                     </Form.Group>
 
 
-                    <h3>Confirm configuration</h3>
-                    <Editor
-                        value={state}
-                        onChange={
-                            (value) => {
-                                setConfig(value);
-                                console.log("value", value);
-                            }
+                    <Button id="button1" onClick={
+                        (event) => {
+                            onsubmit(event, "button1");
                         }
-                    />
-
-                    <Button onClick={onsubmit} style={{ margin: "5%" }} variant="primary" type="submit">
+                    }
+                        style={{ margin: "5%" }} variant="primary" type="submit">
                         Submit
                     </Button>
                 </Form>
