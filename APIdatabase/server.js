@@ -6,7 +6,7 @@ const app = express()
 
 app.use(express.json())
 
-mongoose.connect("mongodb://localhost:27017/logsDB", {
+mongoose.connect("mongodb://localhost:27017/subscription", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }, (err) => {
@@ -19,6 +19,6 @@ mongoose.connect("mongodb://localhost:27017/logsDB", {
 
 app.use(router)
 
-app.listen(2000, () => {
-    console.log("listening on port 2000")
+app.listen(3000, () => {
+    console.log("listening on port 3000")
 })
