@@ -24,7 +24,7 @@ function Manage() {
 
         function onsubmit(event, VM) {
             event.preventDefault();
-            console.log("submit nothing");
+            console.log("submit");
             console.log(VM);
         }
 
@@ -62,33 +62,33 @@ function Manage() {
                         <Collapse style={{ textAlign: "center", margin: "5% auto", width: "50%" }} in={open}>
                             <Card.Body>
                                 <Form onSubmit={() => {this.event.preventDefault();}}>
-                                    <Form.Group controlId="formBasicEmail">
+                                    <Form.Group>
                                         <h3>Description</h3>
                                         <Form.Control onChange={e => { props.VM.desc = e.target.value }} type="text" placeholder="Enter description" defaultValue={props.VM.desc} />
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicEmail">
+                                    <Form.Group>
                                         <h3>RAM</h3>
                                         <Form.Control onChange={e => { props.VM.ram = e.target.value }} type="text" placeholder="Enter RAM" defaultValue={props.VM.ram} />
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicEmail">
+                                    <Form.Group>
                                         <h3>CPU</h3>
                                         <Form.Control onChange={e => { props.VM.cpu = e.target.value }} type="text" placeholder="Enter CPU" defaultValue={props.VM.cpu} />
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicEmail">
+                                    <Form.Group>
                                         <h3>Disk</h3>
                                         <Form.Control onChange={e => { props.VM.disk = e.target.value }} type="text" placeholder="Enter Disk" defaultValue={props.VM.disk} />
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicEmail">
+                                    <Form.Group>
                                         <h3>Network</h3>
                                         <Form.Control onChange={e => { props.VM.network = e.target.value }} type="text" placeholder="Enter Network" defaultValue={props.VM.network} />
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicEmail">
+                                    <Form.Group>
                                         <h3>Image</h3>
                                         <Form.Control onChange={e => { props.VM.image = e.target.value }} type="text" placeholder="Enter Image" defaultValue={props.VM.image} />
                                     </Form.Group>
-                                    <Form.Group controlId="formBasicEmail">
+                                    <Form.Group>
                                         <h3>Services</h3>
-                                        <Form.Group controlId="formBasicEmail">
+                                        <Form.Group>
                                             <h3>Database</h3>
                                             <Form.Check type="switch" label="InfluxDB" defaultChecked={props.VM.services.db.influxdb} onChange={e => { props.VM.services.db.influxdb = e.target.checked }} />
                                             <Form.Check type="switch" label="MongoDB" defaultChecked={props.VM.services.db.mongodb} onChange={e => { props.VM.services.db.mongodb = e.target.checked }} />
@@ -99,7 +99,7 @@ function Manage() {
                                             <Form.Check type="switch" label="SQLite" defaultChecked={props.VM.services.db.sqlite} onChange={e => { props.VM.services.db.sqlite = e.target.checked }} />
                                             <Form.Check type="switch" label="Oracle" defaultChecked={props.VM.services.db.oracle} onChange={e => { props.VM.services.db.oracle = e.target.checked }} />
                                         </Form.Group>
-                                        <Form.Group controlId="formBasicEmail">
+                                        <Form.Group>
                                             <h3>Web</h3>
                                             <Form.Check type="switch" label="Grafana" defaultChecked={props.VM.services.web.grafana} onChange={e => { props.VM.services.web.grafana = e.target.checked }} />
                                             <Form.Check type="switch" label="Node-RED" defaultChecked={props.VM.services.web.nodered} onChange={e => { props.VM.services.web.nodered = e.target.checked }} />
@@ -107,7 +107,7 @@ function Manage() {
                                             <Form.Check type="switch" label="Nginx" defaultChecked={props.VM.services.web.nginx} onChange={e => { props.VM.services.web.nginx = e.target.checked }} />
                                             <Form.Check type="switch" label="Tomcat" defaultChecked={props.VM.services.web.tomcat} onChange={e => { props.VM.services.web.tomcat = e.target.checked }} />
                                         </Form.Group>
-                                        <Form.Group controlId="formBasicEmail">
+                                        <Form.Group>
                                             <h3>Other</h3>
                                             <Form.Check type="switch" label="MQTT" defaultChecked={props.VM.services.other.mqtt} onChange={e => { props.VM.services.other.mqtt = e.target.checked }} />
                                             <Form.Check type="switch" label="SSH" defaultChecked={props.VM.services.other.ssh} onChange={e => { props.VM.services.other.ssh = e.target.checked }} />
@@ -116,7 +116,7 @@ function Manage() {
                                             <Form.Check type="switch" label="FTP" defaultChecked={props.VM.services.other.ftp} onChange={e => { props.VM.services.other.ftp = e.target.checked }} />
                                         </Form.Group>
 
-                                        <Form.Group controlId="formBasicEmail">
+                                        <Form.Group>
                                             <h3>Submit changes</h3>
                                             <Button variant="primary" type="submit" onClick={(e) => {onsubmit(e, props.VM)}}>
                                                 Submit
