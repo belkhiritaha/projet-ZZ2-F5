@@ -1,4 +1,7 @@
+const express= require('express');
 
+const app = express();
+app.use(express.json());
 
 app.listen(8000, () => {
     console.log('Listening on port 8000');
@@ -17,8 +20,8 @@ app.get('/api/vm/list/',(req, res)=> {
     console.log(req.query); 
     // send the list of the VMs with the right idUser
     const listVm = []; 
-    listVm = db.vms.find(vm=>vm.idUser=id);
-    res.send(listVm); 
+    //listVm = vmExemple.vms.find(vm=>vm.idUser=id);
+    res.send(vmExemple); 
 });
 
 
