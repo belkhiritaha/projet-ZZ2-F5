@@ -2,7 +2,7 @@
 
 ## Install
 
-- Run `npm init -y`
+- Run `npm init`
 - Run `npm install express mongoose` to install dependencies
 
 ## Run
