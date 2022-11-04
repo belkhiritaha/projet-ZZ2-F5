@@ -7,7 +7,8 @@ def test():
                 {'image' : 'influxdb', 'container_name': 'influxdb', 'restart': 'on_failure', 'hostname': 'influxdb', 
                  'volumes': [".influxdb:/var/lib/influxdb"]}}}]
 
-    contents2 = [{'banger' : 'bang'}]
+    add = "yoooo"
+    contents2 = [{'banger' : add}]
 
     stream = open("docker-compose2.yml","w")
 

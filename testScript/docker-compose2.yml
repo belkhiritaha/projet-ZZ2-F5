@@ -7,4 +7,6 @@ services:
     volumes:
     - .influxdb:/var/lib/influxdb
 version: '3'
-banger: bang
+banger: yoooo
+? ''
+: yooo: bammmm

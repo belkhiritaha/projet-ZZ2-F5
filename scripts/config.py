@@ -3,6 +3,7 @@ from configDatabase import *
 from configDataVisualisation import *
 from configDataRetrieving import * 
 
+import yaml
 
 
 
@@ -12,18 +13,56 @@ from configDataRetrieving import *
 
 def createDockerCompose(*args):
 
-    initializeDockerCompose (str( args[0]))
+    val = True
+
+    contenu = [{
+                'version': str(args[0]),
+                'services': 
+                {
+                 args[2]: 
+                    {
+                     'image' : args[2], 
+                     'container_name': args[2],
+                     'restart': 'on_failure', 
+                     'hostname': args[2], 
+                     'volumes': [".influxdb:/var/lib/influxdb"]
+                    },
+                 args[3]: 
+                    {
+                     'image': args[3], 
+                     'depends_on': [args[2]], 
+                     'container_name': args[3], 
+                     'restart': 'on_failure',
+                     'links': ["influxdb:influxdb"], 
+                     'tty': val,
+                     'volumes':
+                               [
+                                "/var/run/docker.sock:/var/run/docker.sock", 
+                                "./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf"
+                               ]
+                    }
+                }
+               }
+              ]
+
+    fichier = open("docker-compose.yml","w")
+
+    yaml.dump_all(contenu, fichier, sort_keys=False)
+
+
+    #initializeDockerCompose (str( args[0]))
     
-    configDatabase(args[2] , ".influxdb:/var/lib/influxdb")
+    #configDatabase(args[2] , ".influxdb:/var/lib/influxdb")
 
-    configDataVisualisation(args[1])
+    #configDataVisualisation(args[1])
 
-    for i in args[3:]:
+    #for i in args[3:]:
 
-        configDataRetrieving ( i, args[2], "/var/run/docker.sock:/var/run/docker.sock", "./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf" )
+     #   configDataRetrieving ( i, args[2], "/var/run/docker.sock:/var/run/docker.sock", "./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf" )
     
     print("N'IMPORTE\nQUOI\n!!!!!!!!!!!!!!!!!!!!!!!!!")
 
+    fichier.close()
 
 # TO DO
 
