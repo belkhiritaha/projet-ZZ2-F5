@@ -1,0 +1,22 @@
+[{'version': '3', 
+  'services': 
+        {'influxdb': 
+            {'image': 'influxdb', 
+             'container_name': 'influxdb', 
+             'restart': 'on_failure', 
+             'hostname': 'influxdb', 
+             'volumes': ['.influxdb:/var/lib/influxdb']
+            }, 
+         'telegraf': 
+            {'image': 'telegraf', 
+             'depends_on': ['influxdb'], 
+             'container_name': 'telegraf', 
+             'restart': 'on_failure', 
+             'links': ['influxdb:influxdb'], 
+             'tty': True, 
+             'volumes': ['/var/run/docker.sock:/var/run/docker.sock',
+                         './telegraf/telegraf.conf:/etc/telegraf/telegraf.conf']
+            }
+        }
+ }
+]

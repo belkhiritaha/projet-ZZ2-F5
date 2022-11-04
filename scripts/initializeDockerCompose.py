@@ -1,9 +1,6 @@
 
-def initializeDockerCompose (version):
+def initializeDockerCompose (contenu, version):
 
-    fichier = open("docker-compose.yml", "w")
+    contenu.append({'version': version})
 
-    fichier.write("version : '" + version + "'\n")
-    fichier.write("services:\n")
-
-    fichier.close()
+    contenu[0]['services'] = False

@@ -1,21 +1,18 @@
 
-def configDataRetrieving (technology, database, pathToDockerDemon, pathToDataRetrievingConfigFile):
+def configDataRetrieving (contenu, technology, database, pathToDockerDemon, pathToDataRetrievingConfigFile):
 
-    fichier = open("docker-compose.yml", "a")
+    val = True
 
-    fichier.write(" " + technology + ":\n")
-    fichier.write("  image: " + technology + "\n")
-    fichier.write("  depends_on:\n" + "   - " + database + "\n") #le système de database est nécessaire
-    fichier.write("  container_name: " + technology + "\n")
-    fichier.write("  restart: always\n")
-    fichier.write("  links:\n   - " + database + ":" + database + "\t\n")
-    fichier.write("  tty: true\n")
-
-    fichier.write("  volumes:\n")
-    fichier.write("   - " + pathToDockerDemon + "\n") # nécessaire pour remonter les données du démon Docker
-    fichier.write("   - " + pathToDataRetrievingConfigFile + "\n")
-
-    fichier.write("\n")
-    fichier.close()
+    contenu[0]['services'][technology] = {
+                              'image': technology, 
+                              'depends_on': [database],                     # le système de database est nécessaire
+                              'container_name': technology, 
+                              'restart': 'on_failure', 
+                              'links': ["influxdb:influxdb"], 
+                              'tty': val, 
+                              'volumes':[pathToDockerDemon,                 # nécessaire pour remonter les données du démon Docker
+                                         pathToDataRetrievingConfigFile]
+                             }
 
     print("VRAIMENT")
+

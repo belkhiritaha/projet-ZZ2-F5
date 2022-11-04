@@ -1,10 +1,9 @@
 from initializeDockerCompose import *
 from configDatabase import *
 from configDataVisualisation import *
-from configDataRetrieving import * 
+from configDataRetrieving import *
 
 import yaml
-
 
 
 # FUNCTION WHO CREATE A DOCKER-COMPOSE FILE AND SET UP IT IN A PERSONALIZED WAY
@@ -13,56 +12,27 @@ import yaml
 
 def createDockerCompose(*args):
 
-    val = True
+    contenu = []
 
-    contenu = [{
-                'version': str(args[0]),
-                'services': 
-                {
-                 args[2]: 
-                    {
-                     'image' : args[2], 
-                     'container_name': args[2],
-                     'restart': 'on_failure', 
-                     'hostname': args[2], 
-                     'volumes': [".influxdb:/var/lib/influxdb"]
-                    },
-                 args[3]: 
-                    {
-                     'image': args[3], 
-                     'depends_on': [args[2]], 
-                     'container_name': args[3], 
-                     'restart': 'on_failure',
-                     'links': ["influxdb:influxdb"], 
-                     'tty': val,
-                     'volumes':
-                               [
-                                "/var/run/docker.sock:/var/run/docker.sock", 
-                                "./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf"
-                               ]
-                    }
-                }
-               }
-              ]
+    initializeDockerCompose (contenu, str( args[0]))
 
-    fichier = open("docker-compose.yml","w")
+    configDatabase(contenu, args[2] , ".influxdb:/var/lib/influxdb")
+
+    configDataVisualisation(args[1])
+
+    for i in args[3:]:
+
+        configDataRetrieving (contenu, i, args[2], "/var/run/docker.sock:/var/run/docker.sock", "./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf" )
+    
+
+    fichier = open("docker-compose.yml","w") 
 
     yaml.dump_all(contenu, fichier, sort_keys=False)
 
+    fichier.close()
 
-    #initializeDockerCompose (str( args[0]))
-    
-    #configDatabase(args[2] , ".influxdb:/var/lib/influxdb")
-
-    #configDataVisualisation(args[1])
-
-    #for i in args[3:]:
-
-     #   configDataRetrieving ( i, args[2], "/var/run/docker.sock:/var/run/docker.sock", "./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf" )
-    
     print("N'IMPORTE\nQUOI\n!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-    fichier.close()
 
 # TO DO
 
