@@ -1,0 +1,10 @@
+services:
+  influxdb:
+    container_name: influxdb
+    hostname: influxdb
+    image: influxdb
+    restart: on_failure
+    volumes:
+    - .influxdb:/var/lib/influxdb
+version: '3'
+banger: bang

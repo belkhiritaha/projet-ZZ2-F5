@@ -1,17 +1,22 @@
 version : '3'
-	service:
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+services:
+ influxdb:
+  image: influxdb
+  container_name: influxdb
+  restart: always
+  hostname: influxdb
+  volumes:
+   - .influxdb:/var/lib/influxdb
+ telegraf:
+  image: telegraf
+  depends_on:
+   - influxdb
+  container_name: telegraf
+  restart: always
+  links:
+   - influxdb:influxdb
+  tty: true
+  volumes:
+   - /var/run/docker.sock:/var/run/docker.sock
+   - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+
