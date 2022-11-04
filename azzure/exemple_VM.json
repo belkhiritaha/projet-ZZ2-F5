@@ -7,7 +7,7 @@
     "VMdisk": "",
     "VMnetwork": "",
     "VMimage": "",
-    "VMservices": {
+    "services": {
         "db": {
             "influxdb": false,
             "mongodb": false,
