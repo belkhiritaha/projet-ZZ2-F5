@@ -3,16 +3,28 @@ services:
   influxdb:
     image: influxdb
     container_name: influxdb
-    restart: on_failure
+    restart: always
     hostname: influxdb
     volumes:
     - .influxdb:/var/lib/influxdb
+  grafana:
+    image: grafana/grafana
+    depends_on:
+    - influxdb
+    container_name: grafana
+    restart: always
+    ports:
+    - 3000:3000
+    links:
+    - influxdb:influxdb
+    volumes:
+    - ./grafana:/var/lib/grafana
   telegraf:
     image: telegraf
     depends_on:
     - influxdb
     container_name: telegraf
-    restart: on_failure
+    restart: always
     links:
     - influxdb:influxdb
     tty: true

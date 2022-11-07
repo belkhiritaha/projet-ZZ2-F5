@@ -18,7 +18,7 @@ def createDockerCompose(*args):
 
     configDatabase(contenu, args[2] , ".influxdb:/var/lib/influxdb")
 
-    configDataVisualisation(args[1])
+    configDataVisualisation(contenu, args[1], args[2], "./grafana:/var/lib/grafana")
 
     for i in args[3:]:
 

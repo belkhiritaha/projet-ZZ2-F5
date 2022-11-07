@@ -1,12 +1,14 @@
 
 def configDatabase(contenu, technology, pathToVolume):
 
+
+
     contenu[0]['services'] = {
                                 technology: 
                                     {
                                         'image' : technology, 
                                         'container_name': technology,
-                                        'restart': 'on_failure', 
+                                        'restart': 'always', 
                                         'hostname': technology, 
                                         'volumes': [pathToVolume]
                                      }
@@ -14,3 +16,7 @@ def configDatabase(contenu, technology, pathToVolume):
 
 
     print("ISIMA")
+
+
+
+#Formatiser la path ou on veut garder la database
