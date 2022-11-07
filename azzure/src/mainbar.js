@@ -100,7 +100,7 @@ function Mainbar(props) {
 
     return (
         <>
-            <Col xs={10}>
+            <Col xs={12}>
                 <Container style={{ textAlign: "center" }}>
                     <h1>aZZure</h1>
                     <h2>Clermont INP's IoT VM Manager</h2>

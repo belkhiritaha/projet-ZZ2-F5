@@ -12,8 +12,6 @@ function App(props) {
             <NavbarBasicExample />
             <Container fluid>
                 <Row>
-                    <Sidebar />
-
                     <Mainbar {...props} />
                 </Row>
             </Container>
