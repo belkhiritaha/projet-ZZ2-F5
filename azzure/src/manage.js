@@ -137,124 +137,139 @@ function Manage() {
     const [VMs, setVMs] = useState([]);
     const [refresh, setRefresh] = useState(false);
 
+    let response;
+
     // functions
-    function getAllVMs() {
-        setRefresh(false);
-        //return fetch('http://localhost:3000/api/vms')
-        return {
-            VMs: [
-                {
-                    name: "test",
-                    desc: "test",
-                    ram: "test",
-                    cpu: "test",
-                    disk: "test",
-                    network: "test",
-                    image: "test",
-                    services: {
-                        db: {
-                            influxdb: false,
-                            mongodb: false,
-                            mysql: false,
-                            postgresql: false,
-                            redis: false,
-                            mariadb: false,
-                            sqlite: false,
-                            oracle: false,
-                        },
-                        web: {
-                            grafana: false,
-                            nodered: false,
-                            apache: false,
-                            nginx: false,
-                            tomcat: false,
-                        },
-                        other: {
-                            mqtt: false,
-                            ssh: false,
-                            http: false,
-                            https: false,
-                            ftp: false,
-                        }
-                    }
-                }
-            ]
-        };
+    async function getAllVMs() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:8000/api/vm/list/0", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        await xhr.send(null);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                response = JSON.parse(xhr.responseText);
+                console.log("the response, ", response);
+                setVMs(response);
+
+                console.log('this is it', VMs);
+            }
+        }
     }
+        // return {
+        //     VMs: [
+        //         {
+        //             name: "test",
+        //             desc: "test",
+        //             ram: "test",
+        //             cpu: "test",
+        //             disk: "test",
+        //             network: "test",
+        //             image: "test",
+        //             services: {
+        //                 db: {
+        //                     influxdb: false,
+        //                     mongodb: false,
+        //                     mysql: false,
+        //                     postgresql: false,
+        //                     redis: false,
+        //                     mariadb: false,
+        //                     sqlite: false,
+        //                     oracle: false,
+        //                 },
+        //                 web: {
+        //                     grafana: false,
+        //                     nodered: false,
+        //                     apache: false,
+        //                     nginx: false,
+        //                     tomcat: false,
+        //                 },
+        //                 other: {
+        //                     mqtt: false,
+        //                     ssh: false,
+        //                     http: false,
+        //                     https: false,
+        //                     ftp: false,
+        //                 }
+        //             }
+        //         }
+        //     ]
+        // };
 
     function refreshVMs() {
-        setVMs([
-            {
-                name: "My Super VM 1",
-                desc: "My super vm to test my super IOT project",
-                ram: "1024",
-                cpu: "1",
-                disk: "10",
-                network: "bridge",
-                image: "ubuntu",
-                services: {
-                    db: {
-                        influxdb: false,
-                        mongodb: false,
-                        mysql: false,
-                        postgresql: false,
-                        redis: true,
-                        mariadb: false,
-                        sqlite: false,
-                        oracle: false,
-                    },
-                    web: {
-                        grafana: false,
-                        nodered: false,
-                        apache: false,
-                        nginx: true,
-                        tomcat: false,
-                    },
-                    other: {
-                        mqtt: false,
-                        ssh: false,
-                        http: true,
-                        https: false,
-                        ftp: false,
-                    }
-                }
-            },
-            {
-                name: "My Super VM 2",
-                desc: "My super vm to test my super IOT project",
-                ram: "1024",
-                cpu: "1",
-                disk: "10",
-                network: "bridge",
-                image: "ubuntu",
-                services: {
-                    db: {
-                        influxdb: false,
-                        mongodb: false,
-                        mysql: false,
-                        postgresql: false,
-                        redis: true,
-                        mariadb: false,
-                        sqlite: false,
-                        oracle: false,
-                    },
-                    web: {
-                        grafana: false,
-                        nodered: false,
-                        apache: false,
-                        nginx: true,
-                        tomcat: false,
-                    },
-                    other: {
-                        mqtt: false,
-                        ssh: false,
-                        http: true,
-                        https: false,
-                        ftp: false,
-                    }
-                }
-            }
-        ]);
+        getAllVMs();
+        console.log("cms", VMs);
+        // setVMs([
+        //     {
+        //         name: "My Super VM 1",
+        //         desc: "My super vm to test my super IOT project",
+        //         ram: "1024",
+        //         cpu: "1",
+        //         disk: "10",
+        //         network: "bridge",
+        //         image: "ubuntu",
+        //         services: {
+        //             db: {
+        //                 influxdb: false,
+        //                 mongodb: false,
+        //                 mysql: false,
+        //                 postgresql: false,
+        //                 redis: true,
+        //                 mariadb: false,
+        //                 sqlite: false,
+        //                 oracle: false,
+        //             },
+        //             web: {
+        //                 grafana: false,
+        //                 nodered: false,
+        //                 apache: false,
+        //                 nginx: true,
+        //                 tomcat: false,
+        //             },
+        //             other: {
+        //                 mqtt: false,
+        //                 ssh: false,
+        //                 http: true,
+        //                 https: false,
+        //                 ftp: false,
+        //             }
+        //         }
+        //     },
+        //     {
+        //         name: "My Super VM 2",
+        //         desc: "My super vm to test my super IOT project",
+        //         ram: "1024",
+        //         cpu: "1",
+        //         disk: "10",
+        //         network: "bridge",
+        //         image: "ubuntu",
+        //         services: {
+        //             db: {
+        //                 influxdb: false,
+        //                 mongodb: false,
+        //                 mysql: false,
+        //                 postgresql: false,
+        //                 redis: true,
+        //                 mariadb: false,
+        //                 sqlite: false,
+        //                 oracle: false,
+        //             },
+        //             web: {
+        //                 grafana: false,
+        //                 nodered: false,
+        //                 apache: false,
+        //                 nginx: true,
+        //                 tomcat: false,
+        //             },
+        //             other: {
+        //                 mqtt: false,
+        //                 ssh: false,
+        //                 http: true,
+        //                 https: false,
+        //                 ftp: false,
+        //             }
+        //         }
+        //     }
+        // ]);
 
     };
 
@@ -278,7 +293,7 @@ function Manage() {
 
     // return
 
-    console.log("vms: " + VMs);
+    console.log("vms: " , VMs);
 
     // render
     return (
