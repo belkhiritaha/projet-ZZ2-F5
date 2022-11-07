@@ -107,6 +107,42 @@
                     "ftp": false
                 }
             }
+        },
+        {
+            "idUser": 0,
+            "VMid": null,
+            "VMname": "nikmok",
+            "VMdesc": "!",
+            "VMram": "",
+            "VMcpu": "",
+            "VMdisk": "",
+            "VMimage": "",
+            "VMservices": {
+                "db": {
+                    "influxdb": false,
+                    "mongodb": false,
+                    "mysql": false,
+                    "postgresql": false,
+                    "redis": false,
+                    "mariadb": false,
+                    "sqlite": false,
+                    "oracle": false
+                },
+                "web": {
+                    "grafana": false,
+                    "nodered": false,
+                    "apache": false,
+                    "nginx": false,
+                    "tomcat": false
+                },
+                "other": {
+                    "mqtt": false,
+                    "ssh": false,
+                    "http": false,
+                    "https": false,
+                    "ftp": false
+                }
+            }
         }
     ]
 }

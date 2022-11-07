@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
     res.send('Hello World');
 }
 );
+const {exec}= require("child_process"); 
 
 const fs = require('fs');
 let file = fs.readFileSync('exemple_VM.json', 'utf8');
@@ -35,7 +36,7 @@ file = fs.readFileSync('./DataBase/vm.json', 'utf8');
 const database = JSON.parse(file);
 
 app.get('/api/vm/list/:id',(req, res)=> {
-    const id = req.params.id;
+    const id = req.params.id;    
     console.log(" Requesting list VM of user ", id); 
     console.log(req.query); 
     // send the list of the VMs with the right idUser
@@ -48,11 +49,63 @@ app.get('/api/vm/list/:id',(req, res)=> {
 
 
 function createVm(body){
-    //insertion du programme de creation de VM
+    body= {
+        "idUser": 0,
+        "VMid": 4,
+        "VMname": "nikmok",
+        "VMdesc": "!",
+        "VMram": "",
+        "VMcpu": "",
+        "VMdisk": "",
+        "VMimage": "",
+        "VMservices": {
+            "db": {
+                "influxdb": false,
+                "mongodb": false,
+                "mysql": false,
+                "postgresql": false,
+                "redis": false,
+                "mariadb": false,
+                "sqlite": false,
+                "oracle": false
+            },
+            "web": {
+                "grafana": false,
+                "nodered": false,
+                "apache": false,
+                "nginx": false,
+                "tomcat": false
+            },
+            "other": {
+                "mqtt": false,
+                "ssh": false,
+                "http": false,
+                "https": false,
+                "ftp": false
+            }
+        }
+    }
+    exec("./script.sh", (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return 0;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return 0;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.log( " body : ",body); 
+        console.log(stdout);
+        body.VMid=parseInt(stdout);
+        database.list.push(body);
+        fs.writeFileSync('./DataBase/vm.json', JSON.stringify(database)); 
+        return 1; 
+    });
     //insertion de la VM si tout se passe bien.
     // fs.writeFileSync('db.JSON', JSON.stringify(body)); 
     // en body.VMname
-    // return bool; if la machine tourne return true
+    // return bool
 }
 
 function startVm(idVm){
@@ -63,22 +116,21 @@ function startVm(idVm){
 
 function stopVm(idVm){
     //insertion of the vm stop code
-    // change the status of the vm in the db
-    return (stopSucces);
+    //change the status of the vm in the db
+    return (stopSuccess);
 }
 
 function modifiedVm(body,idVm){
     
-    
+    return (modifiedSuccess )
 }
 
-app.post('/api/vm/create/:idVm',(req, res) => {
+app.get('/api/vm/create/',(req, res) => {
     console.log("Requesting VM create");
     const body = req.body;
     console.log(body);
     
     const createSuccess= createVm(body); 
-    // return a booleen 
     res.send(createSuccess); 
 }); 
 
@@ -96,4 +148,3 @@ app.post('/api/stop/:idVm',(req,res)=> {
     console.log("Requesting Stop VM");
 
 })
-
