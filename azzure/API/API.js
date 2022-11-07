@@ -8,20 +8,28 @@ app.listen(8000, () => {
 }
 );
 
-const fs = require('fs');
-const file = fs.readFileSync('exemple_VM.json', 'utf8');
+app.get('/', (req, res) => {
+    res.send('Hello World');
+}
+);
 
+const fs = require('fs');
+let file = fs.readFileSync('exemple_VM.json', 'utf8');
 
 const vmExemple = JSON.parse(file);
 
+file = fs.readFileSync('./DataBase/vm.db', 'utf8');
+
+const db = JSON.parse(file);
+
 app.get('/api/vm/list/',(req, res)=> {
-    const id = req.params.idUser;
+    const id = 0;//req.params.idUser;
     console.log(" Requesting list VM of user ", id); 
     console.log(req.query); 
     // send the list of the VMs with the right idUser
-    const listVm = []; 
-    //listVm = vmExemple.vms.find(vm=>vm.idUser=id);
-    res.send(vmExemple); 
+    let listVm = []; 
+    listVm = db.list.find(vm=>db.list[db.list.indexOf(vm)].idUser=id);
+    res.send(listVm); 
 });
 
 

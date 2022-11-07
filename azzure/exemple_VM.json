@@ -5,7 +5,6 @@
     "VMram": "",
     "VMcpu": "",
     "VMdisk": "",
-    "VMnetwork": "",
     "VMimage": "",
     "VMservices": {
         "db": {
