@@ -14,12 +14,18 @@ mongoose.connect("mongodb+srv://aZZure:admin@cluster0.tm9ghpd.mongodb.net/?retry
     }
 })
 
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    next();
+});
+
 data = express.json()
 app.use(data)
 
 // POST user
-app.post('/api/user', (req, res) => {
-    //delete req.body._id    
+app.post('/api/user', (req, res) => {   
     const user = new User({
         ...req.body
     })
@@ -27,18 +33,19 @@ app.post('/api/user', (req, res) => {
     user.save()
         .then(() => res.status(201).json({ message: 'A new user has arrived !' }))
         .catch(error => res.status(400).json({ error }))
+        
+    console.log("toto")
 })
 
 // GET user by ID
 app.get('/api/user/:id', (req, res) => {
     User.findOne({_id: req.params.id})
-        .then(user => res.status(200).json(thing))
+        .then(user => res.status(200).json(user))
         .catch(error => res.status(404).json({ error }))
 })
 
 // GET all users
 app.get('/api/user', (req, res) => {
-    console.log(req.body)
     User.find()
         .then(users => res.status(200).json(users))
         .catch(error => res.status(400).json({ error }))
