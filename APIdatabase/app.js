@@ -14,7 +14,8 @@ mongoose.connect("mongodb+srv://aZZure:admin@cluster0.tm9ghpd.mongodb.net/?retry
     }
 })
 
-app.use(express.json())
+data = express.json()
+app.use(data)
 
 // POST user
 app.post('/api/user', (req, res) => {
