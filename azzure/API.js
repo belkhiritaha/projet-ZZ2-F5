@@ -20,7 +20,7 @@ app.listen(8000, () => {
 );
 
 const fs = require('fs');
-const file = fs.readFileSync('exemple_VM.json', 'utf8');
+const file = fs.readFileSync('DataBase/vm.json', 'utf8');
 
 
 const vmExemple = JSON.parse(file);
