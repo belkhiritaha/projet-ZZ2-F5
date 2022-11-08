@@ -24,6 +24,7 @@ function NavbarBasicExample() {
                 Separated link
               </NavDropdown.Item>
             </NavDropdown>
+            <Nav.Link href="/register"></Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
