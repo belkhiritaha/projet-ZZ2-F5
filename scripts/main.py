@@ -1,7 +1,7 @@
 from config import *
 
 def main():
-    createEnvFile("topin", "passwd")
+    configEnv("topin", "passwd")
     createDockerCompose(3, "grafana", "influxdb", "telegraf")
         
 
