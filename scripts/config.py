@@ -1,9 +1,10 @@
+import yaml
+
 from initializeDockerCompose import *
 from configDatabase import *
 from configDataVisualisation import *
 from configDataRetrieving import *
-
-import yaml
+from configEnv import *
 
 
 # FUNCTION WHO CREATE A DOCKER-COMPOSE FILE AND SET UP IT IN A PERSONALIZED WAY
@@ -29,7 +30,7 @@ def createDockerCompose(*args):
 
     yaml.dump_all(contenu, fichier, sort_keys=False)
 
-    fichier.close()
+    fichier.close() 
 
     print("N'IMPORTE\nQUOI\n!!!!!!!!!!!!!!!!!!!!!!!!!")
 
@@ -38,5 +39,4 @@ def createDockerCompose(*args):
 
 #   MAKE SOME FUNCTIONS ABOUT CONFIGURING EACH SOFTWARE
 
-createDockerCompose(3, "grafana", "influxdb", "telegraf")
 
