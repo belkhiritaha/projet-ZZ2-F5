@@ -23,6 +23,7 @@ def configDatabase(contenu, technology, pathToVolume):
                                         'container_name': technology,
                                         'restart': 'always', 
                                         'hostname': technology, 
+                                        'ports': ['8086:8086'],
                                         'volumes': [pathToVolume]
                                      }
                              }

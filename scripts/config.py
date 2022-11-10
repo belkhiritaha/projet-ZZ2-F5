@@ -19,7 +19,7 @@ def createDockerCompose(*args):
 
     for i in args[3:]:
 
-        configDataRetrieving (contenu, i, args[2], "/var/run/docker.sock:/var/run/docker.sock", "./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf" )
+        configDataRetrieving (contenu, i, args[2],"./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf" )
     
 
     fichier = open("configFiles/docker-compose.yml","w") 

@@ -7,7 +7,7 @@ def configDataVisualisation(contenu, technology, database, pathToTechnology):
                                             'container_name': technology,
                                             'restart': 'always',                        # port pour accéder à l'interface web de Grafana
                                             'ports': ['3000:3000'],
-                                            'links': [database + ':' + database],
+                                            'links': [database],
                                             'volumes': [pathToTechnology]
     }
 
