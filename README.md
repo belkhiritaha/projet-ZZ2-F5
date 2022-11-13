@@ -20,6 +20,6 @@ This project contains:
     EL KHALIDY Lotfi - ZZ2 F5  
 
 ### TASKS:
-   MOUHALHAL Abdelmonaim : déploiement automatisé avec Prometheus/Graphana
-
+   MOUHALHAL Abdelmonaim : Setup-Influxdb-Telegraf-And-Grafana-using-Docker-Compose
+   
  
