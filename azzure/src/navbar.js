@@ -13,6 +13,7 @@ function NavbarBasicExample() {
           <Nav className="me-auto">
             <Nav.Link href="#home">Home</Nav.Link>
             <Nav.Link href="#link">Link</Nav.Link>
+            <Nav.Link href="/register">Register</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">
@@ -24,7 +25,6 @@ function NavbarBasicExample() {
                 Separated link
               </NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link href="/register"></Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
