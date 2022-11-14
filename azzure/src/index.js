@@ -7,6 +7,7 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import "https://kit.fontawesome.com/68fc273f7b.js";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import NotFound from './notfound';
+import Login from './login';
 import Register from './register';
 
 function Router() {
@@ -19,6 +20,7 @@ function Router() {
                         <Route path=":id" element={<App page='create' id={this} /> }/>
                     </Route>
                     <Route path="/manage" element={<App page='manage' />}/>
+                    <Route path="/login" element={<Login />} />
                     <Route path="register" element={<Register />}/>
                     <Route path="/" element={<App page='home' />}/>
                     <Route path="/*" element={<NotFound />}/>
