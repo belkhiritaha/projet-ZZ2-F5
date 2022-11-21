@@ -3,15 +3,21 @@ const mongoose = require("mongoose")
 const User = require("./models")
 const app = express()
 
-mongoose.connect("mongodb+srv://aZZure:admin@cluster0.tm9ghpd.mongodb.net/?retryWrites=true&w=majority", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+let db = "mongodb://localhost:27017/aZZure_DB";
+mongoose.connect(db, { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true
 }, (err) => {
     if (!err) {
         console.log("connected to MongoDB server")
     } else {
         console.log("error")
     }
+})
+
+const conSuccess = mongoose.connection
+conSuccess.once('open', _ => {
+  console.log('Database connected:', db)
 })
 
 app.use((req, res, next) => {
