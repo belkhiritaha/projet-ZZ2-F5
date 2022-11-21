@@ -5,12 +5,7 @@ import Container from 'react-bootstrap/Container';
 import './mainbar.css';
 import Card from 'react-bootstrap/Card';
 import Collapse from 'react-bootstrap/Collapse';
-import ListGroup from 'react-bootstrap/ListGroup';
-import UploadForm, { Switch } from './form';
-import Fade from 'react-bootstrap/Fade';
 import './card.css'
-import { Form } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
 import CreateForm from './create';
 import Manage from './manage';
 

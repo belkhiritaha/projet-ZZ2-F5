@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-// import "https://kit.fontawesome.com/68fc273f7b.js";
+import "https://kit.fontawesome.com/68fc273f7b.js";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import NotFound from './notfound';
 import Login from './login';
