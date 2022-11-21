@@ -3,6 +3,12 @@ const mongoose = require("mongoose")
 const User = require("./models")
 const app = express()
 
+// listen on port 8001
+app.listen(8001, () => {
+    console.log("Server running on port 8001")
+})
+
+
 let db = "mongodb://localhost:27017/aZZure_DB";
 mongoose.connect(db, { 
     useNewUrlParser: true, 
@@ -15,10 +21,12 @@ mongoose.connect(db, {
     }
 })
 
+
 const conSuccess = mongoose.connection
 conSuccess.once('open', _ => {
   console.log('Database connected:', db)
 })
+
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
