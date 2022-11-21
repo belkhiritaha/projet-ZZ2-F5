@@ -26,19 +26,23 @@ app.get('/', (req, res) => {
 const {exec}= require("child_process"); 
 
 const fs = require('fs');
-let file = fs.readFileSync('exemple_VM.json', 'utf8');
+const { resolve } = require('path');
 
+let file = fs.readFileSync('exemple_VM.json', 'utf8');
 const vmExemple = JSON.parse(file);
 
 file = fs.readFileSync('./DataBase/vm.json', 'utf8');
-
-// const db = JSON.parse(file);
 const database = JSON.parse(file);
+
+file = fs.readFileSync('./DataBase/user.json', 'utf8');
+const userDatabase = JSON.parse(file); 
 
 app.get('/api/vm/list/:id',(req, res)=> {
     const id = req.params.id;    
     console.log(" Requesting list VM of user ", id); 
     console.log(req.query); 
+    console.log(userDatabase.list.find(idReseach=>idReseach.idUser==id));
+    if (!userDatabase.list.find((idReseach=>idReseach.idUser==id))) return res.status(404).send("User not found");
     // send the list of the VMs with the right idUser
     let listVm = []; 
     listVm = database.list.filter(vm=>vm.idUser==id);
@@ -47,66 +51,25 @@ app.get('/api/vm/list/:id',(req, res)=> {
     res.send(listVm); 
 });
 
-
-function createVm(body){
-    body= {
-        "idUser": 0,
-        "VMid": 4,
-        "VMname": "nikmok",
-        "VMdesc": "!",
-        "VMram": "",
-        "VMcpu": "",
-        "VMdisk": "",
-        "VMimage": "",
-        "VMservices": {
-            "db": {
-                "influxdb": false,
-                "mongodb": false,
-                "mysql": false,
-                "postgresql": false,
-                "redis": false,
-                "mariadb": false,
-                "sqlite": false,
-                "oracle": false
-            },
-            "web": {
-                "grafana": false,
-                "nodered": false,
-                "apache": false,
-                "nginx": false,
-                "tomcat": false
-            },
-            "other": {
-                "mqtt": false,
-                "ssh": false,
-                "http": false,
-                "https": false,
-                "ftp": false
-            }
-        }
-    }
+async function createVm(body){
+    console.log("ok2");
+    return new Promise((resolve)=>{
     exec("./script.sh", (error, stdout, stderr) => {
         if (error) {
-            console.log(`error: ${error.message}`);
-            return 0;
-        }
+                console.log(`error: ${error.message}`);
+                resolve("-1");
+            }
         if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return 0;
-        }
-        console.log(`stdout: ${stdout}`);
-        console.log( " body : ",body); 
-        console.log(stdout);
-        body.VMid=parseInt(stdout);
-        database.list.push(body);
-        fs.writeFileSync('./DataBase/vm.json', JSON.stringify(database)); 
-        return 1; 
+                console.log(`stderr: ${stderr}`);
+            resolve("-1");
+            }
+            console.log(stdout)
+            let VMid=stdout;
+            console.log("vm id : " + VMid);
+            resolve(VMid);
+        })
     });
-    //insertion de la VM si tout se passe bien.
-    // fs.writeFileSync('db.JSON', JSON.stringify(body)); 
-    // en body.VMname
-    // return bool
-}
+};
 
 function startVm(idVm){
     //insertion of the stating code of the VM
@@ -125,22 +88,46 @@ function modifiedVm(body,idVm){
     return (modifiedSuccess )
 }
 
-app.get('/api/vm/create/',(req, res) => {
+function successCallback(résultat) {
+    console.log("L'opération a réussi avec le message : " + résultat);
+  };
+
+function failureCallback(erreur) {
+    console.error("L'opération a échoué avec le message : " + erreur); 
+  };
+
+
+app.post('/api/vm/create',async (req, res) => {
     console.log("Requesting VM create");
     const body = req.body;
     console.log(body);
-    
-    const createSuccess= createVm(body); 
-    res.send(createSuccess); 
+    let createSuccess;
+    createSuccess= await createVm(body).then(x=>{body.VMid=JSON.parse(x)});
+
+    if (body.VMid!="-1"){
+        // Il manque le test de l'user deja dans la base de donnée. 
+        if (database.list.find((vm=>vm.VMid==body.VMid))){
+            console.log("existe deja")
+            res.send ("Already exist")
+        ;}
+        else {
+            console.log(body.VMid);
+            console.log("ok 3");
+            res.send("success");
+            database.list.push(body);
+            fs.writeFileSync('./DataBase/vm.json', JSON.stringify(database))
+        };
+    }
+    else{
+        res.send("failled");
+    };
 }); 
 
 app.post('/api/delete/:idVm',(req, res) => {
-    console.log("Resquesting delete VM"); 
-    const idVm=req.idVm; 
-    const deleteSuccess =False; 
+    console.log("Resquesting delete VM");
 
-    deleteSuccess=stopVm(idVm); 
-    //return a boolen.
+    let deleteSuccess=stopVm(req.body); 
+
     res.send(deleteSuccess);
 });
 

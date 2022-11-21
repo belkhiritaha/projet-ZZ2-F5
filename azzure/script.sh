@@ -1,3 +1,4 @@
 #!/bin/bash 
-
-echo 1>>fichier.txt;
+nbre_lignes=$(wc -l < fichier.txt);
+echo $nbre_lignes>>fichier.txt;
+echo $nbre_lignes;
