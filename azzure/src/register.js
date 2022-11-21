@@ -24,8 +24,23 @@ function Register() {
 
     function onsubmit(event) {
         event.preventDefault();
-        console.log('submit');
+        // create user object
+        const user = {
+            username: username,
+            passwd: password,
+            listVMs: []
+        };
+
+        // send post request to port 8001
+        fetch('http://localhost:8001/api/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        }).then(response => console.log(response));
     }
+
 
     return (
         <>

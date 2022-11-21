@@ -1,6 +1,7 @@
 const  express = require("express")
 const mongoose = require("mongoose")
 const User = require("./models")
+const Cookie = require("./cookies.models")
 const app = express()
 
 // listen on port 8001
@@ -20,6 +21,17 @@ mongoose.connect(db, {
         console.log("error")
     }
 })
+
+
+function generateNewCookie(){
+    let cookie;
+    cookie = new Cookie({
+        value: Math.floor(Math.random() * 1000000),
+    })
+    console.log(cookie.value)
+    cookie.save()
+    return cookie.value
+}
 
 
 const conSuccess = mongoose.connection
@@ -48,7 +60,7 @@ app.post('/api/user', (req, res) => {
         .then(() => res.status(201).json({ message: 'A new user has arrived !' }))
         .catch(error => res.status(400).json({ error }))
         
-    console.log("toto")
+    console.log("Succesfully added user to database");
 })
 
 // GET user by ID
@@ -77,6 +89,37 @@ app.delete('/api/user/:id', (req, res) => {
     User.deleteOne({_id: req.params.id})
         .then(user => res.status(200).json({ message: 'The user has been deleted !' }))
         .catch(error => res.status(400).json({ error }))
+})
+
+// Login user
+app.post('/api/user/login', (req, res) => {
+    // clear user database
+    // User.deleteMany({}, function(err) {
+    //     if (err) console.log(err);
+    //     console.log("Successful deletion");
+    // });
+    console.log(req.body)
+    User.findOne({username: req.body.username, passwd: req.body.passwd})
+        .then(user => {
+            if (user) {
+                const cookie = {
+                    value: generateNewCookie()
+                }
+                res.status(200).json({ message: 'The user has been logged in !', cookie: cookie })
+                // create cookie
+                
+                // print all cookies
+                // Cookie.find()
+                // .then(cookies => console.log(cookies))
+                // .catch(error => console.log(error))          
+                
+                console.log("The user has been logged in !");
+            } else {
+                res.status(404).json({ message: 'The user has not been found !' })
+                console.log("The user has not been found !");
+            }
+        })
+        .catch(error => res.status(404).json({ error }))
 })
 
 module.exports = app

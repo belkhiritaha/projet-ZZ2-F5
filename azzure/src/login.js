@@ -20,7 +20,32 @@ function Login() {
 
     function onsubmit(event) {
         event.preventDefault();
-        console.log('submit');
+        const user = {
+            username: username,
+            passwd: password
+        };
+        // send post request to port 8001 xhr
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:8001/api/user/login');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(user));
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                // get response body
+                const response = JSON.parse(xhr.responseText);
+                const sessionCookie = response.cookie;
+
+                // set cookie
+                document.cookie = `sessionCookie=${sessionCookie.value}; max-age=3600`;
+
+                // redirect to localhost:3000/home
+                window.location.href = 'http://localhost:3000/home';
+            
+                console.log(response);
+            } else {
+                console.log('error');
+            }
+        }
     }
 
     return (
