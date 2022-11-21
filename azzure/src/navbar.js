@@ -3,7 +3,9 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
-function NavbarBasicExample() {
+function NavbarBasicExample(props) {
+    console.log("zioheriuzhi" , props.user);
+
   return (
     <Navbar bg="light" expand="lg">
       <Container>
@@ -26,6 +28,7 @@ function NavbarBasicExample() {
               </NavDropdown.Item>
             </NavDropdown>
           <Nav.Link href="/login">Login</Nav.Link>
+          <Navbar.Brand>{props.user}</Navbar.Brand>
           </Nav>
         </Navbar.Collapse>
       </Container>

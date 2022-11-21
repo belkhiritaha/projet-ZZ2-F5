@@ -2,6 +2,7 @@ const  express = require("express")
 const mongoose = require("mongoose")
 const User = require("./models")
 const Cookie = require("./cookies.models")
+const users = require("./models")
 const app = express()
 
 // listen on port 8001
@@ -23,16 +24,16 @@ mongoose.connect(db, {
 })
 
 
-function generateNewCookie(){
+function generateNewCookie(userIdentifier) {
     let cookie;
     cookie = new Cookie({
         value: Math.floor(Math.random() * 1000000),
+        linkedUser: userIdentifier
     })
     console.log(cookie.value)
     cookie.save()
     return cookie.value
 }
-
 
 const conSuccess = mongoose.connection
 conSuccess.once('open', _ => {
@@ -103,7 +104,8 @@ app.post('/api/user/login', (req, res) => {
         .then(user => {
             if (user) {
                 const cookie = {
-                    value: generateNewCookie()
+                    value: generateNewCookie(user._id),
+                    linkedUser: user._id
                 }
                 res.status(200).json({ message: 'The user has been logged in !', cookie: cookie })
                 // create cookie
@@ -121,5 +123,36 @@ app.post('/api/user/login', (req, res) => {
         })
         .catch(error => res.status(404).json({ error }))
 })
+
+
+async function getUserFromCookie(cookie) {
+    return new Promise((resolve, reject) => {
+        Cookie.findOne({ value: cookie }, (err, cookie) => {
+            if (err) {
+                reject(err)
+            } else {
+                const userId = cookie.linkedUser
+                User.findOne({ _id: userId }, (err, user) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(user)
+                    }
+                })
+            }
+        })
+    })
+}
+
+app.get('/api/user/cookie/:cookie', async (req, res) => {
+    const cookie = req.params.cookie
+    const user = await getUserFromCookie(cookie)
+    if (user) {
+        res.status(200).json(user.username)
+    } else {
+        res.status(404).json({ message: 'The user has not been found !' })
+    }
+})
+
 
 module.exports = app
