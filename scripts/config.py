@@ -30,9 +30,3 @@ def createDockerCompose(*args):
 
     print("N'IMPORTE\nQUOI\n!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-
-# TO DO
-
-#   MAKE SOME FUNCTIONS ABOUT CONFIGURING EACH SOFTWARE
-
-

@@ -1,5 +1,7 @@
 import yaml
 
+import os.path
+
 def configEnv(user, passwd):
     data = []
 

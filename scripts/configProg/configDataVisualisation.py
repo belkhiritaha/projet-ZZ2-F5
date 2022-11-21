@@ -15,7 +15,7 @@ def configDataVisualisation(contenu, technology, database, pathToTechnology):
     envPasswd = "GF_SECURITY_ADMIN_PASSWORD : $PASSWORD"
 
     if technology == "grafana":
-        contenu[0]['services'][technology]['environnement'] = [envUser, envPasswd]
+        contenu[0]['services'][technology]['environment'] = [envUser, envPasswd]
 
     print("C'EST")
 
