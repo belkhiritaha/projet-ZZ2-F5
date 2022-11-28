@@ -41,9 +41,7 @@ function App(props) {
 
     if (loading) {
         return (
-            <div>
-                <p>Loading...</p>
-            </div>
+            <div className="lds-dual-ring"></div>
         )
     }
 
