@@ -10,6 +10,7 @@ import NotFound from './notfound';
 import Login from './login';
 import Register from './register';
 import { useState } from 'react';
+import Logout from './logout';
 
 function Router() {
     const [user, setUser] = useState(null);
@@ -31,12 +32,13 @@ function Router() {
             <BrowserRouter>
                 <Routes>
                     <Route index path="/home" element={<App  page='home' user={user} />}/>
-                    <Route path="/create" element={<App page='create' />}>
+                    <Route path="/create" element={<App page='create' user={user} />}>
                         <Route path=":id" element={<App page='create' id={this} user={user} /> }/>
                     </Route>
                     <Route path="/manage" element={<App page='manage' user={user} />}/>
                     <Route path="/login" element={<Login user={user} />} />
                     <Route path="register" element={<Register user={user}/>}/>
+                    <Route path="logout" element={<Logout />}/>
                     <Route path="/" element={<App page='home' user={user}/>}/>
                     <Route path="/*" element={<NotFound />}/>
                 </Routes>
