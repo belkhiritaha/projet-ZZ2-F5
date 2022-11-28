@@ -93,6 +93,22 @@ function Mainbar(props) {
     let isViewActive = (menu == 'view');
     let isDashboardActive = (menu == 'dashboard');
 
+    // if user undefined, show login and register
+    if (props.user == undefined) {
+        return (
+            <Container>
+                <Row>
+                    <div id="home">
+                        <h1>Welcome to aZZure</h1>
+                        <p>aZZure is a cloud computing platform that allows you to create, manage and run virtual machines.</p>
+                        <p>It is a project for the ZZ2 year at ISIMA.</p>
+                        <p>To access all its cool features, you need to login first.</p>
+                    </div>
+                </Row>
+            </Container>
+        );
+    }
+
     return (
         <>
             <Col xs={12}>

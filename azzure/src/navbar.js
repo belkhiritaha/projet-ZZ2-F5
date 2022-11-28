@@ -1,10 +1,9 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 
 function NavbarBasicExample(props) {
-    console.log("zioheriuzhi", props.user);
+    console.log("logged in as: ", props.user);
 
 
     if (props.user) {
@@ -20,6 +19,7 @@ function NavbarBasicExample(props) {
                             <Nav.Link href="/create">Create a VM</Nav.Link>
                             <Nav.Link href="/manage">Manage your VMs</Nav.Link>
                             <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+                            <Nav.Link href="/logout">Logout</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
