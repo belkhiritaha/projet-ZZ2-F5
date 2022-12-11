@@ -108,14 +108,7 @@ app.post('/api/user/login', (req, res) => {
                     linkedUser: user._id
                 }
                 res.status(200).json({ message: 'The user has been logged in !', cookie: cookie })
-                // create cookie
-                
-                // print all cookies
-                // Cookie.find()
-                // .then(cookies => console.log(cookies))
-                // .catch(error => console.log(error))          
-                
-                console.log("The user has been logged in !");
+                console.log("The user has been logged in !");            
             } else {
                 res.status(404).json({ message: 'The user has not been found !' })
                 console.log("The user has not been found !");
