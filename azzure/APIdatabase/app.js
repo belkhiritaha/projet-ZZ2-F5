@@ -4,6 +4,7 @@ const User = require("./models")
 const Cookie = require("./cookies.models")
 const users = require("./models")
 const app = express()
+const jwt = require('jsonwebtoken')
 
 // listen on port 8001
 app.listen(8001, () => {
@@ -25,14 +26,35 @@ mongoose.connect(db, {
 
 
 function generateNewCookie(userIdentifier) {
-    let cookie;
-    cookie = new Cookie({
-        value: Math.floor(Math.random() * 1000000),
+    // let cookie;
+    // cookie = new Cookie({
+    //     value: Math.floor(Math.random() * 1000000),
+    //     linkedUser: userIdentifier
+    // })
+    // console.log(cookie.value)
+    // cookie.save()
+    // return cookie.value
+
+    // generate new jwt token
+    const token = jwt.sign({ userIdentifier
+    }, 'RANDOM TOKEN SECRET KEY', {
+        expiresIn: '24h'
+    });
+
+    // create cookie object
+    const cookie = new Cookie({
+        value: token,
         linkedUser: userIdentifier
     })
+
     console.log(cookie.value)
+
+
+    // save cookie in database
     cookie.save()
-    return cookie.value
+
+    // return token
+    return cookie;
 }
 
 const conSuccess = mongoose.connection
@@ -92,21 +114,25 @@ app.delete('/api/user/:id', (req, res) => {
         .catch(error => res.status(400).json({ error }))
 })
 
+
+// reset user database
+app.delete('/api/user', (req, res) => {
+    User.deleteMany({}, function(err) {
+        if (err) console.log(err);
+        console.log("Successful deletion");
+    });
+    res.status(200).json({ message: 'The user database has been deleted !' })
+})
+
+
+
 // Login user
 app.post('/api/user/login', (req, res) => {
-    // clear user database
-    // User.deleteMany({}, function(err) {
-    //     if (err) console.log(err);
-    //     console.log("Successful deletion");
-    // });
     console.log(req.body)
     User.findOne({username: req.body.username, passwd: req.body.passwd})
         .then(user => {
             if (user) {
-                const cookie = {
-                    value: generateNewCookie(user._id),
-                    linkedUser: user._id
-                }
+                const cookie = generateNewCookie(user._id)
                 res.status(200).json({ message: 'The user has been logged in !', cookie: cookie })
                 console.log("The user has been logged in !");            
             } else {
@@ -139,6 +165,7 @@ async function getUserFromCookie(cookie) {
 
 app.get('/api/user/cookie/:cookie', async (req, res) => {
     const cookie = req.params.cookie
+    // console.log(cookie)
     const user = await getUserFromCookie(cookie)
     if (user) {
         res.status(200).json(user.username)
