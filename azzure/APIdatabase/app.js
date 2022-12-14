@@ -1,18 +1,31 @@
 const  express = require("express")
-const mongoose = require("mongoose")
 const User = require("./models")
 const Cookie = require("./cookies.models")
 const users = require("./models")
 const app = express()
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
 
-// listen on port 8001
+// ########### API SETUP ###########
 app.listen(8001, () => {
     console.log("Server running on port 8001")
 })
 
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    next();
+});
 
+app.use(express.json())
+// ########### API SETUP ###########
+
+
+
+// ########### DATABASE SETUP ###########
 let db = "mongodb://localhost:27017/aZZure_DB";
+
 mongoose.connect(db, { 
     useNewUrlParser: true, 
     useUnifiedTopology: true
@@ -24,17 +37,16 @@ mongoose.connect(db, {
     }
 })
 
+const conSuccess = mongoose.connection
+conSuccess.once('open', _ => {
+  console.log('Database connected:', db)
+})
+// ########### DATABASE SETUP ###########
+
+
+// ########### JWT SETUP ###########
 
 function generateNewCookie(userIdentifier) {
-    // let cookie;
-    // cookie = new Cookie({
-    //     value: Math.floor(Math.random() * 1000000),
-    //     linkedUser: userIdentifier
-    // })
-    // console.log(cookie.value)
-    // cookie.save()
-    // return cookie.value
-
     // generate new jwt token
     const token = jwt.sign({ userIdentifier
     }, 'RANDOM TOKEN SECRET KEY', {
@@ -47,31 +59,35 @@ function generateNewCookie(userIdentifier) {
         linkedUser: userIdentifier
     })
 
-    console.log(cookie.value)
-
-
     // save cookie in database
     cookie.save()
 
-    // return token
     return cookie;
 }
 
-const conSuccess = mongoose.connection
-conSuccess.once('open', _ => {
-  console.log('Database connected:', db)
-})
+async function getUserFromCookie(cookie) {
+    return new Promise((resolve, reject) => {
+        Cookie.findOne({ value: cookie }, (err, cookie) => {
+            if (err) {
+                reject(err)
+            } else {
+                const userId = cookie.linkedUser
+                User.findOne({ _id: userId }, (err, user) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(user)
+                    }
+                })
+            }
+        })
+    })
+}
+
+// ########### JWT SETUP ###########
 
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    next();
-});
-
-data = express.json()
-app.use(data)
+// ########### API ROUTES ###########
 
 // POST user
 app.post('/api/user', (req, res) => {   
@@ -143,26 +159,6 @@ app.post('/api/user/login', (req, res) => {
         .catch(error => res.status(404).json({ error }))
 })
 
-
-async function getUserFromCookie(cookie) {
-    return new Promise((resolve, reject) => {
-        Cookie.findOne({ value: cookie }, (err, cookie) => {
-            if (err) {
-                reject(err)
-            } else {
-                const userId = cookie.linkedUser
-                User.findOne({ _id: userId }, (err, user) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        resolve(user)
-                    }
-                })
-            }
-        })
-    })
-}
-
 app.get('/api/user/cookie/:cookie', async (req, res) => {
     const cookie = req.params.cookie
     // console.log(cookie)
@@ -173,6 +169,8 @@ app.get('/api/user/cookie/:cookie', async (req, res) => {
         res.status(404).json({ message: 'The user has not been found !' })
     }
 })
+
+// ########### API ROUTES ###########
 
 
 module.exports = app
