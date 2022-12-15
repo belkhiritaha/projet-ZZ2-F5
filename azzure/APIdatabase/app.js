@@ -65,20 +65,48 @@ function generateNewCookie(userIdentifier) {
     return cookie;
 }
 
+// verify cookie
+function verifyCookie(cookie) {
+    return new Promise((resolve, reject) => {
+        Cookie
+            .findOne({ value: cookie })
+            .then(cookie => {
+                if (cookie) {
+                    jwt.verify(cookie.value, 'RANDOM TOKEN SECRET KEY', (err, decoded) => {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            resolve(decoded)
+                        }
+                    })
+                } else {
+                    reject('Cookie not found')
+                }
+            })
+            .catch(err => reject(err))
+    })
+}
+
+
 async function getUserFromCookie(cookie) {
     return new Promise((resolve, reject) => {
         Cookie.findOne({ value: cookie }, (err, cookie) => {
             if (err) {
                 reject(err)
             } else {
-                const userId = cookie.linkedUser
-                User.findOne({ _id: userId }, (err, user) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        resolve(user)
-                    }
-                })
+                if (!cookie) {
+                    reject('Cookie not found')
+                }
+                else {
+                    const userId = cookie.linkedUser
+                    User.findOne({ _id: userId }, (err, user) => {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            resolve(user)
+                        }
+                    })                    
+                }
             }
         })
     })
@@ -162,7 +190,8 @@ app.post('/api/user/login', (req, res) => {
 app.get('/api/user/cookie/:cookie', async (req, res) => {
     const cookie = req.params.cookie
     // console.log(cookie)
-    const user = await getUserFromCookie(cookie)
+    const user = await getUserFromCookie(cookie).catch(err => console.log(err))
+    console.log(user)
     if (user) {
         res.status(200).json(user.username)
     } else {
