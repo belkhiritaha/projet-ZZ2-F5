@@ -46,6 +46,7 @@ conSuccess.once('open', _ => {
 
 // ########### JWT SETUP ###########
 
+// Generate new cookie object and save it in database
 function generateNewCookie(userIdentifier) {
     // generate new jwt token
     const token = jwt.sign({ userIdentifier
@@ -65,32 +66,26 @@ function generateNewCookie(userIdentifier) {
     return cookie;
 }
 
-// verify cookie
-function verifyCookie(cookie) {
+
+// Verify the token and return the decoded token
+function verifyToken(token) {
     return new Promise((resolve, reject) => {
-        Cookie
-            .findOne({ value: cookie })
-            .then(cookie => {
-                if (cookie) {
-                    jwt.verify(cookie.value, 'RANDOM TOKEN SECRET KEY', (err, decoded) => {
-                        if (err) {
-                            reject(err)
-                        } else {
-                            resolve(decoded)
-                        }
-                    })
-                } else {
-                    reject('Cookie not found')
-                }
-            })
-            .catch(err => reject(err))
+        jwt.verify(token, 'RANDOM TOKEN SECRET KEY', (err, decoded) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(decoded)
+            }
+        })
     })
 }
 
 
-async function getUserFromCookie(cookie) {
+// Get user from ciphered token
+async function getUserFromToken(token) {
+    const tokenData = await verifyToken(token)
     return new Promise((resolve, reject) => {
-        Cookie.findOne({ value: cookie }, (err, cookie) => {
+        Cookie.findOne({ value: token }, (err, cookie) => {
             if (err) {
                 reject(err)
             } else {
@@ -98,7 +93,11 @@ async function getUserFromCookie(cookie) {
                     reject('Cookie not found')
                 }
                 else {
-                    const userId = cookie.linkedUser
+                    console.log("Incoming token: ", token)
+                    console.log("Cookie found: ", cookie)
+                    console.log("Token data: ", tokenData)
+                    const userId = tokenData.userIdentifier
+                    console.log("User ID: ", userId)
                     User.findOne({ _id: userId }, (err, user) => {
                         if (err) {
                             reject(err)
@@ -187,11 +186,10 @@ app.post('/api/user/login', (req, res) => {
         .catch(error => res.status(404).json({ error }))
 })
 
-app.get('/api/user/cookie/:cookie', async (req, res) => {
-    const cookie = req.params.cookie
-    // console.log(cookie)
-    const user = await getUserFromCookie(cookie).catch(err => console.log(err))
-    console.log(user)
+app.get('/api/user/token/:token', async (req, res) => {
+    const token = req.params.token
+    const user = await getUserFromToken(token).catch(err => console.log(err))
+    console.log("user:", user)
     if (user) {
         res.status(200).json(user.username)
     } else {
