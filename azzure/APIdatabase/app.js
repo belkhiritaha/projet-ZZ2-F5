@@ -1,10 +1,12 @@
 const  express = require("express")
-const User = require("./models")
-const Cookie = require("./cookies.models")
-const users = require("./models")
 const app = express()
+
 const jwt = require('jsonwebtoken')
+
 const mongoose = require('mongoose')
+const User = require("./user.models")
+const Cookie = require("./cookies.models")
+const VMs = require("./VM.models")
 
 // ########### API SETUP ###########
 app.listen(8001, () => {
@@ -83,7 +85,14 @@ function verifyToken(token) {
 
 // Get user from ciphered token
 async function getUserFromToken(token) {
-    const tokenData = await verifyToken(token)
+    let tokenData = null
+    try {
+        tokenData = await verifyToken(token)
+    }
+    catch (err) {
+        console.log(err)
+        return null
+    }
     return new Promise((resolve, reject) => {
         Cookie.findOne({ value: token }, (err, cookie) => {
             if (err) {
@@ -189,10 +198,10 @@ app.post('/api/user/login', (req, res) => {
 app.get('/api/user/token/:token', async (req, res) => {
     const token = req.params.token
     const user = await getUserFromToken(token).catch(err => console.log(err))
-    console.log("user:", user)
     if (user) {
         res.status(200).json(user.username)
     } else {
+        console.log("user:", user)
         res.status(404).json({ message: 'The user has not been found !' })
     }
 })
