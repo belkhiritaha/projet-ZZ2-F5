@@ -32,7 +32,7 @@ function Register() {
         };
 
         // send post request to port 8001
-        fetch('http://localhost:8001/api/user', {
+        fetch('http://localhost:8001/api/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

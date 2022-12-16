@@ -69,8 +69,8 @@ function generateNewCookie(userIdentifier) {
 }
 
 
-// Verify the token and return the decoded token
-function verifyToken(token) {
+// decipher the token and return the decoded token
+function decipherToken(token) {
     return new Promise((resolve, reject) => {
         jwt.verify(token, 'RANDOM TOKEN SECRET KEY', (err, decoded) => {
             if (err) {
@@ -79,20 +79,30 @@ function verifyToken(token) {
                 resolve(decoded)
             }
         })
-    })
+    }).catch((err)  => {console.log("invalid token")})
 }
+
+
+// Verify token and return user id
+async function verifyToken(token) {
+    let tokenData = null
+    try {
+        tokenData = await decipherToken(token)
+    }
+    catch (err) {
+        // console.log(err)
+        return null
+    }
+
+    return tokenData.userIdentifier
+}
+
 
 
 // Get user from ciphered token
 async function getUserFromToken(token) {
-    let tokenData = null
-    try {
-        tokenData = await verifyToken(token)
-    }
-    catch (err) {
-        console.log(err)
-        return null
-    }
+    let tokenData = await decipherToken(token)
+    if (!tokenData) return null;
     return new Promise((resolve, reject) => {
         Cookie.findOne({ value: token }, (err, cookie) => {
             if (err) {
@@ -102,11 +112,7 @@ async function getUserFromToken(token) {
                     reject('Cookie not found')
                 }
                 else {
-                    console.log("Incoming token: ", token)
-                    console.log("Cookie found: ", cookie)
-                    console.log("Token data: ", tokenData)
                     const userId = tokenData.userIdentifier
-                    console.log("User ID: ", userId)
                     User.findOne({ _id: userId }, (err, user) => {
                         if (err) {
                             reject(err)
@@ -125,8 +131,53 @@ async function getUserFromToken(token) {
 
 // ########### API ROUTES ###########
 
-// POST user
-app.post('/api/user', (req, res) => {   
+// Verify authentification and call next() if authentification is successful
+async function verifyAuth(req, res, next) {
+    const authHeader = req.headers["authorization"]
+    if (!authHeader) {
+        return res.status(401).json({ error: 'Not authorized' })
+    }
+    const token = authHeader.split(' ')[2]
+    if (!token) {
+        return res.status(401).json({ error: 'Not authorized' })
+    }
+    let userID = await verifyToken(token)
+    console.log(userID)
+    if (userID != null) {
+        next(userID)
+    }
+    else {
+        return res.status(401).json({ error: 'Not authorized' })
+    }
+}
+
+
+// GET all users
+app.get('/api/users', (req, res) => {
+    verifyAuth(req, res, (userID) => {
+        User.find()
+            .then(users => res.status(200).json(users))
+            .catch(error => res.status(400).json({ error }))
+    })
+})
+
+
+// GET user by ID
+app.get('/api/users/:id', (req, res) => {
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+        User.findOne({_id: req.params.id})
+            .then(user => res.status(200).json(user))
+            .catch(error => res.status(404).json({ error }))
+    })
+})
+
+
+
+// create user
+app.post('/api/users', (req, res) => {   
     const user = new User({
         ...req.body
     })
@@ -138,29 +189,16 @@ app.post('/api/user', (req, res) => {
     console.log("Succesfully added user to database");
 })
 
-// GET user by ID
-app.get('/api/user/:id', (req, res) => {
-    User.findOne({_id: req.params.id})
-        .then(user => res.status(200).json(user))
-        .catch(error => res.status(404).json({ error }))
-})
-
-// GET all users
-app.get('/api/user', (req, res) => {
-    User.find()
-        .then(users => res.status(200).json(users))
-        .catch(error => res.status(400).json({ error }))
-})
 
 // UPDATE the user's data
-app.put('/api/user/:id', (req, res) => {
+app.put('/api/users/:id', (req, res) => {
     User.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'The data of the user has been modified !' }))
         .catch(error => res.status(400).json({ error }))
 })
 
 // DELETE user by ID
-app.delete('/api/user/:id', (req, res) => {
+app.delete('/api/users/:id', (req, res) => {
     User.deleteOne({_id: req.params.id})
         .then(user => res.status(200).json({ message: 'The user has been deleted !' }))
         .catch(error => res.status(400).json({ error }))
@@ -168,7 +206,7 @@ app.delete('/api/user/:id', (req, res) => {
 
 
 // reset user database
-app.delete('/api/user', (req, res) => {
+app.delete('/api/users', (req, res) => {
     User.deleteMany({}, function(err) {
         if (err) console.log(err);
         console.log("Successful deletion");
@@ -179,7 +217,7 @@ app.delete('/api/user', (req, res) => {
 
 
 // Login user
-app.post('/api/user/login', (req, res) => {
+app.post('/api/users/login', (req, res) => {
     console.log(req.body)
     User.findOne({username: req.body.username, passwd: req.body.passwd})
         .then(user => {
@@ -195,7 +233,9 @@ app.post('/api/user/login', (req, res) => {
         .catch(error => res.status(404).json({ error }))
 })
 
-app.get('/api/user/token/:token', async (req, res) => {
+
+// Verify token
+app.get('/api/users/token/:token', async (req, res) => {
     const token = req.params.token
     const user = await getUserFromToken(token).catch(err => console.log(err))
     if (user) {
@@ -205,6 +245,11 @@ app.get('/api/user/token/:token', async (req, res) => {
         res.status(404).json({ message: 'The user has not been found !' })
     }
 })
+
+
+// create new vm
+// app.post('api/user/vm', async (req, res) => {
+
 
 // ########### API ROUTES ###########
 

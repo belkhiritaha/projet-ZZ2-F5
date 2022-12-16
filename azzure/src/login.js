@@ -26,7 +26,7 @@ function Login() {
         };
         // send post request to port 8001 xhr
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8001/api/user/login');
+        xhr.open('POST', 'http://localhost:8001/api/users/login');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(user));
         xhr.onload = () => {

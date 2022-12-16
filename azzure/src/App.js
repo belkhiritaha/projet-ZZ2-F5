@@ -19,7 +19,7 @@ async function getUser() {
             console.log(cookieValue);
             if (cookieValue) {
                 // request to /api/user/cookie/:cookie
-                const response = await fetch(`http://localhost:8001/api/user/token/${cookieValue}`);
+                const response = await fetch(`http://localhost:8001/api/users/token/${cookieValue}`);
                 if (response.status === 200) {
                     username = response.text();
                 }
