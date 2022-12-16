@@ -1,0 +1,14 @@
+{
+    "list":[
+        {
+            "idUser":1,
+            "name":"toto",
+            "password":"toto"
+        },
+        {
+            "idUser":2,
+            "name":"test2",
+            "password":"test2"
+        }
+    ]
+}

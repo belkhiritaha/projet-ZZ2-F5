@@ -1,0 +1,10 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap'); */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /* font-family: 'Varela'; */
+}

@@ -1,43 +1,39 @@
-.App {
-  text-align: center;
+.lds-dual-ring {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 10vw;
+    height: 10vw;
+    margin: 1.5vw;
+
+    border-radius: 50%;
+    border: 0.7vw solid rgb(0, 0, 0);
+    border-color: rgb(0, 0, 0) transparent rgb(0, 0, 0) transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
-.row {
-    transition: all 1s;
+.loading {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    font-size: 2rem;
+    transform: translate(-50%, -50%);
+    z-index: 100;
 }

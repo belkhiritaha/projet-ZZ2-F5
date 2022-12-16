@@ -6,8 +6,6 @@ import { Button } from 'react-bootstrap';
 import UploadForm, { Switch } from './form';
 import { JsonEditor as Editor } from 'jsoneditor-react';
 
-import JSONInput from 'react-json-editor-ajrm';
-import locale    from 'react-json-editor-ajrm/locale/en';
 
 import 'jsoneditor-react/es/editor.min.css';
 import './card.css'
