@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const User = require("./user.models")
 const Cookie = require("./cookies.models")
-const VMs = require("./VM.models")
+const VM = require("./VM.models")
 
 // ########### API SETUP ###########
 app.listen(8001, () => {
@@ -135,14 +135,18 @@ async function getUserFromToken(token) {
 async function verifyAuth(req, res, next) {
     const authHeader = req.headers["authorization"]
     if (!authHeader) {
+        console.log("No auth header")
         return res.status(401).json({ error: 'Not authorized' })
     }
-    const token = authHeader.split(' ')[2]
+    console.log(authHeader.split(' '))
+    const token = authHeader.split(' ')[1]
     if (!token) {
+        console.log("No token")
         return res.status(401).json({ error: 'Not authorized' })
     }
+    console.log("----> Incoming request with token: " + token)
     let userID = await verifyToken(token)
-    console.log(userID)
+    console.log("Matches this user id: ", userID)
     if (userID != null) {
         next(userID)
     }
@@ -239,11 +243,73 @@ app.get('/api/users/token/:token', async (req, res) => {
     const token = req.params.token
     const user = await getUserFromToken(token).catch(err => console.log(err))
     if (user) {
-        res.status(200).json(user.username)
+        res.status(200).json({ username : user.username , id: user._id})
     } else {
-        console.log("user:", user)
         res.status(404).json({ message: 'The user has not been found !' })
     }
+})
+
+
+// Get all user's vms
+app.get('/api/users/:id/vms', (req, res) => {
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            console.log("Not authorized")
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+        User.findOne({_id: req.params.id})
+            .then(user => {console.log("found: ", user); res.status(200).json(user.listVMs)})
+            .catch(error => res.status(404).json({ error }))
+    })
+})
+
+
+// Get user's vm by ID
+app.get('/api/users/:id/vms/:vmid', (req, res) => {
+    console.log("get vm by id")
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            console.log("Not authorized")
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+        User.findOne({_id: req.params.id})
+            .then(user => {
+                const vm = user.listVMs.find(vm => vm.id == req.params.vmid)
+                if (vm) {
+                    res.status(200).json(vm)
+                } else {
+                    res.status(404).json({ message: 'The vm has not been found !' })
+                }
+            })
+            .catch(error => res.status(404).json({ error }))
+    })
+})
+
+
+// create new vm
+app.post('/api/users/:id/vms', (req, res) => {
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            console.log("Not authorized")
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+        User.findOne({_id: req.params.id})
+            .then(user => {
+                // create new VM db entry
+                const vm = new VM({
+                    ...req.body
+                })
+                vm.save()
+                    .then(() => console.log("Succesfully added vm to database"))
+                    .catch(error => console.log(error))
+                // add vm to user's list
+                user.listVMs.push(vm)
+                user.save()
+                    .then(() => res.status(201).json({ message: 'A new vm has arrived !' }))
+                    .catch(error => res.status(400).json({ error }))
+            })
+            .catch(error => res.status(404).json({ error }))
+    })
 })
 
 

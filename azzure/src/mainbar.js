@@ -134,7 +134,7 @@ function Mainbar(props) {
                             <CardItem  card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" />
                             <Collapse  in={isManageActive}>
                                 <div className="col">
-                                    <Manage />
+                                    <Manage {...props}/>
                                 </div>
                             </Collapse>
                         </div>

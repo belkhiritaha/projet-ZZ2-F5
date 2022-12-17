@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 async function getUser() {
     return new Promise(async (resolve, reject) => {
-        let username = null;
+        let user = null;
         if (document.cookie) {
             console.log(document.cookie);
             // get cookie
@@ -18,21 +18,19 @@ async function getUser() {
         
             console.log(cookieValue);
             if (cookieValue) {
-                // request to /api/user/cookie/:cookie
                 const response = await fetch(`http://localhost:8001/api/users/token/${cookieValue}`);
                 if (response.status === 200) {
-                    username = response.text();
+                    user = await response.json();
                 }
 
-                console.log(username);
+                console.log("GOT THIS USER: ", user);
             }
         }
-        resolve(username);
+        resolve(user);
     })
 }
 
 function App(props) {
-    console.log("App logged in as: ", props.user);
     return (
         <>
             <NavbarBasicExample user={props.user} />

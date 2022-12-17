@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import {App, getUser} from './App';
 import reportWebVitals from './reportWebVitals';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import "https://kit.fontawesome.com/68fc273f7b.js";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import NotFound from './notfound';
 import Login from './login';
@@ -16,10 +15,13 @@ function Router() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const username = getUser().then(username => {
-        setUser(username);
-        setLoading(false);
-    });
+    useEffect(() => {
+        const username = getUser().then(user => {
+            setUser(user);
+            setLoading(false);
+            // console.log("GOT USER: ", user);
+        });
+    }, []);
 
     if (loading) {
         return (

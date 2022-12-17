@@ -3,7 +3,6 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 function NavbarBasicExample(props) {
-    console.log("logged in as: ", props.user);
 
 
     if (props.user) {
@@ -11,7 +10,7 @@ function NavbarBasicExample(props) {
             <Navbar bg="light" expand="lg">
                 <Container>
                     <Navbar.Brand href="/home">aZZure</Navbar.Brand>
-                    <Navbar.Brand>Welcome, {props.user}</Navbar.Brand>
+                    <Navbar.Brand>Welcome, {props.user.username}</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
