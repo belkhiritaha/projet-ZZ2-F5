@@ -288,6 +288,9 @@ app.get('/api/users/:id/vms/:vmid', (req, res) => {
 
 // create new vm
 app.post('/api/users/:id/vms', (req, res) => {
+    console.log("-----------------------------")
+    console.log("create new vm")
+    console.log(req.body)
     verifyAuth(req, res, (userID) => {
         if (userID != req.params.id) {
             console.log("Not authorized")

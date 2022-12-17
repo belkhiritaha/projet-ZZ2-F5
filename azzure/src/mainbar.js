@@ -123,7 +123,7 @@ function Mainbar(props) {
                             <CardItem  card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" />
                             <Collapse  in={isCreateActive}>
                                 <div className="col">
-                                    <CreateForm />
+                                    <CreateForm {...props} />
                                 </div>
                             </Collapse>
                         </div>

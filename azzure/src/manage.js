@@ -29,6 +29,16 @@ function Manage(props) {
             console.log(VM);
         }
 
+        function updateService(serviceName) {
+            if (props.VM.services.includes(serviceName)) {
+                props.VM.services = props.VM.services.filter(item => item !== serviceName);
+            }
+            else {
+                props.VM.services.push(serviceName);
+            }
+            console.log(props.VM.services);
+        }
+
         function runVM() {
 
         };
@@ -91,30 +101,30 @@ function Manage(props) {
                                         <h3>Services</h3>
                                         <Form.Group>
                                             <h3>Database</h3>
-                                            <Form.Check type="switch" label="InfluxDB" defaultChecked={props.VM.services.db.influxdb} onChange={e => { props.VM.services.db.influxdb = e.target.checked }} />
-                                            <Form.Check type="switch" label="MongoDB" defaultChecked={props.VM.services.db.mongodb} onChange={e => { props.VM.services.db.mongodb = e.target.checked }} />
-                                            <Form.Check type="switch" label="MySQL" defaultChecked={props.VM.services.db.mysql} onChange={e => { props.VM.services.db.mysql = e.target.checked }} />
-                                            <Form.Check type="switch" label="PostgreSQL" defaultChecked={props.VM.services.db.postgresql} onChange={e => { props.VM.services.db.postgresql = e.target.checked }} />
-                                            <Form.Check type="switch" label="Redis" defaultChecked={props.VM.services.db.redis} onChange={e => { props.VM.services.db.redis = e.target.checked }} />
-                                            <Form.Check type="switch" label="MariaDB" defaultChecked={props.VM.services.db.mariadb} onChange={e => { props.VM.services.db.mariadb = e.target.checked }} />
-                                            <Form.Check type="switch" label="SQLite" defaultChecked={props.VM.services.db.sqlite} onChange={e => { props.VM.services.db.sqlite = e.target.checked }} />
-                                            <Form.Check type="switch" label="Oracle" defaultChecked={props.VM.services.db.oracle} onChange={e => { props.VM.services.db.oracle = e.target.checked }} />
+                                            <Form.Check type="switch" label="InfluxDB" defaultChecked={props.VM.services.includes("influxdb")} onChange={() => { updateService("influxdb") }} />
+                                            <Form.Check type="switch" label="MongoDB" defaultChecked={props.VM.services.includes("mongodb")} onChange={() => { updateService("mongodb") }} />
+                                            <Form.Check type="switch" label="MySQL" defaultChecked={props.VM.services.includes("mysql")} onChange={() => { updateService("mysql") }} />
+                                            <Form.Check type="switch" label="PostgreSQL" defaultChecked={props.VM.services.includes("postgresql")} onChange={() => { updateService("postgresql") }} />
+                                            <Form.Check type="switch" label="Redis" defaultChecked={props.VM.services.includes("redis")} onChange={() => { updateService("redis") }} />
+                                            <Form.Check type="switch" label="MariaDB" defaultChecked={props.VM.services.includes("mariadb")} onChange={() => { updateService("mariadb") }} />
+                                            <Form.Check type="switch" label="SQLite" defaultChecked={props.VM.services.includes("sqlite")} onChange={() => { updateService("sqlite") }} />
+                                            <Form.Check type="switch" label="Oracle" defaultChecked={props.VM.services.includes("oracle")} onChange={() => { updateService("oracle") }} />
                                         </Form.Group>
                                         <Form.Group>
                                             <h3>Web</h3>
-                                            <Form.Check type="switch" label="Grafana" defaultChecked={props.VM.services.web.grafana} onChange={e => { props.VM.services.web.grafana = e.target.checked }} />
-                                            <Form.Check type="switch" label="Node-RED" defaultChecked={props.VM.services.web.nodered} onChange={e => { props.VM.services.web.nodered = e.target.checked }} />
-                                            <Form.Check type="switch" label="Apache" defaultChecked={props.VM.services.web.apache} onChange={e => { props.VM.services.web.apache = e.target.checked }} />
-                                            <Form.Check type="switch" label="Nginx" defaultChecked={props.VM.services.web.nginx} onChange={e => { props.VM.services.web.nginx = e.target.checked }} />
-                                            <Form.Check type="switch" label="Tomcat" defaultChecked={props.VM.services.web.tomcat} onChange={e => { props.VM.services.web.tomcat = e.target.checked }} />
+                                            <Form.Check type="switch" label="Grafana" defaultChecked={props.VM.services.includes("grafana")} onChange={() => { updateService("grafana") }} />
+                                            <Form.Check type="switch" label="Node-RED" defaultChecked={props.VM.services.includes("nodered")} onChange={() => { updateService("nodered") }} />
+                                            <Form.Check type="switch" label="Apache" defaultChecked={props.VM.services.includes("apache")} onChange={() => { updateService("apache") }} />
+                                            <Form.Check type="switch" label="Nginx" defaultChecked={props.VM.services.includes("nginx")} onChange={() => { updateService("nginx") }} />
+                                            <Form.Check type="switch" label="Tomcat" defaultChecked={props.VM.services.includes("php")} onChange={() => { updateService("tomcat") }} />
                                         </Form.Group>
                                         <Form.Group>
                                             <h3>Other</h3>
-                                            <Form.Check type="switch" label="MQTT" defaultChecked={props.VM.services.other.mqtt} onChange={e => { props.VM.services.other.mqtt = e.target.checked }} />
-                                            <Form.Check type="switch" label="SSH" defaultChecked={props.VM.services.other.ssh} onChange={e => { props.VM.services.other.ssh = e.target.checked }} />
-                                            <Form.Check type="switch" label="HTTP" defaultChecked={props.VM.services.other.http} onChange={e => { props.VM.services.other.http = e.target.checked }} />
-                                            <Form.Check type="switch" label="HTTPS" defaultChecked={props.VM.services.other.https} onChange={e => { props.VM.services.other.https = e.target.checked }} />
-                                            <Form.Check type="switch" label="FTP" defaultChecked={props.VM.services.other.ftp} onChange={e => { props.VM.services.other.ftp = e.target.checked }} />
+                                            <Form.Check type="switch" label="MQTT" defaultChecked={props.VM.services.includes("mqtt")} onChange={() => { updateService("mqtt") }} />
+                                            <Form.Check type="switch" label="SSH" defaultChecked={props.VM.services.includes("ssh")} onChange={() => { updateService("ssh") }} />
+                                            <Form.Check type="switch" label="HTTP" defaultChecked={props.VM.services.includes("http")} onChange={() => { updateService("http") }} />
+                                            <Form.Check type="switch" label="HTTPS" defaultChecked={props.VM.services.includes("https")} onChange={() => { updateService("https") }} />
+                                            <Form.Check type="switch" label="FTP" defaultChecked={props.VM.services.includes("ftp")} onChange={() => { updateService("ftp") }} />
                                         </Form.Group>
 
                                         <Form.Group>
@@ -151,31 +161,8 @@ function Manage(props) {
                     desc: VM.description,
                     ram: VM.ram,
                     cpu: VM.cpu,
-                    services: {
-                        // check if db is in the array
-                        db: {
-                            mysql: VM.services.includes("mysql"),
-                            postgresql: VM.services.includes("postgresql"),
-                            redis: VM.services.includes("redis"),
-                            mariadb: VM.services.includes("mariadb"),
-                            sqlite: VM.services.includes("sqlite"),
-                            oracle: VM.services.includes("oracle"),
-                        },
-                        web: {
-                            grafana: VM.services.includes("grafana"),
-                            nodered: VM.services.includes("nodered"),
-                            apache: VM.services.includes("apache"),
-                            nginx: VM.services.includes("nginx"),
-                            tomcat: VM.services.includes("tomcat"),
-                        },
-                        other: {
-                            mqtt: VM.services.includes("mqtt"),
-                            ssh: VM.services.includes("ssh"),
-                            http: VM.services.includes("http"),
-                            https: VM.services.includes("https"),
-                            ftp: VM.services.includes("ftp")
-                        }
-                    }
+                    services: VM.services,
+                    status: VM.status
                 }
             })
         }
