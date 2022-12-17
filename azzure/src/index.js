@@ -19,15 +19,16 @@ function Router() {
         const username = getUser().then(user => {
             setUser(user);
             setLoading(false);
-            // console.log("GOT USER: ", user);
         });
     }, []);
 
     if (loading) {
         return (
             <>
-                <div className="lds-dual-ring"></div>
-                <div className="loading">Loading...</div>
+                <div className='loading-container'>
+                    <div className="lds-dual-ring"></div>
+                    <div className="loading">Loading...</div>
+                </div>
             </>
         )
     }

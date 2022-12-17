@@ -238,6 +238,7 @@ function Manage(props) {
             console.log("card:", cards);
             setLoading(false);
         }).catch((error) => {
+            setLoading(true);
             console.log(error);
         });
     }
@@ -249,8 +250,10 @@ function Manage(props) {
     if (loading) {
         return (
             <>
-                <div className="lds-dual-ring"></div>
-                <div className="loading">Loading...</div>
+                <div className='loading-container'>
+                    <div className="lds-dual-ring"></div>
+                    <div className="loading">Loading...</div>
+                </div>
             </>
         )
     }
