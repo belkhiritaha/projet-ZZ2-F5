@@ -70,7 +70,7 @@ function generateNewCookie(userIdentifier) {
 
 
 // decipher the token and return the decoded token
-function decipherToken(token) {
+async function decipherToken(token) {
     return new Promise((resolve, reject) => {
         jwt.verify(token, 'RANDOM TOKEN SECRET KEY', (err, decoded) => {
             if (err) {
@@ -96,7 +96,6 @@ async function verifyToken(token) {
 
     return tokenData.userIdentifier
 }
-
 
 
 // Get user from ciphered token

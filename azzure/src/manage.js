@@ -95,7 +95,7 @@ function Manage(props) {
                                     </Form.Group>
                                     <Form.Group>
                                         <h3>Image</h3>
-                                        <Form.Control onChange={e => { props.VM.image = e.target.value }} type="text" placeholder="Enter Image" defaultValue={props.VM.image} />
+                                        <Form.Control onChange={e => { props.VM.os = e.target.value }} type="text" placeholder="Enter Image" defaultValue={props.VM.os} />
                                     </Form.Group>
                                     <Form.Group>
                                         <h3>Services</h3>
@@ -161,6 +161,9 @@ function Manage(props) {
                     desc: VM.description,
                     ram: VM.ram,
                     cpu: VM.cpu,
+                    disk: VM.disk,
+                    network: VM.network,
+                    os: VM.os,
                     services: VM.services,
                     status: VM.status
                 }
