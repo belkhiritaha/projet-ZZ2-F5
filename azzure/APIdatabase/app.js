@@ -315,8 +315,24 @@ app.post('/api/users/:id/vms', (req, res) => {
 })
 
 
-// create new vm
-// app.post('api/user/vm', async (req, res) => {
+
+// update vm
+app.put('/api/users/:id/vms/:vmid', (req, res) => {
+    // TO DO
+})
+
+
+// delete vm
+app.delete('/api/users/:id/vms/:vmid', (req, res) => {
+    // TO DO
+})
+
+
+// reset vm database
+app.delete('/api/users/:id/vms', (req, res) => {
+    // TO DO
+})
+
 
 
 // ########### API ROUTES ###########
