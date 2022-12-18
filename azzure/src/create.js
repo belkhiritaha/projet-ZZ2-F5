@@ -22,9 +22,6 @@ function CreateForm(props) {
         services: ["ssh"],
     });
 
-    console.log("state", state);
-
-
 
     function setState(name, value) {
         state[name] = value;
@@ -39,7 +36,6 @@ function CreateForm(props) {
             // add field to services
             state.services.push(field);
         }
-        console.log(state.services);
     }
 
 
@@ -48,9 +44,7 @@ function CreateForm(props) {
 
         // get textarea value
         const textarea = document.getElementById("jsonFormTextArea").value;
-        console.log(textarea);
         let jsonData = JSON.parse(textarea);
-        console.log(jsonData);
 
         if (jsonData.name === "" || jsonData.description === "" || jsonData.ram === "" || jsonData.cpu === "" || jsonData.disk === "" || jsonData.network === "" || jsonData.os === "") {
             document.getElementById(id).classList.add("shake");
@@ -72,7 +66,6 @@ function CreateForm(props) {
         else {
             const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
             const cookieValue = sessionCookie.split('=')[1];
-            console.log("sending this data: ", JSON.stringify(jsonData));
             fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
                 method: 'POST',
                 headers: {
@@ -89,7 +82,6 @@ function CreateForm(props) {
                     console.log("error: ", error);
                 });
         }
-        console.log(state);
         return true;
     }
 
@@ -118,7 +110,6 @@ function CreateForm(props) {
         else {
             const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
             const cookieValue = sessionCookie.split('=')[1];
-            console.log("sending this data: ", JSON.stringify(state));
             fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
                 method: 'POST',
                 headers: {

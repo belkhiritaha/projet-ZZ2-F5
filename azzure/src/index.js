@@ -16,7 +16,7 @@ function Router() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const username = getUser().then(user => {
+        getUser().then(user => {
             setUser(user);
             setLoading(false);
         });

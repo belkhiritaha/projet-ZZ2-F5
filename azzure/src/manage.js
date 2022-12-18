@@ -3,14 +3,11 @@ import Card from 'react-bootstrap/Card';
 import Collapse from 'react-bootstrap/Collapse';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
-import UploadForm, { Switch } from './form';
 import './card.css'
-import { get } from 'mongoose';
 
 function Manage(props) {
     function ManageCard(props) {
         const [open, setOpen] = useState(false);
-        console.log(props);
 
         function deleteVM() {
         };
@@ -25,8 +22,6 @@ function Manage(props) {
 
         function onsubmit(event, VM) {
             event.preventDefault()
-            console.log("submit");
-            console.log(VM);
         }
 
         function updateService(serviceName) {
@@ -36,7 +31,6 @@ function Manage(props) {
             else {
                 props.VM.services.push(serviceName);
             }
-            console.log(props.VM.services);
         }
 
         function runVM() {
@@ -146,7 +140,6 @@ function Manage(props) {
     // state
     const [open, setOpen] = useState(false);
     const [VMs, setVMs] = useState({VMs: []});
-    const [refresh, setRefresh] = useState(false);
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -169,7 +162,6 @@ function Manage(props) {
                 }
             })
         }
-        console.log(returnObject);
         return returnObject;
     }
 
@@ -178,7 +170,6 @@ function Manage(props) {
         return new Promise((resolve, reject) => {
             // get cookie
             if (document.cookie) {
-                console.log(document.cookie);
                 // get cookie
                 const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
                 const cookieValue = sessionCookie.split('=')[1];
@@ -193,7 +184,6 @@ function Manage(props) {
                     resolve(data);
                 })
                 .catch((error) => {
-                    console.error('Error:', error);
                     reject(error);
                 });
             }
@@ -213,23 +203,18 @@ function Manage(props) {
 
     function refreshVms() {
         getAllVMs().then((data) => {
-            console.log("response: ", responseToShape(data));
             let responseVMs = responseToShape(data)
             setVMs((VMs) => responseVMs);
-            console.log("vms: ", VMs);
             let newCards = [];
             responseVMs.VMs.map((VM) => {
                 newCards.push(
                     <ManageCard VM={VM} key={VM.id} />
                 );
             });
-            console.log("new cards: ", newCards);
             setCards(newCards);
-            console.log("card:", cards);
             setLoading(false);
         }).catch((error) => {
             setLoading(true);
-            console.log(error);
         });
     }
 

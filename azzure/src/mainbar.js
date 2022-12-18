@@ -14,53 +14,32 @@ function Mainbar(props) {
     // shown menu state
     const [menu, setMenu] = useState(props.page);
 
-    switch (props.page) {
-        case 'home':
-            console.log('home');
-            // setMenu('home');
-            break;
-        case 'create':
-            console.log('create');
-            // setMenu('create');
-            break;
-        case 'manage':
-            console.log('manage');
-            // setMenu('manage');
-            break;
-        default:
-            console.log('home');
-            setMenu('home');
-    }
-
 
     function CardItem(props) {
 
         function handleCardClick(id) {
-            // change props.open to true
-            console.log(id);
-            console.log(menu);
-            //this.setState({open: "true"});
             if (menu !== "home") {
                 setMenu("home");
             }
             else {
-                if (id === 1) {
+                if (id == 1) {
                     setMenu('create');
                 }
-                else if (id === 2) {
+                else if (id == 2) {
                     setMenu('manage');
                 }
-                else if (id === 3) {
+                else if (id == 3) {
                     setMenu('run');
                 }
-                else if (id === 4) {
+                else if (id == 4) {
                     setMenu('view');
                 }
-                else if (id === 5) {
+                else if (id == 5) {
                     setMenu('dashboard');
                 }
             }
         }
+
 
         return (
             <Card onClick={() => { handleCardClick(props.card_id) }} style={{ width: '18rem', margin: 'auto', textAlign: 'center' }}>
@@ -73,15 +52,15 @@ function Mainbar(props) {
         );
     }
 
-    let isHomeActive = (menu === 'home');
-    let isCreateActive = (menu === 'create');
-    let isManageActive = (menu === 'manage');
-    let isRunActive = (menu === 'run');
-    let isViewActive = (menu === 'view');
-    let isDashboardActive = (menu === 'dashboard');
+    let isHomeActive = (menu == 'home');
+    let isCreateActive = (menu == 'create');
+    let isManageActive = (menu == 'manage');
+    let isRunActive = (menu == 'run');
+    let isViewActive = (menu == 'view');
+    let isDashboardActive = (menu == 'dashboard');
 
     // if user undefined, show login and register
-    if (props.user === undefined) {
+    if (props.user == undefined) {
         return (
             <Container>
                 <Row>
