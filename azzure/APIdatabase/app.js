@@ -335,18 +335,18 @@ app.delete('/api/users/:id/vms/:vmid', (req, res) => {
         User.findOne({_id: req.params.id})
             .then(user => {
                 // check the existence of the VM
-                user.listVMs.findOne({_id: req.params.vmid})
-                    .then(vm => {
-                        // remove vm from user's list
-                        listVMs.splice( listVMs.indexOf(vm.id), 1 ); 
-                        
-                        user.save()
-                            .then(() => res.status(201).json({ message: 'The vm has been successfully deleted !' }))
-                            .catch(error => res.status(400).json({ error }))
-                    })
-                    .catch(() => res.status(404).json({ error: 'This vm does not exist' }))
+                const vm = user.listVMs.find(vm => vm._id == req.params.vmid)
+                if (vm) {
+                    // remove vm from user's list
+                    user.listVMs.splice( user.listVMs.indexOf(vm.id), 1 );
+                    user.save()
+                        .then(() => res.status(201).json({ message: 'VM deleted' }))
+                        .catch(error => res.status(400).json({ error }))
+                } else {
+                    res.status(404).json({ message: 'The vm has not been found !' })
+                }
             })
-            .catch(() => res.status(404).json({ error: 'This user does not exist' }))
+            .catch(error => res.status(404).json({ error }))
     })
 })
 

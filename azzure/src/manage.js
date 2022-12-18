@@ -10,6 +10,28 @@ function Manage(props) {
         const [open, setOpen] = useState(false);
 
         function deleteVM() {
+            console.log(props.VM)
+            if (window.confirm("Are you sure you want to delete this VM?")) {
+                if (document.cookie) {
+                    var cookie = document.cookie.split(";");
+                    var token = cookie[0].split("=")[1];
+                    fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM.id}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                        }
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.message === "VM deleted") {
+                                window.location.reload();
+                            }
+                            else {
+                                alert("Error deleting VM")
+                            }
+                        })
+                }
+            }
         };
 
         function editVM() {
@@ -46,7 +68,7 @@ function Manage(props) {
                 <div style={{ textAlign: "center", margin: "5%" }} key={props.VM.name}>
                     <Card>
                         <Card.Header>
-                            <div onClick={() => {setOpen(!open)}} className='row'>
+                            <div onClick={() => { setOpen(!open) }} className='row'>
                                 <h3 className="mr-sm-2">
                                     {props.VM.name}
                                 </h3>
@@ -66,7 +88,7 @@ function Manage(props) {
                         </Card.Header>
                         <Collapse style={{ textAlign: "center", margin: "5% auto", width: "50%" }} in={open}>
                             <Card.Body>
-                                <Form onSubmit={() => {this.event.preventDefault();}}>
+                                <Form onSubmit={() => { this.event.preventDefault(); }}>
                                     <Form.Group>
                                         <h3>Description</h3>
                                         <Form.Control onChange={e => { props.VM.desc = e.target.value }} type="text" placeholder="Enter description" defaultValue={props.VM.desc} />
@@ -123,7 +145,7 @@ function Manage(props) {
 
                                         <Form.Group>
                                             <h3>Submit changes</h3>
-                                            <Button variant="primary" type="submit" onClick={(e) => {onsubmit(e, props.VM)}}>
+                                            <Button variant="primary" type="submit" onClick={(e) => { onsubmit(e, props.VM) }}>
                                                 Submit
                                             </Button>
                                         </Form.Group>
@@ -139,7 +161,7 @@ function Manage(props) {
 
     // state
     const [open, setOpen] = useState(false);
-    const [VMs, setVMs] = useState({VMs: []});
+    const [VMs, setVMs] = useState({ VMs: [] });
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -179,13 +201,13 @@ function Manage(props) {
                         "Authorization": `Bearer ${cookieValue}`,
                     }
                 })
-                .then(response => response.json())
-                .then(data => {
-                    resolve(data);
-                })
-                .catch((error) => {
-                    reject(error);
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
             }
         })
     }
@@ -208,7 +230,7 @@ function Manage(props) {
             let newCards = [];
             responseVMs.VMs.map((VM) => {
                 newCards.push(
-                    <ManageCard VM={VM} key={VM.id} />
+                    <ManageCard VM={VM} key={VM.id} user={props.user} />
                 );
             });
             setCards(newCards);
@@ -221,7 +243,7 @@ function Manage(props) {
     useEffect(() => {
         refreshVms();
     }, []);
-    
+
     if (loading) {
         return (
             <>
@@ -232,12 +254,12 @@ function Manage(props) {
             </>
         )
     }
-    
+
 
     return (
         <div style={{ margin: "auto", textAlign: "center", alignContent: "space-between" }}>
             <h1>Virtual Machines</h1>
-            <Button style={{margin:"1%", width: "25%"}} variant="primary" className="mr-sm-2" onClick={refreshVms}>
+            <Button style={{ margin: "1%", width: "25%" }} variant="primary" className="mr-sm-2" onClick={refreshVms}>
                 Refresh
             </Button>
             <div>
