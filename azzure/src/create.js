@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import Card from 'react-bootstrap/Card';
-import Collapse from 'react-bootstrap/Collapse';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
-import UploadForm, { Switch } from './form';
-import { JsonEditor as Editor } from 'jsoneditor-react';
+import UploadForm from './form';
 
 
-import 'jsoneditor-react/es/editor.min.css';
 import './card.css'
 import './create.css'
 
@@ -17,14 +13,13 @@ function CreateForm(props) {
     const [state, setConfig] = useState({
         name: "test",
         description: "test",
-        ram: "test",
-        cpu: "test",
-        disk: "test",
+        ram: "1",
+        cpu: "1",
+        disk: "1",
         network: "test",
         status: 0,
         os: "Ubuntu",
-        services: [],
-        owner: props.user.id,
+        services: ["ssh"],
     });
 
     console.log("state", state);
@@ -47,18 +42,17 @@ function CreateForm(props) {
         console.log(state.services);
     }
 
-    function getCurrentConfig() {
-        // return state to string
-        console.log(JSON.stringify(state));
-        return JSON.stringify(state);
-    }
 
-    function onsubmit(event, id) {
+    function onSubmitManual(event, id) {
         event.preventDefault();
-        console.log("submitted");
 
-        // check if VMram, VMcpu, VMdisk are numbers and if all fields are filled
-        if (isNaN(state.ram) || isNaN(state.cpu) || isNaN(state.disk)  || state.name === "" || state.description === "" || state.network === "" || state.os === "") {
+        // get textarea value
+        const textarea = document.getElementById("jsonFormTextArea").value;
+        console.log(textarea);
+        let jsonData = JSON.parse(textarea);
+        console.log(jsonData);
+
+        if (jsonData.name === "" || jsonData.description === "" || jsonData.ram === "" || jsonData.cpu === "" || jsonData.disk === "" || jsonData.network === "" || jsonData.os === "") {
             document.getElementById(id).classList.add("shake");
 
             // add p element with error message
@@ -76,21 +70,63 @@ function CreateForm(props) {
             return false;
         }
         else {
-            // // send to localhost:8000
-            if (document.cookie) {
-                console.log(document.cookie);
-                // get cookie
-                const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
-                const cookieValue = sessionCookie.split('=')[1];
-                console.log("this is the current state ",JSON.stringify(state));
-                fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
-                    method: 'POST',
-                    headers: {
-                        "Authorization": `Bearer ${cookieValue}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(state)
+            const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
+            const cookieValue = sessionCookie.split('=')[1];
+            console.log("sending this data: ", JSON.stringify(jsonData));
+            fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${cookieValue}`
+                },
+                body: JSON.stringify(jsonData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("recieved this data: ", data);
                 })
+                .catch(error => {
+                    console.log("error: ", error);
+                });
+        }
+        console.log(state);
+        return true;
+    }
+
+
+    function onsubmit(event, id) {
+        event.preventDefault();
+
+        // check if VMram, VMcpu, VMdisk are numbers and if all fields are filled
+        if (isNaN(state.ram) || isNaN(state.cpu) || isNaN(state.disk) || state.name === "" || state.description === "" || state.network === "" || state.os === "") {
+            document.getElementById(id).classList.add("shake");
+
+            // add p element with error message
+            document.getElementById("error").innerHTML = "Please fill all fields with valid values";
+            setTimeout(() => {
+                document.getElementById(id).classList.remove("shake");
+            }
+                , 500);
+
+            setTimeout(() => {
+                document.getElementById("error").innerHTML = "";
+            }
+                , 5000);
+
+            return false;
+        }
+        else {
+            const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
+            const cookieValue = sessionCookie.split('=')[1];
+            console.log("sending this data: ", JSON.stringify(state));
+            fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
+                method: 'POST',
+                headers: {
+                    "Authorization": `Bearer ${cookieValue}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(state)
+            })
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
@@ -98,14 +134,8 @@ function CreateForm(props) {
                 .catch(error => {
                     console.log(error);
                 });
-            }
-            else {
-                console.log("no cookie");
-            }
         }
-        console.log(state);
         return true;
-
     }
 
     return (
@@ -115,18 +145,20 @@ function CreateForm(props) {
             <div style={{ width: "80%", margin: "auto", textAlign: "center", justifyContent: "space-between" }}>
                 <h2>From an existing configuration file:</h2>
                 <UploadForm style={{ margin: "5%" }} />
-                <Editor
-                    value={state}
-                    onChange={
-                        (value) => {
-                            console.log(value);
-                            setConfig(value);
-                        }
-                    }
-                />
+                <h3> or </h3>
+                <h2>Customize your own VM:</h2>
+
+                <Form>
+                <Form.Group className="mb-3" controlId="jsonFormTextArea">
+                    <Form.Control as="textarea" defaultValue={JSON.stringify(state, null, 2)}
+                                 placeholder="Insert a valid JSON config" rows={15} />
+                </Form.Group>
+                </Form>
+
+
                 <Button id="button" onClick={
                     (event) => {
-                        onsubmit(event, "button");
+                        onSubmitManual(event, "button");
                     }
                 }
                     style={{ margin: "5%" }} variant="primary" type="submit">
