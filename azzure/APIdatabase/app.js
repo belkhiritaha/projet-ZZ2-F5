@@ -324,7 +324,30 @@ app.put('/api/users/:id/vms/:vmid', (req, res) => {
 
 // delete vm
 app.delete('/api/users/:id/vms/:vmid', (req, res) => {
-    // TO DO
+    console.log("-----------------------------")
+    console.log("delete an existing vm")
+    console.log(req.body)
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            console.log("Not authorized")
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+        User.findOne({_id: req.params.id})
+            .then(user => {
+                // check the existence of the VM
+                user.listVMs.findOne({_id: req.params.vmid})
+                    .then(vm => {
+                        // remove vm from user's list
+                        listVMs.splice( listVMs.indexOf(vm.id), 1 ); 
+                        
+                        user.save()
+                            .then(() => res.status(201).json({ message: 'The vm has been successfully deleted !' }))
+                            .catch(error => res.status(400).json({ error }))
+                    })
+                    .catch(() => res.status(404).json({ error: 'This vm does not exist' }))
+            })
+            .catch(() => res.status(404).json({ error: 'This user does not exist' }))
+    })
 })
 
 
