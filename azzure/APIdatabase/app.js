@@ -178,7 +178,6 @@ app.get('/api/users/:id', (req, res) => {
 })
 
 
-
 // create user
 app.post('/api/users', (req, res) => {   
     const user = new User({
@@ -216,7 +215,6 @@ app.delete('/api/users', (req, res) => {
     });
     res.status(200).json({ message: 'The user database has been deleted !' })
 })
-
 
 
 // Login user
@@ -315,10 +313,34 @@ app.post('/api/users/:id/vms', (req, res) => {
 })
 
 
-
 // update vm
 app.put('/api/users/:id/vms/:vmid', (req, res) => {
     // TO DO
+    console.log("-----------------------------")
+    console.log("update an existing vm")
+    console.log(req.body)
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            console.log("Not authorized")
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+        User.findOne({_id: req.params.id})
+            .then(user => {
+                // check the existence of the VM
+                const vm = user.listVMs.find(vm => vm._id == req.params.vmid)
+                if (vm) {
+                    // update the vm
+                    vm.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+                        .then(() => res.status(200).json({ message: 'The info of the vm has been modified !' }))
+                        .catch(error => res.status(400).json({ error }))
+                    
+                } else {
+                    res.status(404).json({ message: 'The vm has not been found !' })
+                }
+            })
+            .catch(error => res.status(404).json({ error }))
+    })
+
 })
 
 
@@ -353,10 +375,26 @@ app.delete('/api/users/:id/vms/:vmid', (req, res) => {
 
 // reset vm database
 app.delete('/api/users/:id/vms', (req, res) => {
-    // TO DO
+    console.log("-----------------------------")
+    console.log("delete the vm's database")
+    console.log(req.body)
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            console.log("Not authorized")
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+        User.findOne({_id: req.params.id})
+            .then(user => {
+                // reset the vm database
+                user.listVMs.deleteMany({}, function(err) {
+                    if (err) console.log(err);
+                    console.log("Successful deletion");
+                });
+                res.status(200).json({ message: 'The vm database has been deleted !' })
+            })
+            .catch(error => res.status(404).json({ error }))
+    })
 })
-
-
 
 // ########### API ROUTES ###########
 
