@@ -9,6 +9,33 @@ function Manage(props) {
     function ManageCard(props) {
         const [open, setOpen] = useState(false);
 
+        function showError(id){
+            document.getElementById(id).classList.add("shake");
+    
+            // add p element with error message
+            document.getElementById(id).innerHTML = "Error editing VM";
+            setTimeout(() => {
+                document.getElementById(id).classList.remove("shake");
+            }
+                , 500);
+    
+            setTimeout(() => {
+                document.getElementById(id).innerHTML = "";
+            }
+                , 5000);
+        }
+    
+        function showSuccess(id){
+            console.log(document.getElementById(id))
+            document.getElementById(id).style.color = "green";
+            document.getElementById(id).innerHTML = "VM edited successfully";
+            setTimeout(() => {
+                document.getElementById(id).innerHTML = "";
+                document.getElementById(id).style.color = "red";
+            }
+                , 5000);
+        }
+
         function deleteVM() {
             console.log(props.VM)
             if (window.confirm("Are you sure you want to delete this VM?")) {
@@ -18,7 +45,7 @@ function Manage(props) {
                     fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM.id}`, {
                         method: "DELETE",
                         headers: {
-                            "Authorization": `Bearer ${token}`,
+                            "Authorization": `Bearer ${token}`
                         }
                     })
                         .then(res => res.json())
@@ -34,17 +61,42 @@ function Manage(props) {
             }
         };
 
-        function editVM() {
-            // setOpen(!open);
+        function editVM(event) {
+            event.preventDefault();
+            console.log(props.VM)
+            if (document.cookie) {
+                var cookie = document.cookie.split(";");
+                var token = cookie[0].split("=")[1];
+                fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM.id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: props.VM.name,
+                        description: props.VM.desc,
+                        services: props.VM.services
+                    })
+                })
+                    // check status
+                    .then(res => {
+                        if (res.status === 200) {
+                            showSuccess("edit-error");
+                            refreshVms();
+                        }
+                        else {
+                            showError("edit-error");
+                        }
+                    }
+
+                    )
+            }
         };
 
         function createVM() {
 
         };
-
-        function onsubmit(event, VM) {
-            event.preventDefault()
-        }
 
         function updateService(serviceName) {
             if (props.VM.services.includes(serviceName)) {
@@ -68,14 +120,23 @@ function Manage(props) {
                 <div style={{ textAlign: "center", margin: "5%" }} key={props.VM.name}>
                     <Card>
                         <Card.Header>
-                            <div onClick={() => { setOpen(!open) }} className='row'>
+                            <div className='row'>
                                 <h3 className="mr-sm-2">
                                     {props.VM.name}
                                 </h3>
+                                <h5 className="mr-sm-2">
+                                    {props.VM.desc}
+                                </h5>
+                                <h5 className="mr-sm-2">
+                                    {props.VM.status === 0 ? "Stopped" : "Running"}
+                                    <div className="status-circle" ></div>
+                                </h5>
+
+
                                 <Button style={{ width: "12%", margin: "1% auto" }} variant="danger" className="mr-sm-2" onClick={deleteVM}>
                                     Delete
                                 </Button>
-                                <Button style={{ width: "12%", margin: "1% auto" }} variant="primary" className="mr-sm-2" onClick={editVM}>
+                                <Button onClick={() => { setOpen(!open) }} style={{ width: "12%", margin: "1% auto" }} variant="primary" className="mr-sm-2">
                                     Edit
                                 </Button>
                                 <Button style={{ width: "12%", margin: "1% auto" }} variant="success" className="mr-sm-2" onClick={runVM}>
@@ -94,27 +155,6 @@ function Manage(props) {
                                         <Form.Control onChange={e => { props.VM.desc = e.target.value }} type="text" placeholder="Enter description" defaultValue={props.VM.desc} />
                                     </Form.Group>
                                     <Form.Group>
-                                        <h3>RAM</h3>
-                                        <Form.Control onChange={e => { props.VM.ram = e.target.value }} type="text" placeholder="Enter RAM" defaultValue={props.VM.ram} />
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <h3>CPU</h3>
-                                        <Form.Control onChange={e => { props.VM.cpu = e.target.value }} type="text" placeholder="Enter CPU" defaultValue={props.VM.cpu} />
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <h3>Disk</h3>
-                                        <Form.Control onChange={e => { props.VM.disk = e.target.value }} type="text" placeholder="Enter Disk" defaultValue={props.VM.disk} />
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <h3>Network</h3>
-                                        <Form.Control onChange={e => { props.VM.network = e.target.value }} type="text" placeholder="Enter Network" defaultValue={props.VM.network} />
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <h3>Image</h3>
-                                        <Form.Control onChange={e => { props.VM.os = e.target.value }} type="text" placeholder="Enter Image" defaultValue={props.VM.os} />
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <h3>Services</h3>
                                         <Form.Group>
                                             <h3>Database</h3>
                                             <Form.Check type="switch" label="InfluxDB" defaultChecked={props.VM.services.includes("influxdb")} onChange={() => { updateService("influxdb") }} />
@@ -144,10 +184,10 @@ function Manage(props) {
                                         </Form.Group>
 
                                         <Form.Group>
-                                            <h3>Submit changes</h3>
-                                            <Button variant="primary" type="submit" onClick={(e) => { onsubmit(e, props.VM) }}>
+                                            <Button variant="primary" type="submit" onClick={editVM}>
                                                 Submit
                                             </Button>
+                                            <h3 id="edit-error"/>
                                         </Form.Group>
                                     </Form.Group>
                                 </Form>

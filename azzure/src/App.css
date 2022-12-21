@@ -48,3 +48,15 @@
     transform: translate(-50%, -50%);
     z-index: 100;
 }
+
+
+.status-circle {
+    background-color: red;
+    width: 1vw;
+    height: 1vw;
+    border-radius: 100%;
+    display: inline-block;
+    margin-left: 1vw;
+    transform: translateY(0.25vw);
+    box-shadow: 0 0 0.5vw 0.5vw rgba(255, 255, 255, 0.5);
+}
