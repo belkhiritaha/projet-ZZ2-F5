@@ -255,7 +255,12 @@ app.get('/api/users/:id/vms', (req, res) => {
             return res.status(401).json({ error: 'Not authorized' })
         }
         User.findOne({_id: req.params.id})
-            .then(user => {console.log("found: ", user); res.status(200).json(user.listVMs)})
+            .then(user => {
+                const vmIds = user.listVMs
+                VM.find({ _id: { $in: vmIds } })
+                    .then(vms => res.status(200).json(vms))
+                    .catch(error => res.status(404).json({ error }))
+            })
             .catch(error => res.status(404).json({ error }))
     })
 })
@@ -269,15 +274,8 @@ app.get('/api/users/:id/vms/:vmid', (req, res) => {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-        User.findOne({_id: req.params.id})
-            .then(user => {
-                const vm = user.listVMs.find(vm => vm.id == req.params.vmid)
-                if (vm) {
-                    res.status(200).json(vm)
-                } else {
-                    res.status(404).json({ message: 'The vm has not been found !' })
-                }
-            })
+        VM.findOne({_id: req.params.vmid})
+            .then(vm => res.status(200).json(vm))
             .catch(error => res.status(404).json({ error }))
     })
 })
@@ -297,13 +295,14 @@ app.post('/api/users/:id/vms', (req, res) => {
             .then(user => {
                 // create new VM db entry
                 const vm = new VM({
-                    ...req.body
+                    ...req.body,
+                    owner: user._id
                 })
                 vm.save()
                     .then(() => console.log("Succesfully added vm to database"))
                     .catch(error => console.log(error))
                 // add vm to user's list
-                user.listVMs.push(vm)
+                user.listVMs.push(vm._id)
                 user.save()
                     .then(() => res.status(201).json({ message: 'A new vm has arrived !' }))
                     .catch(error => res.status(400).json({ error }))
@@ -324,21 +323,22 @@ app.put('/api/users/:id/vms/:vmid', (req, res) => {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-        User.findOne({_id: req.params.id})
-            .then(user => {
-                // check the existence of the VM
-                const vm = user.listVMs.find(vm => vm._id == req.params.vmid)
-                if (vm) {
-                    // update the vm
-                    vm.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-                        .then(() => res.status(200).json({ message: 'The info of the vm has been modified !' }))
-                        .catch(error => res.status(400).json({ error }))
-                    
-                } else {
-                    res.status(404).json({ message: 'The vm has not been found !' })
+
+        VM.findOne({_id: req.params.vmid})
+            .then(vm => {
+                // loop through body params
+                for (const key in req.body) {
+                    if (["name", "description"].includes(key)) {
+                        vm[key] = req.body[key]
+                    }
                 }
-            })
-            .catch(error => res.status(404).json({ error }))
+
+                vm.save()
+                    .then(() => {console.log(vm.name); res.status(200).json({ message: 'The vm has been updated !' })})
+                    .catch(error => res.status(400).json({ error: "IDK" }))
+            }
+            )
+            .catch(err => res.status(404).json({ error: err }))
     })
 
 })
@@ -356,19 +356,16 @@ app.delete('/api/users/:id/vms/:vmid', (req, res) => {
         }
         User.findOne({_id: req.params.id})
             .then(user => {
-                // check the existence of the VM
-                const vm = user.listVMs.find(vm => vm._id == req.params.vmid)
-                if (vm) {
-                    // remove vm from user's list
-                    user.listVMs.splice( user.listVMs.indexOf(vm.id), 1 );
-                    user.save()
-                        .then(() => res.status(201).json({ message: 'VM deleted' }))
-                        .catch(error => res.status(400).json({ error }))
-                } else {
-                    res.status(404).json({ message: 'The vm has not been found !' })
-                }
+                // remove vm from user's list
+                user.listVMs.pull(req.params.vmid)
+                user.save()
+                    .then(() => console.log("Succesfully removed vm from user's list"))
+                    .catch(error => console.log(error))
+                // remove vm from database
+                VM.deleteOne({_id: req.params.vmid})
+                    .then(() => res.status(200).json({ message: 'The vm has been deleted !' }))
+                    .catch(error => res.status(400).json({ error }))
             })
-            .catch(error => res.status(404).json({ error }))
     })
 })
 
@@ -386,14 +383,17 @@ app.delete('/api/users/:id/vms', (req, res) => {
         User.findOne({_id: req.params.id})
             .then(user => {
                 // reset the vm database
-                user.listVMs.deleteMany({}, function(err) {
-                    if (err) console.log(err);
-                    console.log("Successful deletion");
-                });
-                res.status(200).json({ message: 'The vm database has been deleted !' })
+                user.listVMs = []
+                user.save()
+                    .then(() => console.log("Succesfully reset the vm database"))
+                    .catch(error => console.log(error))
             })
             .catch(error => res.status(404).json({ error }))
-    })
+
+        VM.deleteMany({owner: userID})
+            .then(() => res.status(200).json({ message: 'The vm database has been reset !' }))
+            .catch(error => res.status(400).json({ error }))
+        })
 })
 
 // ########### API ROUTES ###########
