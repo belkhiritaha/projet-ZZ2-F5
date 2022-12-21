@@ -369,6 +369,52 @@ app.delete('/api/users/:id/vms/:vmid', (req, res) => {
 })
 
 
+// start vm
+app.post('/api/users/:id/vms/:vmid/start', (req, res) => {
+    console.log("-----------------------------")
+    console.log("start an existing vm")
+    console.log(req.body)
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            console.log("Not authorized")
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+        VM.findOne({_id: req.params.vmid})
+            .then(vm => {
+                // start vm
+                vm.status = 1
+                vm.save()
+                    .then(() => res.status(200).json({ message: 'The vm has been started !' }))
+                    .catch(error => res.status(400).json({ error }))
+            })
+            .catch(error => res.status(404).json({ error }))
+    })
+})
+
+
+// stop vm
+app.post('/api/users/:id/vms/:vmid/stop', (req, res) => {
+    console.log("-----------------------------")
+    console.log("stop an existing vm")
+    console.log(req.body)
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            console.log("Not authorized")
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+        VM.findOne({_id: req.params.vmid})
+            .then(vm => {
+                // stop vm
+                vm.status = 0
+                vm.save()
+                    .then(() => res.status(200).json({ message: 'The vm has been stopped !' }))
+                    .catch(error => res.status(400).json({ error }))
+            })
+            .catch(error => res.status(404).json({ error }))
+    })
+})
+
+
 // reset vm database
 app.delete('/api/users/:id/vms', (req, res) => {
     console.log("-----------------------------")

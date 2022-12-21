@@ -9,23 +9,23 @@ function Manage(props) {
     function ManageCard(props) {
         const [open, setOpen] = useState(false);
 
-        function showError(id){
+        function showError(id) {
             document.getElementById(id).classList.add("shake");
-    
+
             // add p element with error message
             document.getElementById(id).innerHTML = "Error editing VM";
             setTimeout(() => {
                 document.getElementById(id).classList.remove("shake");
             }
                 , 500);
-    
+
             setTimeout(() => {
                 document.getElementById(id).innerHTML = "";
             }
                 , 5000);
         }
-    
-        function showSuccess(id){
+
+        function showSuccess(id) {
             console.log(document.getElementById(id))
             document.getElementById(id).style.color = "green";
             document.getElementById(id).innerHTML = "VM edited successfully";
@@ -88,9 +88,7 @@ function Manage(props) {
                         else {
                             showError("edit-error");
                         }
-                    }
-
-                    )
+                    })
             }
         };
 
@@ -108,11 +106,45 @@ function Manage(props) {
         }
 
         function runVM() {
-
+            if (document.cookie) {
+                var cookie = document.cookie.split(";");
+                var token = cookie[0].split("=")[1];
+                fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM.id}/start`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                    .then(res => {
+                        if (res.status === 200) {
+                            refreshVms();
+                        }
+                        else {
+                            alert("Error starting VM")
+                        }
+                    })  
+            }
         };
 
         function stopVM() {
-
+            if (document.cookie) {
+                var cookie = document.cookie.split(";");
+                var token = cookie[0].split("=")[1];
+                fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM.id}/stop`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                    .then(res => {
+                        if (res.status === 200) {
+                            refreshVms();
+                        }
+                        else {
+                            alert("Error starting VM")
+                        }
+                    })  
+            }
         };
 
         return (
@@ -129,7 +161,7 @@ function Manage(props) {
                                 </h5>
                                 <h5 className="mr-sm-2">
                                     {props.VM.status === 0 ? "Stopped" : "Running"}
-                                    <div className="status-circle" ></div>
+                                    <div className="status-circle" style={{ backgroundColor: props.VM.status === 0 ? "red" : "green" , boxShadow: props.VM.status === 0 ? "0 0 0.5vw 0.5vw rgba(255, 0, 0, 0.5)" : "0 0 0.5vw 0.5vw rgba(0, 255, 0, 0.5)" }}></div>
                                 </h5>
 
 
@@ -187,7 +219,7 @@ function Manage(props) {
                                             <Button variant="primary" type="submit" onClick={editVM}>
                                                 Submit
                                             </Button>
-                                            <h3 id="edit-error"/>
+                                            <h3 id="edit-error" />
                                         </Form.Group>
                                     </Form.Group>
                                 </Form>
