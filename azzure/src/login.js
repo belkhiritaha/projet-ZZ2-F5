@@ -2,20 +2,36 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import NavbarBasicExample from './navbar';
 import './login.css';
+import { useState } from 'react';
+
 
 function Login() {
     let username = '';
     let email = '';
     let password = '';
+
+    const [loading, setLoading] = useState(false);
+
+    function showError(id) {
+        document.getElementById(id).classList.add("shake");
+        document.getElementById(id).innerHTML = "Error";
+        setTimeout(() => {
+            document.getElementById(id).classList.remove("shake");
+        }
+            , 500);
+
+        setTimeout(() => {
+            document.getElementById(id).innerHTML = "";
+        }
+            , 5000);
+    }
     
     function handleUsernameChange(event) {
         username = event.target.value;
-        console.log(username);
     }
 
     function handlePasswordChange(event) {
         password = event.target.value;
-        console.log(password);
     }
 
     function onsubmit(event) {
@@ -24,28 +40,43 @@ function Login() {
             username: username,
             passwd: password
         };
-        // send post request to port 8001 xhr
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8001/api/users/login');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(user));
-        xhr.onload = () => {
-            if (xhr.status === 200) {
-                // get response body
-                const response = JSON.parse(xhr.responseText);
-                const sessionCookie = response.cookie;
 
-                // set cookie
-                document.cookie = `sessionCookie=${sessionCookie.value}; max-age=3600`;
+        setLoading(true);
+        console.log(loading);
 
-                // redirect to localhost:3000/home
+        fetch('http://localhost:8001/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+        .then(response => response.json())
+        .then(data => {
+            try {
+                const sessionCookie = data.cookie;
+                document.cookie = `sessionCookie=${sessionCookie.value}; max-age=86400`;
                 window.location.href = 'http://localhost:3000/home';
-            
-                console.log(response);
-            } else {
-                console.log('error');
             }
-        }
+            catch (error) {
+                showError('error');
+            }
+            finally {
+                setLoading(false);
+            }
+        })
+    }
+
+    if (loading) {
+        return (
+            <>
+                <div className='loading-container'>
+                    <div className="lds-dual-ring"></div>
+                    <div className="loading">Loading...</div>
+                    <div className="error" id="error"></div>
+                </div>
+            </>
+        )
     }
 
     return (
@@ -67,6 +98,7 @@ function Login() {
                     <Button variant="primary" type="submit">
                         Submit
                     </Button>
+                    <p id='error' style={{color: "red"}}></p>
                 </Form>
             </div>
         </>
