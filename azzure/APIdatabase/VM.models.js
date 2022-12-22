@@ -3,12 +3,12 @@ const mongoose = require("mongoose")
 const vmSchema = new mongoose.Schema ({
     name: { type: String, required: true },
     description: { type: String, required: true },
-    ram: { type: Number, required: true },
-    cpu: { type: Number, required: true },
-    disk: { type: Number, required: true },
-    network: { type: String, required: true },
+    ram: { type: Number },
+    cpu: { type: Number },
+    disk: { type: Number },
+    network: { type: String },
     status: { type: Number, required: true },
-    os: { type: String, required: true },
+    os: { type: String },
     services: { type: Array, required: true },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 })

@@ -6,6 +6,7 @@ import UploadForm from './form';
 
 import './card.css'
 import './create.css'
+import { json } from 'react-router-dom';
 
 
 function CreateForm(props) {
@@ -17,7 +18,6 @@ function CreateForm(props) {
         cpu: "1",
         disk: "1",
         network: "test",
-        status: 0,
         os: "Ubuntu",
         services: ["ssh"],
     });
@@ -38,29 +38,50 @@ function CreateForm(props) {
         }
     }
 
+    function showError(id) {
+        document.getElementById(id).classList.add("shake");
+
+        // add p element with error message
+        document.getElementById(id).innerHTML = "Error creating VM";
+        setTimeout(() => {
+            document.getElementById(id).classList.remove("shake");
+        }
+            , 500);
+
+        setTimeout(() => {
+            document.getElementById(id).innerHTML = "";
+        }
+            , 5000);
+    }
+
+    function showSuccess(id) {
+        console.log(document.getElementById(id))
+        document.getElementById(id).style.color = "green";
+        document.getElementById(id).innerHTML = "VM created successfully";
+        setTimeout(() => {
+            document.getElementById(id).innerHTML = "";
+            document.getElementById(id).style.color = "red";
+        }
+            , 5000);
+    }
+
 
     function onSubmitManual(event, id) {
         event.preventDefault();
 
         // get textarea value
         const textarea = document.getElementById("jsonFormTextArea").value;
-        let jsonData = JSON.parse(textarea);
+        let jsonData = {};
+        try {
+            jsonData = JSON.parse(textarea);
+        }
+        catch (error) {
+            showError("error");
+            return false;
+        }
 
         if (jsonData.name === "" || jsonData.description === "" || jsonData.ram === "" || jsonData.cpu === "" || jsonData.disk === "" || jsonData.network === "" || jsonData.os === "") {
-            document.getElementById(id).classList.add("shake");
-
-            // add p element with error message
-            document.getElementById("error").innerHTML = "Please fill all fields with valid values";
-            setTimeout(() => {
-                document.getElementById(id).classList.remove("shake");
-            }
-                , 500);
-
-            setTimeout(() => {
-                document.getElementById("error").innerHTML = "";
-            }
-                , 5000);
-
+            showError("error");
             return false;
         }
         else {
@@ -76,10 +97,10 @@ function CreateForm(props) {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("recieved this data: ", data);
+                    showSuccess("error");
                 })
                 .catch(error => {
-                    console.log("error: ", error);
+                    showError("error");
                 });
         }
         return true;
@@ -134,9 +155,6 @@ function CreateForm(props) {
             <h1>Create a VM</h1>
             <hr />
             <div style={{ width: "80%", margin: "auto", textAlign: "center", justifyContent: "space-between" }}>
-                <h2>From an existing configuration file:</h2>
-                <UploadForm style={{ margin: "5%" }} />
-                <h3> or </h3>
                 <h2>Customize your own VM:</h2>
 
                 <Form>

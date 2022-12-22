@@ -42,7 +42,6 @@ function Login() {
         };
 
         setLoading(true);
-        console.log(loading);
 
         fetch('http://localhost:8001/api/users/login', {
             method: 'POST',

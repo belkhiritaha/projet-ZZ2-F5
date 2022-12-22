@@ -82,11 +82,11 @@ function Manage(props) {
                     // check status
                     .then(res => {
                         if (res.status === 200) {
-                            showSuccess("edit-error");
+                            showSuccess(props.VM.id + "error");
                             refreshVms();
                         }
                         else {
-                            showError("edit-error");
+                            showError(props.VM.id + "error");
                         }
                     })
             }
@@ -219,7 +219,7 @@ function Manage(props) {
                                             <Button variant="primary" type="submit" onClick={editVM}>
                                                 Submit
                                             </Button>
-                                            <h3 id="edit-error" />
+                                            <h3 id={props.VM.id + "error"} style={{ color: "red" }}></h3>
                                         </Form.Group>
                                     </Form.Group>
                                 </Form>

@@ -296,7 +296,8 @@ app.post('/api/users/:id/vms', (req, res) => {
                 // create new VM db entry
                 const vm = new VM({
                     ...req.body,
-                    owner: user._id
+                    owner: user._id,
+                    status: 0
                 })
                 vm.save()
                     .then(() => console.log("Succesfully added vm to database"))
