@@ -27,7 +27,7 @@ function Cli(props) {
         }
 
         return (
-            <Card key={vm._id} style={{ width:'18 rem', margin: 'auto', textAlign: 'center' }}>
+            <Card key={'cli-card' + vm._id} style={{ width:'18 rem', margin: 'auto', textAlign: 'center' }}>
                 <i className={props.img} style={{ fontSize: '5rem', margin: 'auto', marginTop: '1rem' }}></i>
                 <Card.Body onClick={() => {handleCardClick(vm._id)}}>
                     <Card.Title>{vm.name}</Card.Title>
@@ -68,7 +68,7 @@ function Cli(props) {
                                             }
                                             }}
                                             placeholder='Enter a command'
-                                            />
+                                        />
                                     </div>
                                 </div>
                             </div>

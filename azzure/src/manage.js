@@ -43,19 +43,15 @@ function Manage(props) {
                 if (document.cookie) {
                     var cookie = document.cookie.split(";");
                     var token = cookie[0].split("=")[1];
-                    fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM.id}`, {
+                    fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM._id}`, {
                         method: "DELETE",
                         headers: {
                             "Authorization": `Bearer ${token}`
                         }
                     })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.message === "VM deleted") {
-                                window.location.reload();
-                            }
-                            else {
-                                alert("Error deleting VM")
+                        .then(res => {
+                            if (res.status === 200) {
+                                refreshVms();
                             }
                         })
                 }
@@ -68,7 +64,7 @@ function Manage(props) {
             if (document.cookie) {
                 var cookie = document.cookie.split(";");
                 var token = cookie[0].split("=")[1];
-                fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM.id}`, {
+                fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM._id}`, {
                     method: "PUT",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -76,25 +72,21 @@ function Manage(props) {
                     },
                     body: JSON.stringify({
                         name: props.VM.name,
-                        description: props.VM.desc,
+                        description: props.VM.description,
                         services: props.VM.services
                     })
                 })
                     // check status
                     .then(res => {
                         if (res.status === 200) {
-                            showSuccess(props.VM.id + "error");
+                            showSuccess(props.VM._id + "error");
                             refreshVms();
                         }
                         else {
-                            showError(props.VM.id + "error");
+                            showError(props.VM._id + "error");
                         }
                     })
             }
-        };
-
-        function createVM() {
-
         };
 
         function updateService(serviceName) {
@@ -110,7 +102,7 @@ function Manage(props) {
             if (document.cookie) {
                 var cookie = document.cookie.split(";");
                 var token = cookie[0].split("=")[1];
-                fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM.id}/start`, {
+                fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM._id}/start`, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token}`
@@ -131,7 +123,7 @@ function Manage(props) {
             if (document.cookie) {
                 var cookie = document.cookie.split(";");
                 var token = cookie[0].split("=")[1];
-                fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM.id}/stop`, {
+                fetch(`http://localhost:8001/api/users/${props.user.id}/vms/${props.VM._id}/stop`, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token}`
@@ -158,7 +150,7 @@ function Manage(props) {
                                     {props.VM.name}
                                 </h3>
                                 <h5 className="mr-sm-2">
-                                    {props.VM.desc}
+                                    {props.VM.description}
                                 </h5>
                                 <h5 className="mr-sm-2">
                                     {props.VM.status === 0 ? "Stopped" : "Running"}
@@ -185,7 +177,7 @@ function Manage(props) {
                                 <Form onSubmit={() => { this.event.preventDefault(); }}>
                                     <Form.Group>
                                         <h3>Description</h3>
-                                        <Form.Control onChange={e => { props.VM.desc = e.target.value }} type="text" placeholder="Enter description" defaultValue={props.VM.desc} />
+                                        <Form.Control onChange={e => { props.VM.description = e.target.value }} type="text" placeholder="Enter description" defaultValue={props.VM.description} />
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Group>
@@ -220,7 +212,7 @@ function Manage(props) {
                                             <Button variant="primary" type="submit" onClick={editVM}>
                                                 Submit
                                             </Button>
-                                            <h3 id={props.VM.id + "error"} style={{ color: "red" }}></h3>
+                                            <h3 id={props.VM._id + "error"} style={{ color: "red" }}></h3>
                                         </Form.Group>
                                     </Form.Group>
                                 </Form>
@@ -234,32 +226,11 @@ function Manage(props) {
 
     // state
     const [open, setOpen] = useState(false);
-    const [VMs, setVMs] = useState({ VMs: [] });
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
 
 
     // functions
-    function responseToShape(response) {
-        const returnObject = {
-            VMs: response.map((VM) => {
-                return {
-                    id: VM._id,
-                    name: VM.name,
-                    desc: VM.description,
-                    ram: VM.ram,
-                    cpu: VM.cpu,
-                    disk: VM.disk,
-                    network: VM.network,
-                    os: VM.os,
-                    services: VM.services,
-                    status: VM.status
-                }
-            })
-        }
-        return returnObject;
-    }
-
     function deleteVM() {
     };
 
@@ -273,12 +244,10 @@ function Manage(props) {
 
     function refreshVms() {
         getAllVMs(props.user).then((data) => {
-            let responseVMs = responseToShape(data)
-            setVMs((VMs) => responseVMs);
             let newCards = [];
-            responseVMs.VMs.map((VM) => {
+            data.map((VM) => {
                 newCards.push(
-                    <ManageCard VM={VM} key={VM.id} user={props.user} />
+                    <ManageCard VM={VM} key={VM._id} user={props.user} />
                 );
             });
             setCards(newCards);
@@ -290,17 +259,17 @@ function Manage(props) {
     }
 
     useEffect(() => {
+        console.log(props.user.vms);
         const userVms = props.user.vms;
-        setVMs(userVms);
         let newCards = [];
         userVms.map((VM) => {
             newCards.push(
-                <ManageCard VM={VM} key={VM.id} user={props.user} />
+                <ManageCard VM={VM} key={VM._id} user={props.user} />
             );
         });
         setCards(newCards);
         setLoading(false);
-    }, [props.user]);
+    }, [props]);
 
 
     if (loading) {
