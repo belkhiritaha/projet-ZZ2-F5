@@ -24,6 +24,9 @@ function Router() {
                 setLoading(false);
             })
         })
+        .catch(() => {
+            setLoading(false);
+        })
     }, [])
 
     if (loading) {

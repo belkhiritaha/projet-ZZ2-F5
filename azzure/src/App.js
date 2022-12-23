@@ -19,8 +19,11 @@ async function getUser() {
                     user = await response.json();
                 }
             }
+            resolve(user);
         }
-        resolve(user);
+        else {
+            reject();
+        }
     })
 }
 
