@@ -24,6 +24,30 @@ async function getUser() {
     })
 }
 
+async function getAllVMs(user) {
+    return new Promise((resolve, reject) => {
+        // get cookie
+        if (document.cookie) {
+            // get cookie
+            const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
+            const cookieValue = sessionCookie.split('=')[1];
+            fetch(`http://localhost:8001/api/users/${user.id}/vms`, {
+                method: 'GET',
+                headers: {
+                    "Authorization": `Bearer ${cookieValue}`,
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        }
+    })
+}
+
 function App(props) {
     return (
         <>
@@ -37,4 +61,4 @@ function App(props) {
     );
 }
 
-export { App, getUser };
+export { App, getUser, getAllVMs };

@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import Collapse from 'react-bootstrap/Collapse';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
+import { getAllVMs } from './App';
 import './card.css'
 
 function Manage(props) {
@@ -259,31 +260,6 @@ function Manage(props) {
         return returnObject;
     }
 
-
-    async function getAllVMs() {
-        return new Promise((resolve, reject) => {
-            // get cookie
-            if (document.cookie) {
-                // get cookie
-                const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
-                const cookieValue = sessionCookie.split('=')[1];
-                fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
-                    method: 'GET',
-                    headers: {
-                        "Authorization": `Bearer ${cookieValue}`,
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    });
-            }
-        })
-    }
-
     function deleteVM() {
     };
 
@@ -296,7 +272,7 @@ function Manage(props) {
     };
 
     function refreshVms() {
-        getAllVMs().then((data) => {
+        getAllVMs(props.user).then((data) => {
             let responseVMs = responseToShape(data)
             setVMs((VMs) => responseVMs);
             let newCards = [];
@@ -308,13 +284,24 @@ function Manage(props) {
             setCards(newCards);
             setLoading(false);
         }).catch((error) => {
+            console.log(error);
             setLoading(true);
         });
     }
 
     useEffect(() => {
-        refreshVms();
-    }, []);
+        const userVms = props.user.vms;
+        setVMs(userVms);
+        let newCards = [];
+        userVms.map((VM) => {
+            newCards.push(
+                <ManageCard VM={VM} key={VM.id} user={props.user} />
+            );
+        });
+        setCards(newCards);
+        setLoading(false);
+    }, [props.user]);
+
 
     if (loading) {
         return (
