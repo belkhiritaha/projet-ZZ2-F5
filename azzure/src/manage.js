@@ -231,17 +231,6 @@ function Manage(props) {
 
 
     // functions
-    function deleteVM() {
-    };
-
-    function editVM() {
-        setOpen(!open);
-    };
-
-    function createVM() {
-
-    };
-
     function refreshVms() {
         getAllVMs(props.user).then((data) => {
             let newCards = [];

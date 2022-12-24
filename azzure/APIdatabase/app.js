@@ -82,9 +82,9 @@ async function decipherToken(token) {
     }).catch((err)  => {console.log("invalid token")})
 }
 
-
 // Verify token and return user id
 async function verifyToken(token) {
+    await new Promise(r => setTimeout(r, 1000));
     let tokenData = null
     try {
         tokenData = await decipherToken(token)

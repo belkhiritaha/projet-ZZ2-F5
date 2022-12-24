@@ -3,17 +3,21 @@ import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import { Collapse } from 'react-bootstrap';
 import { useState } from 'react';
+import { Button } from 'react-bootstrap';
+import { getAllVMs } from './App';
 
 function Cli(props) {
 
     const [cardID, setCardID] = useState(0);
+    const [vms, setVms] = useState(props.user.vms);
 
     function VmCard(vm, user) {
 
         const [commandHistory, setCommandHistory] = useState([]);
 
+
         function handleCardClick(id) {
-            if (cardID == id) {
+            if (cardID == id || vm.status == 0) {
                 setCardID(0);
             }
             else {
@@ -22,7 +26,20 @@ function Cli(props) {
         }
 
         function executeCommand(command) {
-            setCommandHistory([...commandHistory, command]);
+            if (command == 'help') {
+                setCommandHistory([...commandHistory, command, 'Available commands:']);
+                setCommandHistory([...commandHistory, 'help', 'clear', 'exit', 'ls', 'cd', 'cat', 'pwd']);
+            }
+            else if (command == 'clear') {
+                setCommandHistory([]);
+                console.log(commandHistory);
+            }
+            else if (command == 'exit') {
+                setCardID(0);
+            }
+            else {
+                setCommandHistory([...commandHistory, command]);
+            }
             console.log(command);
         }
 
@@ -35,6 +52,10 @@ function Cli(props) {
                     <Card.Text>
                         {vm.description}
                     </Card.Text>
+                    <h5 className="mr-sm-2">
+                        {vm.status === 0 ? "Stopped" : "Running"}
+                        <div className="status-circle" style={{ backgroundColor: vm.status === 0 ? "red" : "green" , boxShadow: vm.status === 0 ? "0 0 0.5vw 0.5vw rgba(255, 0, 0, 0.5)" : "0 0 0.5vw 0.5vw rgba(0, 255, 0, 0.5)" }}></div>
+                    </h5>
                 </Card.Body>
 
                 <Collapse in={cardID == vm._id}>
@@ -187,14 +208,29 @@ function Cli(props) {
         )
     }
 
+    function refreshVms() {
+        getAllVMs(props.user).then((data) => {
+            let newVms = [];
+            data.forEach((vm) => {
+                newVms.push(vm);
+            });
+            setVms(newVms);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
 
     return (
         <>
+            <Button style={{ margin: "1%", width: "25%" }} variant="primary" className="mr-sm-2" onClick={refreshVms}>
+                Refresh
+            </Button>
             <Row>
 
-                {props.user.vms.map(vm => {
+                {vms.map(vm => {
                     return (
-                        <Collapse in={(cardID == vm._id) || (cardID == 0)}>
+                        <Collapse key={"collapse"+vm._id} in={(cardID == vm._id) && (vm.status == 1) || (cardID == 0)}>
                             <div className='col'>
                                 {VmCard(vm, props.user.username)}
                             </div>
