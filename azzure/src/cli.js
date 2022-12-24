@@ -223,9 +223,12 @@ function Cli(props) {
 
     return (
         <>
-            <Button style={{ margin: "1%", width: "25%" }} variant="primary" className="mr-sm-2" onClick={refreshVms}>
-                Refresh
-            </Button>
+            <div style={{ textAlign: "center" }}>
+                <h1>Select a VM</h1>
+                <Button style={{ margin: "1%", width: "25%" }} variant="primary" className="mr-sm-2" onClick={refreshVms}>
+                    Refresh
+                </Button>
+            </div>
             <Row>
 
                 {vms.map(vm => {

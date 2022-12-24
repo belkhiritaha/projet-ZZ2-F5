@@ -20,7 +20,6 @@ function Router() {
             getAllVMs(user).then(vms => {
                 user.vms = vms;
                 setUser(user);
-                console.log(user);
                 setLoading(false);
             })
         })

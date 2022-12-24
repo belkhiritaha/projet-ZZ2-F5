@@ -248,7 +248,6 @@ function Manage(props) {
     }
 
     useEffect(() => {
-        console.log(props.user.vms);
         const userVms = props.user.vms;
         let newCards = [];
         userVms.map((VM) => {
