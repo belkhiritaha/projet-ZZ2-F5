@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import {App, getUser} from './App';
+import {App, getUser, getAllVMs} from './App';
 import reportWebVitals from './reportWebVitals';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -17,10 +17,16 @@ function Router() {
 
     useEffect(() => {
         getUser().then(user => {
-            setUser(user);
+            getAllVMs(user).then(vms => {
+                user.vms = vms;
+                setUser(user);
+                setLoading(false);
+            })
+        })
+        .catch(() => {
             setLoading(false);
-        });
-    }, []);
+        })
+    }, [])
 
     if (loading) {
         return (

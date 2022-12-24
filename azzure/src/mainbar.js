@@ -8,6 +8,7 @@ import Collapse from 'react-bootstrap/Collapse';
 import './card.css'
 import CreateForm from './create';
 import Manage from './manage';
+import Cli from './cli';
 
 
 function Mainbar(props) {
@@ -29,7 +30,7 @@ function Mainbar(props) {
                     setMenu('manage');
                 }
                 else if (id == 3) {
-                    setMenu('run');
+                    setMenu('cli');
                 }
                 else if (id == 4) {
                     setMenu('view');
@@ -55,7 +56,7 @@ function Mainbar(props) {
     let isHomeActive = (menu == 'home');
     let isCreateActive = (menu == 'create');
     let isManageActive = (menu == 'manage');
-    let isRunActive = (menu == 'run');
+    let isRunActive = (menu == 'cli');
     let isViewActive = (menu == 'view');
     let isDashboardActive = (menu == 'dashboard');
 
@@ -66,7 +67,7 @@ function Mainbar(props) {
                 <Row>
                     <div id="home">
                         <h1>Welcome to aZZure</h1>
-                        <p>aZZure is a cloud computing platform that allows you to create, manage and run virtual machines.</p>
+                        <p>aZZure is a cloud computing platform that allows you to create, manage and run virtual machines geared towards IoT.</p>
                         <p>It is a project for the ZZ2 year at ISIMA.</p>
                         <p>To access all its cool features, you need to login first.</p>
                     </div>
@@ -108,7 +109,12 @@ function Mainbar(props) {
 
                     <Collapse  in={(isHomeActive || isRunActive)}>
                         <div className="col">
-                            <CardItem  card_id='3' title="Run a VM" text="Run a VM" img="fas fa-play" />
+                            <CardItem  card_id='3' title="Run a CLI" text="Run a CLI" img="fas fa-terminal" />
+                            <Collapse  in={isRunActive}>
+                                <div className="col">
+                                    <Cli {...props}/>
+                                </div>
+                            </Collapse>
                         </div>
                     </Collapse>
 
