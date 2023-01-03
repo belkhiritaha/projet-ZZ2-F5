@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: redis-slave
+  name: redis-slave
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: redis-slave
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: redis-slave
+    spec:
+      containers:
+        - env:
+            - name: GET_HOSTS_FROM
+              value: dns
+          image: gcr.io/google_samples/gb-redisslave:v3
+          name: redis-slave
+          ports:
+            - containerPort: 6379
+          resources: {}
+      restartPolicy: Always
+status: {}
