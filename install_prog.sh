@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #Install curl and docker file
 sudo apt update -y && sudo apt install curl docker.io docker-compose
 

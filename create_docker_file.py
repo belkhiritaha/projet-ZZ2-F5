@@ -3,7 +3,7 @@ import subprocess
 import glob
 
 def main():
-    print("Quels docker-compose ?")
+    print("Quel dossier (avec le '/'final) ?")
     path = input()
     path_docker = path + 'docker-compose.yml'
     path_kube = path + 'kube_files/'

@@ -8,7 +8,7 @@ def main():
     print (path_kube, path)
 
     #Start the docker into K8s
-    kubectl = subprocess.run(["kubectl", "apply", "-f", path_kube])
+    kubectl = subprocess.run(["kubectl", "delete", "-f", path_kube])
 
     return 0
 
