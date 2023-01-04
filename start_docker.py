@@ -9,6 +9,7 @@ def main():
 
     #Start the docker into K8s
     kubectl = subprocess.run(["kubectl", "apply", "-f", path_kube])
+    service = subprocess.run(["minikube service --all | grep http"], shell=True)
 
     return 0
 
