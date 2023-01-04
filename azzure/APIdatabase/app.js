@@ -130,7 +130,7 @@ async function getUserFromToken(token) {
 
 // ########### API ROUTES ###########
 
-// Verify authentification and call next() if authentification is successful
+// Verify authentication and call next() if authentification is successful
 async function verifyAuth(req, res, next) {
     const authHeader = req.headers["authorization"]
     if (!authHeader) {
@@ -231,7 +231,7 @@ app.post('/api/users/login', (req, res) => {
                 console.log("The user has not been found !");
             }
         })
-        .catch(error => res.status(404).json({ error }))
+        .catch(error => res.status(400).json({ error }))
 })
 
 
