@@ -1,4 +1,5 @@
-#/bin/bash
+#!/bin/bash
+
 
 #Install curl and docker file
 sudo apt update -y && sudo apt install curl docker.io docker-compose
@@ -24,6 +25,5 @@ sudo mv ./kompose /usr/local/bin/kompose
 #1er démarage et extinction de minikube pour test
 minikube start
 minikube stop
-
 
 echo "Fin de l'installation des composants nécessaires !"
