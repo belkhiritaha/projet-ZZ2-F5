@@ -210,7 +210,11 @@ app.delete('/api/users/:id', (req, res) => {
 // reset user database
 app.delete('/api/users', (req, res) => {
     User.deleteMany({}, function(err) {
-        if (err) console.log(err);
+        if (err) {
+            console.log(err);
+            res.status(400).json({ error })
+
+        }
         console.log("Successful deletion");
     });
     res.status(200).json({ message: 'The user database has been deleted !' })
