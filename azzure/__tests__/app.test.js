@@ -2,33 +2,23 @@ import app from "../APIdatabase/app"
 import request from 'supertest'
 import mongoose from 'mongoose'
 
+
+// The token should change in every connexion
+const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6IjYzYjYwM2JhMDU5MWEwMjhiOWEyMDhhOSIsImlhdCI6MTY3Mjg3MzE2MiwiZXhwIjoxNjcyOTU5NTYyfQ.f16EUu1TEzY-8rhwCrqt8f3NMDMQrSfAlCkCXTHNndo';
+
+const userTest = {
+    "_id": "63b603ba0591a028b9a208a9",
+    "username": "test",
+    "passwd": "test",
+    "listVMs": [],
+    "__v": 0
+}
+
+
 const User = require("../APIdatabase/user.models")
 const Cookie = require("../APIdatabase/cookies.models")
 const VM = require("../APIdatabase/VM.models")
 
-const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6IjYzYjQ5OTliODNmNmQ5NmQ5OTMxYWJiMSIsImlhdCI6MTY3MjgzNTQ2OSwiZXhwIjoxNjcyOTIxODY5fQ.hHHDIyXDo8hJYB6f4QCdeml-1ErmYArRotOL15-6hcY';
-
-/* Connect to the database before each test
-beforeAll(async () => {
-    let db = "mongodb://localhost:27017/aZZure_DB";
-
-    await mongoose.connect(db, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }, (err) => {
-        if (!err) {
-            console.log("connected to MongoDB server")
-        } else {
-            console.log("error")
-        }
-    })
-    
-    const conSuccess = mongoose.connection
-    conSuccess.once('open', _ => {
-      console.log('Database connected:', db)
-    })
-})
-*/
 
 /* Close database connection after each test */ 
 afterAll(async () => {
@@ -80,38 +70,113 @@ describe("GET all users", () => {
                                 .get("/api/users")
                                 .set('Authorization', `Basic ${TOKEN}`)
         expect(response.status).toEqual(200)
+        expect(response.text).not.toBeUndefined()
+
+    })
+})
+
+
+describe("Get user by ID", () => {
+    test("should require authorization", async () => {
+        const response = await request(app)
+                                .get("/api/users/63b603ba0591a028b9a208a9")
+        expect(response.status).toEqual(401)
+    })
+    
+    test("should respond with a 200 status code and return a unique user", async () => {
+        const response = await request(app)
+                                .get("/api/users/63b603ba0591a028b9a208a9")
+                                .set('Authorization', `Basic ${TOKEN}`)
+        expect(response.status).toEqual(200)
+        expect(response.text).not.toBeUndefined()
+    })
+
+    // If the user tries to change the id to access others, his request will be denied
+    test("should respond with a 401 status code", async () => {
+        const response = await request(app)
+                                .get("/api/users/63b603bafgjfg7")
+                                .set('Authorization', `Basic ${TOKEN}`)
+        expect(response.status).toEqual(401)
+        expect(response.error).not.toBeUndefined()
+    })
+})
+
+
+describe("Create user", () => {
+    test("should respond with a 200 status code", async () => {
+        const response = await request(app)
+                                .post("/api/users")
+                                .send({
+                                    username: "test 2",
+                                    passwd: "test",
+                                })
+        expect(response.status).toEqual(201)
+        expect(response.text).not.toBeUndefined()
+        expect(response.body).toEqual({
+            message: "A new user has arrived !"
+        })
+    })
+
+    test("should respond with a 400 status code", async () => {
+        const response = await request(app)
+                                .post("/api/users")
+                                .send({})
+        expect(response.status).toEqual(400)
+        expect(response.error).not.toBeUndefined()
+    })
+})
+
+
+describe("Update the user's data", () => {
+    test("should respond with a 200 status code", async () => {
+        const response = await request(app)
+                                .put("/api/users/63b603ba0591a028b9a208a9")
+                                .send({
+                                    username: "test 1.2",
+                                    passwd: "test",
+                                })
+        expect(response.status).toEqual(200)
+        expect(response.text).not.toBeUndefined()
+        expect(response.body).toEqual({
+            message: "The data of the user has been modified !"
+        })
+    })
+
+    test("should respond with a 400 status code", async () => {
+        const response = await request(app)
+                                .put("/api/users/63b603ba0591a028b908a9")
+                                .send({})
+        expect(response.status).toEqual(400)
+        expect(response.error).not.toBeUndefined()
+    })
+})
+
+
+describe("Delete user by ID", () => {
+    test("should respond with a 200 status code", async () => {
+        const response = await request(app)
+                                .delete("/api/users/63b603ba0591a028b9a208a9")
+                                .send({
+                                    username: "test 1.2",
+                                    passwd: "test",
+                                })
+        expect(response.status).toEqual(200)
+        expect(response.text).not.toBeUndefined()
+        expect(response.body).toEqual({
+            message: "The user has been deleted !"
+        })
+    })
+
+    test("should respond with a 400 status code", async () => {
+        const response = await request(app)
+                                .delete("/api/users/63b603ba0591a028b908a9")
+                                .send({})
+        expect(response.status).toEqual(400)
+        expect(response.error).not.toBeUndefined()
     })
 })
 
 /*
-describe("Get user by ID", () => {
-    // TO DO
-    test("", async () => {
-
-    })
-})
-
-describe("Create user", () => {
-    // TO DO
-    test("", async () => {
-
-    })
-})
-
-describe("Update the user's data", () => {
-    // TO DO
-    test("", async () => {
-
-    })
-})
-
-describe("Delete user by ID", () => {
-    // TO DO
-    test("", async () => {
-
-    })
-})
-
 describe("Reset user database", () => {
     // TO DO
     test("", async () => {
