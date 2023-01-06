@@ -6,13 +6,11 @@ def main():
     print("Quel user ?")
     user = input()
     path_user = Path(user + '/')
-    print(path_user.absolute())
     if (path_user.exists()):
         if path_user.is_dir():
             print("Quelle app ?")
             app = input()
             path_app = Path(user + '/' + app)
-            print(path_app)
             if(path_app.exists()):
                 if(path_app.is_dir()):
                     print("app already existing")
