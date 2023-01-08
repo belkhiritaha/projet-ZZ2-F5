@@ -368,7 +368,7 @@ app.delete('/api/users/:id/vms/:vmid', (req, res) => {
                 // remove vm from database
                 VM.deleteOne({_id: req.params.vmid})
                     .then(() => res.status(200).json({ message: 'The vm has been deleted !' }))
-                    .catch(error => res.status(400).json({ error }))
+                    .catch(error => res.status(404).json({ error }))
             })
     })
 })
