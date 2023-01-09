@@ -4,13 +4,13 @@ import sys
 from pathlib import Path
 
 def main(user, app):
-    path_user = Path(user + '/')
+    path_user = Path('users/' + user + '/')
     if (path_user.exists()):
         if (path_user.is_dir()):
-            path_app = Path(user + '/' + app)
+            path_app = Path('users/' + user + '/' + app)
             if (path_app.exists()):
                 if (path_app.is_dir()):
-                    path_docker_files = Path(user + '/' + app + '/kube_files/')
+                    path_docker_files = Path('users/' + user + '/' + app + '/kube_files/')
                     if (path_docker_files.exists()):
                         if (path_docker_files.is_dir()):
                             #Delete the docker from K8s
