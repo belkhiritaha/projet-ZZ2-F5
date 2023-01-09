@@ -13,7 +13,7 @@ def main(user):
     else : 
         #Create the app dir into the user dir
         create_app = subprocess.run(["mkdir", path_user])
-                
+        print("done")
     return 0
 
 

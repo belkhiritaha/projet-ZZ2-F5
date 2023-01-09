@@ -15,6 +15,7 @@ def main(user, app):
             else : 
                 #Create the app dir into the user dir
                 create_app = subprocess.run(["mkdir", path_app])
+                print("done")
         else : print("user error")
     else : print("user not existing")
                 
