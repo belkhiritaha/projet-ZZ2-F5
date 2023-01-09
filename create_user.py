@@ -1,9 +1,10 @@
+#!/usr/bin/env python
+
 import subprocess
+import sys
 from pathlib import Path
 
-def main():
-    print("Quel user ?")
-    user = input()
+def main(user):
     path_user = Path(user + '/')
     if (path_user.exists()):
         if path_user.is_dir():
@@ -18,4 +19,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1])
