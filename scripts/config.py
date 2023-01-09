@@ -1,4 +1,5 @@
 import yaml
+import subprocess
 
 from configProg import *
 from configEnv import *
@@ -21,8 +22,9 @@ def createDockerCompose(*args):
 
         configDataRetrieving (contenu, i, args[2],"./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf" )
     
+    path = subprocess.run(["pwd"])
 
-    fichier = open("configFiles/docker-compose.yml","w") 
+    fichier = open("configFiles/docker-compose.yml","w+") 
 
     yaml.dump_all(contenu, fichier, sort_keys=False)
 

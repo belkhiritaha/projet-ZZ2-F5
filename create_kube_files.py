@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 import glob
 
-def main(user, app):
+def create_kube_files(user, app):
     path_user = Path('users/' + user + '/')
     if (path_user.exists()):
         if (path_user.is_dir()):
@@ -23,7 +23,3 @@ def main(user, app):
     else : print("user unknown")
     
     return 0
-
-
-if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
