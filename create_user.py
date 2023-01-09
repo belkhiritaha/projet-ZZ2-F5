@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 def main(user):
-    path_user = Path(user + '/')
+    path_user = Path('users/' + user + '/')
     if (path_user.exists()):
         if path_user.is_dir():
             print("user already existing")

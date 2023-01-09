@@ -4,10 +4,10 @@ import sys
 from pathlib import Path
 
 def main(user, app):
-    path_user = Path(user + '/')
+    path_user = Path('users/' + user + '/')
     if (path_user.exists()):
         if path_user.is_dir():
-            path_app = Path(user + '/' + app)
+            path_app = Path('users/' + user + '/' + app)
             if(path_app.exists()):
                 if(path_app.is_dir()):
                     print("app already existing")
