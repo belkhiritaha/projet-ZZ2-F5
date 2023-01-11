@@ -3,6 +3,13 @@ import subprocess
 from pathlib import Path
 import glob
 
+class DirectoryError(Exception):
+    "This exception is raised when there is a directory error"
+    pass
+
+class DockerComposeError(Exception):
+    "this excepetion is raised when there is an issue with the docker-compose.yml"
+
 def create_kube_files(user, app):
     path_user = Path('users/' + user + '/')
     if (path_user.exists()):
@@ -11,14 +18,15 @@ def create_kube_files(user, app):
             if (path_app.exists()):
                 if (path_app.is_dir()):
                     path_docker_compose = Path('users/' + user + '/' + app + '/docker-compose.yml')
-                    path_docker_files = Path('users/' + user + '/' + app + '/kube_files/')
-                    #Create kubernetes .yaml files
-                    result = subprocess.run(["kompose", "convert", "-f", path_docker_compose])
-                    create_dir = subprocess.run(["mkdir", path_docker_files])
-                    move = subprocess.run(['mv'] + glob.glob('*.yaml') + [path_docker_files])
-                else : print("app error")
-            else : print("app unknown")
-        else : print("user error")
-    else : print("user unknown")
+                    if (path_docker_compose.exists()):
+                        path_docker_files = Path('users/' + user + '/' + app + '/kube_files/')
+                        result = subprocess.run(["kompose", "convert", "-f", path_docker_compose], capture_output=True)
+                        create_dir = subprocess.run(["mkdir", path_docker_files])
+                        move = subprocess.run(['mv'] + glob.glob('*.yaml') + [path_docker_files], capture_output=True)
+                    else: raise DockerComposeError("The docker-compose doesn't exists")
+                else : raise DirectoryError("This app name doesn't correspond to a directory")
+            else : raise DirectoryError("This app doesn't exists")
+        else : raise DirectoryError("This username doesn't correspond to a directory")
+    else : raise DirectoryError("This user doesn't exists")
     
     return 0

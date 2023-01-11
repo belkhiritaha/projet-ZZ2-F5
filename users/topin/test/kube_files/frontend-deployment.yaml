@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert -f users/topin/example/docker-compose.yml
+    kompose.cmd: kompose convert -f users/topin/test/docker-compose.yml
     kompose.service.type: LoadBalancer
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert -f users/topin/example/docker-compose.yml
+        kompose.cmd: kompose convert -f users/topin/test/docker-compose.yml
         kompose.service.type: LoadBalancer
         kompose.version: 1.26.0 (40646f47)
       creationTimestamp: null

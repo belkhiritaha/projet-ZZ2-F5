@@ -13,8 +13,8 @@ def create_app(user, app):
             path_app = Path('users/' + user + '/' + app)
             if(path_app.exists()):
                 if(path_app.is_dir()):
-                    raise DirectoryError("This application already exist")
-                else: raise DirectoryError("This application name match an other file name")
+                    raise DirectoryError("This app already exist")
+                else: raise DirectoryError("This app name match an other file name")
             else : 
                 #Create the app dir into the user dir
                 subprocess.run(["mkdir", path_app])

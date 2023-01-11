@@ -2,6 +2,13 @@
 import subprocess
 from pathlib import Path
 
+class DirectoryError(Exception):
+    "This exception is raised when there is a directory error"
+    pass
+
+class KubectlError(Exception):
+    "This exception is raised when there is an error with kubectl"
+
 def start_docker(user, app):
     path_user = Path('users/' + user + '/')
     if (path_user.exists()):
@@ -13,13 +20,17 @@ def start_docker(user, app):
                     if (path_docker_files.exists()):
                         if (path_docker_files.is_dir()):
                             #Start the docker into K8s
-                            kubectl = subprocess.run(["kubectl", "apply", "-f", path_docker_files])
-                            service = subprocess.run(["minikube service --all | grep http"], shell=True)
-                        else : print("kube_files error")
-                    else : print("kube_file unknown")
-                else : print("app error")
-            else : print("app unknown")
-        else : print("user error")
-    else : print("user unknown")
+                            kubectl = subprocess.run(["kubectl", "apply", "-f", path_docker_files], capture_output=True, text=True)
+                            if kubectl.stderr != "":
+                                raise KubectlError(kubectl.stderr)
+                            service = subprocess.run(["minikube service --all | grep http"], shell=True, capture_output=True, text=True)
+                            print(service.stdout)
+                        else : raise DirectoryError("This app kube_files doesn't correspond to a directory")
+                    else : raise DirectoryError("This app kube_files doesn't exists")
+                else : raise DirectoryError("This app name doesn't correspond to a directory")
+            else : raise DirectoryError("This app doesn't exists")
+        else : raise DirectoryError("This username doesn't correspond to a directory")
+    else : raise DirectoryError("This user doesn't exists")
+    
 
     return 0
