@@ -1,5 +1,5 @@
 import sys
-from create_app import create_app
+from create_app import *
 from create_kube_files import create_kube_files
 from start_docker import start_docker
 
@@ -7,8 +7,13 @@ def main(user, app):
     #Création du dossier application dans le dossier du user
     try :
         create_app(user, app)
-    except:
-        print("An exception occurred")
+    except DirectoryError as err:
+        print(err.args[0])
+        return(1)
+
+    #Simulation de la création du docker-compose
+    path_app = Path("users/" + user + "/" + app)
+    copy = subprocess.run(["cp", "users/topin/example/docker-compose.yml", path_app])
 
     #Création du docker-compose
     """try:
@@ -22,12 +27,14 @@ def main(user, app):
     except:
         print("An exception occurred")
     
+
+    """
     #Démarrage du docker dans minikube(K8s)
     try:
         start_docker(user, app)
     except:
         print("An error occurred")
-
+    """
     return 0
 
 
