@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 import subprocess
+from error import *
 from pathlib import Path
-
-class DirectoryError(Exception):
-    "This exception is raised when there is a directory error"
-    pass
 
 def create_app(user, app):
     path_user = Path('users/' + user + '/')
@@ -13,7 +10,7 @@ def create_app(user, app):
             path_app = Path('users/' + user + '/' + app)
             if(path_app.exists()):
                 if(path_app.is_dir()):
-                    raise DirectoryError("This app already exist")
+                    raise DirectoryError("This app already exists")
                 else: raise DirectoryError("This app name match an other file name")
             else : 
                 #Create the app dir into the user dir

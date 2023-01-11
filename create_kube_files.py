@@ -1,14 +1,8 @@
 #!/usr/bin/env python
 import subprocess
+from error import *
 from pathlib import Path
 import glob
-
-class DirectoryError(Exception):
-    "This exception is raised when there is a directory error"
-    pass
-
-class DockerComposeError(Exception):
-    "this excepetion is raised when there is an issue with the docker-compose.yml"
 
 def create_kube_files(user, app):
     path_user = Path('users/' + user + '/')

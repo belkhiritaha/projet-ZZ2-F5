@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 import subprocess
 from pathlib import Path
-
-class DirectoryError(Exception):
-    "This exception is raised when there is a directory error"
-    pass
-
-class KubectlError(Exception):
-    "This exception is raised when there is an error with kubectl"
+from error import *
 
 def start_docker(user, app):
     path_user = Path('users/' + user + '/')
