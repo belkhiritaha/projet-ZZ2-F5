@@ -107,6 +107,14 @@ describe("GET all users", () => {
                                 .set('Authorization', `Basic ${TOKEN}`)
         expect(response.status).toEqual(200)
         expect(response.text).not.toBeUndefined()
+    })
+
+    test("should respond with a 404 status code", async () => {
+        const response = await request(app)
+                                .get("/api/user")
+                                .set('Authorization', `Basic ${TOKEN}`)
+        expect(response.status).toEqual(404)
+        expect(response.text).not.toBeUndefined()
 
     })
 })
@@ -122,10 +130,21 @@ describe("Get user by ID", () => {
     
     test("should respond with a 200 status code and return a unique user", async () => {
         const response = await request(app)
-                                .get("/api/users/63b74947e6276f2d84e35a89")
-                                .set('Authorization', `Basic ${TOKEN}`)
+        .get("/api/users/63b74947e6276f2d84e35a89")
+        .set('Authorization', `Basic ${TOKEN}`)
         expect(response.status).toEqual(200)
         expect(response.text).not.toBeUndefined()
+        expect(response.text.includes("_id")).toBe(true)
+        expect(response.text.includes("username")).toBe(true)
+        expect(response.text.includes("passwd")).toBe(true)
+    })
+
+    test("should respond with a 404 status code", async () => {
+        const response = await request(app)
+                                .get("/api/user/63b74947e6276f2d84e35a89")
+                                .set('Authorization', `Basic ${TOKEN}`)
+        expect(response.status).toEqual(404)
+        expect(response.error).not.toBeUndefined()
     })
 
     // If the user tries to change the id to access others, his request will be denied
@@ -135,6 +154,7 @@ describe("Get user by ID", () => {
                                 .set('Authorization', `Basic ${TOKEN}`)
         expect(response.status).toEqual(401)
         expect(response.error).not.toBeUndefined()
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
 })
 

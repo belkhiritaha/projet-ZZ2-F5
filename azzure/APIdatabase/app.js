@@ -79,7 +79,9 @@ async function decipherToken(token) {
                 resolve(decoded)
             }
         })
-    }).catch((err)  => {console.log("invalid token")})
+    }).catch((err)  => {
+        console.log("invalid token")
+    })
 }
 
 // Verify token and return user id
@@ -181,6 +183,9 @@ app.get('/api/users/:id', (req, res) => {
 // create user
 app.post('/api/users', (req, res) => {   
     const user = new User({
+        // Should filter this entry
+        // Verify that a username, an email and a password were given
+        // Hash the password + (salage ??) 
         ...req.body
     })
 
@@ -194,6 +199,7 @@ app.post('/api/users', (req, res) => {
 
 // UPDATE the user's data
 app.put('/api/users/:id', (req, res) => {
+    // *
     User.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'The data of the user has been modified !' }))
         .catch(error => res.status(400).json({ error }))
@@ -201,6 +207,8 @@ app.put('/api/users/:id', (req, res) => {
 
 // DELETE user by ID
 app.delete('/api/users/:id', (req, res) => {
+    // The problem with this functiobn is that any user in the app who has another user's ID can delete his info
+    // Should verify that a user canb only delete his own data + (Add a super user; admin ??)
     User.deleteOne({_id: req.params.id})
         .then(user => res.status(200).json({ message: 'The user has been deleted !' }))
         .catch(error => res.status(400).json({ error }))
@@ -209,6 +217,7 @@ app.delete('/api/users/:id', (req, res) => {
 
 // reset user database
 app.delete('/api/users', (req, res) => {
+    // Anyone can delete everything
     User.deleteMany({}, function(err) {
         if (err) {
             console.log(err);
@@ -299,6 +308,8 @@ app.post('/api/users/:id/vms', (req, res) => {
             .then(user => {
                 // create new VM db entry
                 const vm = new VM({
+                    // Should filter this entry
+                    // Verify that all the technologies that the user choosed are available and working
                     ...req.body,
                     owner: user._id,
                     status: 0
