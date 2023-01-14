@@ -2,16 +2,72 @@ import app from "../APIdatabase/app"
 import request from 'supertest'
 import mongoose from 'mongoose'
 
+//import { generateNewCookie } from "../APIdatabase/app";
 
 // The token should change in every connexion
 //
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6IjYzYjc0OTQ3ZTYyNzZmMmQ4NGUzNWE4OSIsImlhdCI6MTY3MzIwNDE4MCwiZXhwIjoxNjczMjkwNTgwfQ.9Dq0WrPqTP1vDXHhS8DrZQm6y1lhWCmmYivylXs_aIU";
+const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6IjYzYjc0OTQ3ZTYyNzZmMmQ4NGUzNWE4OSIsImlhdCI6MTY3MzcyMzE1OCwiZXhwIjoxNjczODA5NTU4fQ.S0h1ioqleErq5gPWoENbGDWKvT85icacmRstoeH6K1E";
+
+
+const jwt = require('jsonwebtoken')
+
+const User = require("../APIdatabase/user.models")
+const Cookie = require("../APIdatabase/cookies.models")
+const VM = require("../APIdatabase/VM.models")
+
+const userID = "63b74947e6276f2d84e35a89"
+
 
 /* Close database connection after each test */ 
 afterAll(async () => {
     await mongoose.connection.close()
 })
 
+
+/*
+describe("Generate new coookie", () => {
+    test("Returns a new generated cookie and links to userID", async () => {
+        const cookie = await app.generateNewCookie(userID)
+        
+        expect(cookie).not.toBe(null);
+        expect(cookie.linkedUser).not.toBe(null);
+    })
+})
+
+
+describe("Get user from ciphered token", () => {
+    test("Should return user info from token", async () => {
+        const cookie = await app.generateNewCookie(userID)
+        getUserFromToken(cookie.token)
+            .then(user => expect(user).not.toBeUndefined())
+            //.then(error => expect(error).toBeUndefined())
+    })
+
+    test("Should return error : Uesr not found", async () => {
+        const cookie = await app.generateNewCookie("63b74947e62789")
+        getUserFromToken(cookie.token)
+            .then(user => expect(user).toBe(null))
+            //.then(error => expect(error).toBeUndefined())
+    })
+})
+
+
+describe("Verify token", () => {
+    test("should respond with a 200 status code and return a unique user", async () => {
+        const response = await request(app)
+                                .get(`/api/users/token/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6IjYzYjc0OTQ3ZTYyNzZmMmQ4NGUzNWE4OSIsImlhdCI6MTY3MzcyMzE1OCwiZXhwIjoxNjczODA5NTU4fQ.S0h1ioqleErq5gPWoENbGDWKvT85icacmRstoeH6K1E`)
+        expect(response.status).toEqual(200)
+        expect(response.text).not.toBeUndefined()
+    })
+
+    test("should respond with a 404 status code", async () => {
+        const response = await request(app)
+                                .get(`/api/users/token/dfh6985dhdfh96dfh6d5hhd4fh4f`)
+        expect(response.status).toEqual(404)
+        expect(response.error).not.toBeUndefined()
+    })
+})
+*/
 
 describe("Login user", () => {
     test("should return 200 if the user exists in the database and a cookie had been generated", async () => {
@@ -42,6 +98,7 @@ describe("GET all users", () => {
         const response = await request(app)
                                 .get("/api/users")
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
 
     test("should respond with a 200 status code", async () => {
@@ -60,6 +117,7 @@ describe("Get user by ID", () => {
         const response = await request(app)
                                 .get("/api/users/63b74947e6276f2d84e35a89")
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
     
     test("should respond with a 200 status code and return a unique user", async () => {
@@ -136,6 +194,7 @@ describe("Get all user's vms", () => {
         const response = await request(app)
                                 .get("/api/users/63b74947e6276f2d84e35a89/vms")
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
     
     test("should respond with a 200 status code and returns the vm's list", async () => {
@@ -162,6 +221,7 @@ describe("Get user's vm by ID", () => {
         const response = await request(app)
                                 .get("/api/users/63b74947e6276f2d84e35a89/vms/63b75277e8a80538ce17af6f")
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
     
     test("should respond with a 200 status code and returns the vm's list", async () => {
@@ -199,6 +259,7 @@ describe("Create new vm", () => {
                                     description: "New vm",
                                 })
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
     
     test("should respond with a 201 status code and creates a new vm", async () => {
@@ -233,6 +294,7 @@ describe("Update vm", () => {
                                     description: "Modified vm",
                                 })
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
     
     test("should respond with a 200 status code and returns the vm's list", async () => {
@@ -278,6 +340,7 @@ describe("Delete vm", () => {
         const response = await request(app)
                                 .delete("/api/users/63b74947e6276f2d84e35a89/vms/63b753d25f9d368be838afca")
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
     
     test("should respond with a 200 status code", async () => {
@@ -315,6 +378,7 @@ describe("Start vm", () => {
                                     description: "Modified vm started",
                                 })
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
     
     test("should respond with a 200 status code and returns the vm's list", async () => {
@@ -364,6 +428,7 @@ describe("Stop vm", () => {
                                     description: "Modified vm stopped",
                                 })
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
     
     test("should respond with a 200 status code and returns the vm's list", async () => {
@@ -397,6 +462,7 @@ describe("Reset vm database", () => {
         const response = await request(app)
                                 .delete("/api/users/63b75480fa0f99d8f59a4586/vms")
         expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
     })
 
     /*test("should respond with a 200 status code", async () => {
