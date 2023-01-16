@@ -3,28 +3,35 @@ import sys
 from create_app import *
 from create_kube_files import create_kube_files
 from start_docker import start_docker
+from retrieve_json_file import retrieve_json_file
+from docker_management import *
 
-def main(user, app):
+def main():
+
+    res = retrieve_json_file()
+
     #Création du dossier application dans le dossier du user
     try:
-        create_app(user, app)
+        create_app(res[0], res[1])
     except DirectoryError as err:
         print(err.args[0])
         return(1)
 
     #Simulation de la création du docker-compose
-    path_app = Path("users/" + user + "/" + app)
+    path_app = Path("users/" + res[0] + "/" + res[1])
     subprocess.run(["cp", "users/topin/example/docker-compose.yml", path_app])
 
     #Création du docker-compose
-    """try:
-        create_docker-compose(user, app, ...)
+    try:
+            create_env(res[0], "passwd")
+            create_docker_compose(res)
     except:
-        print("An exception occurred")"""
+        print("An exception occurred")
+        return 1
     
     #Création des kubes_files
     try:
-        create_kube_files(user, app)
+        create_kube_files(res[0], res[1])
     except (DirectoryError, DockerComposeError) as err:
         print(err.args[0])
         return 1
@@ -32,7 +39,7 @@ def main(user, app):
 
     #Démarrage du docker dans minikube(K8s)
     try:
-        start_docker(user, app)
+        start_docker(res[0], res[1])
     except KubectlError as err:
         print(err.args[0])
         return 1
@@ -45,6 +52,5 @@ def main(user, app):
 
 #To start the main fonction, with the parameters
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
 
-#arg list : user, app
+    main()
