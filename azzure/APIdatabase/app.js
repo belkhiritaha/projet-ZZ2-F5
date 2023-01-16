@@ -204,12 +204,12 @@ app.post('/api/users', registerValidate, (req, res) => {
     }
 
     // Retrieve data
-    const { username, email, password } = req.body
+    const { username, email, passwd } = req.body
 
     const user = new User({
         username: username,
         email: email,
-        passwd: password
+        passwd: passwd
     })
 
     console.log(req.body)
