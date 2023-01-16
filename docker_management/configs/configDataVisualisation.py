@@ -17,6 +17,5 @@ def configDataVisualisation(contenu, technology, database, pathToTechnology):
     if technology == "grafana":
         contenu[0]['services'][technology]['environment'] = [envUser, envPasswd]
 
-    print("C'EST")
 
 #formatiser le path de la techno qu'on veut pour visualiser la data

@@ -17,13 +17,9 @@ def main():
         print(err.args[0])
         return(1)
 
-    #Simulation de la création du docker-compose
-    path_app = Path("users/" + res[0] + "/" + res[1])
-    subprocess.run(["cp", "users/topin/example/docker-compose.yml", path_app])
-
     #Création du docker-compose
     try:
-            create_env(res[0], "passwd")
+            create_env(res[0], res[1], "passwd")
             create_docker_compose(res)
     except:
         print("An exception occurred")

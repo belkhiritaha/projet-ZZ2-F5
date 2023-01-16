@@ -8,8 +8,6 @@ def configDatabaseEnvVar (contenu, technology):
                                                              'INFLUXDB_ADMIN_USER=$USER',
                                                              'INFLUXDB_ADMIN_PASSWORD=$USER']
 
-    print('AAAAAAAAAAAAAAAAA')
-
 
 
 def configDatabase(contenu, technology, pathToVolume):
@@ -28,8 +26,6 @@ def configDatabase(contenu, technology, pathToVolume):
                                      }
                              }
 
-
-    print("ISIMA")
 
     configDatabaseEnvVar(contenu, technology)
 

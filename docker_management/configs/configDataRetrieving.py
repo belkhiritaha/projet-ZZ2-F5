@@ -12,7 +12,6 @@
 
 def configDataRetrieving (contenu, technology, database, pathToDataRetrievingConfigFile):
 
-    val = True
 
     contenu[0]['services'][technology] = {
                               'image': technology, 
@@ -25,6 +24,3 @@ def configDataRetrieving (contenu, technology, database, pathToDataRetrievingCon
                              }
 
     #configDataRetrievingEnvVar(contenu, technology)                      
-
-    print("VRAIMENT")
-
