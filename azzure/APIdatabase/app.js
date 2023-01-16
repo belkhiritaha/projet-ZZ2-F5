@@ -2,6 +2,7 @@ const  express = require("express")
 const app = express()
 
 const jwt = require('jsonwebtoken')
+const { check, validationResult } = require('express-validator')
 
 const mongoose = require('mongoose')
 const User = require("./user.models")
@@ -179,20 +180,44 @@ app.get('/api/users/:id', (req, res) => {
     })
 })
 
+const registerValidate = [
+    check('username', 'Username must be unique')
+        .notEmpty(),
+    check('email', 'Email Must Be an Email Address')
+        .isEmail().trim().escape().normalizeEmail(),
+    check('passwd')
+        .notEmpty()
+        .isLength({ min: 8 })
+        .withMessage('Password Must Be at Least 8 Characters')
+        .matches('[0-9]').withMessage('Password Must Contain a Number')
+        .matches('[A-Z]').withMessage('Password Must Contain an Uppercase Letter')
+        .trim().escape()
+]
 
-// create user
-app.post('/api/users', (req, res) => {   
+// Create user : Register
+app.post('/api/users', registerValidate, (req, res) => {   
+    // Check the data entry (valid username and 8-length password)
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() })
+    }
+
+    // Retrieve data
+    const { username, email, password } = req.body
+
     const user = new User({
-        // Should filter this entry
-        // Verify that a username, an email and a password were given
-        // Hash the password + (salage ??) 
-        ...req.body
+        username: username,
+        email: email,
+        passwd: password
     })
+
+    console.log(req.body)
 
     user.save()
         .then(() => res.status(201).json({ message: 'A new user has arrived !' }))
         .catch(error => res.status(400).json({ error }))
-        
+            
     console.log("Succesfully added user to database");
 })
 

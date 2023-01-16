@@ -27,6 +27,7 @@ function Register() {
         // create user object
         const user = {
             username: username,
+            email: email,
             passwd: password,
             listVMs: []
         };
