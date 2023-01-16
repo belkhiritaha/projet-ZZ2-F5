@@ -6,13 +6,13 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: influxdb
-  name: influxdb
+    io.kompose.service: grafana
+  name: grafana
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: influxdb
+      io.kompose.service: grafana
   strategy:
     type: Recreate
   template:
@@ -22,28 +22,20 @@ spec:
         kompose.version: 1.26.0 (40646f47)
       creationTimestamp: null
       labels:
-        io.kompose.service: influxdb
+        io.kompose.service: grafana
     spec:
       containers:
-        - env:
-            - name: INFLUXDB_ADMIN_PASSWORD
-              value: xethail
-            - name: INFLUXDB_ADMIN_USER
-              value: xethail
-            - name: INFLUXDB_DB
-              value: influx
-          image: influxdb
-          name: influxdb
+        - image: grafana/grafana
+          name: grafana
           ports:
-            - containerPort: 8086
+            - containerPort: 3000
           resources: {}
           volumeMounts:
-            - mountPath: /var/lib/influxdb
-              name: influxdb-claim0
-      hostname: influxdb
+            - mountPath: /var/lib/grafana
+              name: grafana-claim0
       restartPolicy: Always
       volumes:
-        - name: influxdb-claim0
+        - name: grafana-claim0
           persistentVolumeClaim:
-            claimName: influxdb-claim0
+            claimName: grafana-claim0
 status: {}

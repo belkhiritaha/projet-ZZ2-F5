@@ -20,12 +20,13 @@ def create_docker_compose(res):
 
     configDatabase(contenu, res[2] , ".influxdb:/var/lib/influxdb")
 
-    configDataVisualisation(contenu, res[2], res[3], "./grafana:/var/lib/grafana")
-
-    for i in res[4:]:
-
-        configDataRetrieving(contenu, i, res[3],"./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf" )
+    configDataVisualisation(contenu, res[3], res[2], "./grafana:/var/lib/grafana")
     
+    '''for i in res[4:]:
+
+        configDataRetrieving(contenu, i, res[3],"./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf" )'''
+    
+ 
     path = subprocess.run(["pwd"])
 
     fichier = open("users/"+res[0]+"/"+ res[1] +"/docker-compose.yml","w+") 

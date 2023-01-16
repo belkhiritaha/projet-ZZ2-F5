@@ -3,7 +3,7 @@ import sys
 from create_app import *
 from create_kube_files import create_kube_files
 from start_docker import start_docker
-from retrieve_json_file import retrieve_json_file
+from docker_management.retrieve_json_file import retrieve_json_file
 from docker_management import *
 
 def main():

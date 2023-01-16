@@ -12,8 +12,6 @@ def configDatabaseEnvVar (contenu, technology):
 
 def configDatabase(contenu, technology, pathToVolume):
 
-
-
     contenu[0]['services'] = {
                                 technology: 
                                     {

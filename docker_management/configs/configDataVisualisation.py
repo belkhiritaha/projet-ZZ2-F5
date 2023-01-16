@@ -1,6 +1,7 @@
 
 def configDataVisualisation(contenu, technology, database, pathToTechnology):
 
+
     contenu[0]['services'][technology] = {
                                             'image': technology + '/' + technology,     # le système de database est nécessaire
                                             'depends_on': [database],

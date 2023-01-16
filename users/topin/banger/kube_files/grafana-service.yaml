@@ -6,14 +6,14 @@ metadata:
     kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
-    io.kompose.service: influxdb
-  name: influxdb
+    io.kompose.service: grafana
+  name: grafana
 spec:
   ports:
-    - name: "8086"
-      port: 8086
-      targetPort: 8086
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
   selector:
-    io.kompose.service: influxdb
+    io.kompose.service: grafana
 status:
   loadBalancer: {}
