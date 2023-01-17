@@ -4,6 +4,9 @@ const app = express()
 const jwt = require('jsonwebtoken')
 const { check, validationResult } = require('express-validator')
 
+const bcrypt = require('bcrypt')
+const saltRounds = 10
+
 const mongoose = require('mongoose')
 const User = require("./user.models")
 const Cookie = require("./cookies.models")
@@ -180,8 +183,9 @@ app.get('/api/users/:id', (req, res) => {
     })
 })
 
+// Create user : Register
 const registerValidate = [
-    check('username', 'Username must be unique')
+    check('username', 'Username must not be empty')
         .notEmpty(),
     check('email', 'Email Must Be an Email Address')
         .isEmail().trim().escape().normalizeEmail(),
@@ -194,7 +198,6 @@ const registerValidate = [
         .trim().escape()
 ]
 
-// Create user : Register
 app.post('/api/users', registerValidate, (req, res) => {   
     // Check the data entry (valid username and 8-length password)
     const errors = validationResult(req)
@@ -205,26 +208,30 @@ app.post('/api/users', registerValidate, (req, res) => {
 
     // Retrieve data
     const { username, email, passwd } = req.body
-
-    const user = new User({
-        username: username,
-        email: email,
-        passwd: passwd
-    })
-
-    console.log(req.body)
-
-    user.save()
-        .then(() => res.status(201).json({ message: 'A new user has arrived !' }))
-        .catch(error => res.status(400).json({ error }))
+    
+    bcrypt.hash(passwd, saltRounds)
+        .then(hash => {
+            const user = new User({
+                username: username,
+                email: email,
+                passwd: hash
+            })
             
-    console.log("Succesfully added user to database");
+            console.log(req.body)
+            console.log(user)
+        
+            user.save()
+                .then(() => res.status(201).json({ message: 'A new user has arrived !' }))
+                .catch(error => res.status(400).json({ error }))
+                        
+            console.log("Succesfully added user to database");
+        })
+        .catch(error => res.status(400).json({ error }))
 })
 
 
 // UPDATE the user's data
 app.put('/api/users/:id', (req, res) => {
-    // *
     User.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'The data of the user has been modified !' }))
         .catch(error => res.status(400).json({ error }))
@@ -232,8 +239,6 @@ app.put('/api/users/:id', (req, res) => {
 
 // DELETE user by ID
 app.delete('/api/users/:id', (req, res) => {
-    // The problem with this functiobn is that any user in the app who has another user's ID can delete his info
-    // Should verify that a user canb only delete his own data + (Add a super user; admin ??)
     User.deleteOne({_id: req.params.id})
         .then(user => res.status(200).json({ message: 'The user has been deleted !' }))
         .catch(error => res.status(400).json({ error }))
@@ -242,7 +247,6 @@ app.delete('/api/users/:id', (req, res) => {
 
 // reset user database
 app.delete('/api/users', (req, res) => {
-    // Anyone can delete everything
     User.deleteMany({}, function(err) {
         if (err) {
             console.log(err);
@@ -254,22 +258,27 @@ app.delete('/api/users', (req, res) => {
     res.status(200).json({ message: 'The user database has been deleted !' })
 })
 
-
 // Login user
 app.post('/api/users/login', (req, res) => {
     console.log(req.body)
-    User.findOne({username: req.body.username, passwd: req.body.passwd})
-        .then(user => {
-            if (user) {
+    User.findOne({username: req.body.username})
+    .then(async (user) => {
+        if (user) {
+            const match = await bcrypt.compare(req.body.passwd, user.passwd)
+            if (match)  {
                 const cookie = generateNewCookie(user._id)
                 res.status(200).json({ message: 'The user has been logged in !', cookie: cookie })
-                console.log("The user has been logged in !");            
+                console.log("The user has been logged in !");
             } else {
-                res.status(404).json({ message: 'The user has not been found !' })
-                console.log("The user has not been found !");
-            }
-        })
-        .catch(error => res.status(400).json({ error }))
+                res.status(400).json({ message: 'The password is incorrect !' })
+                console.log("The password is incorrect !");
+            }   
+        } else {
+            res.status(404).json({ message: 'The user has not been found !' })
+            console.log("The user has not been found !");
+        }
+    })
+    .catch(error => res.status(400).json({ error }))
 })
 
 
@@ -318,9 +327,28 @@ app.get('/api/users/:id/vms/:vmid', (req, res) => {
     })
 })
 
-
 // create new vm
-app.post('/api/users/:id/vms', (req, res) => {
+const createVmValidate = [
+    check('name', 'name must not be empty')
+        .notEmpty().trim().escape(),
+    check('description', 'Description must not be empty')
+        .notEmpty().trim().escape(),
+    check('status')
+        .notEmpty()
+        .isNumeric()
+        .withMessage('Status Must Be a Number')
+        .isIn([0, 1]).withMessage('Status must have a value of 0 or 1')
+        .matches('[A-Z]').withMessage('Password Must Contain an Uppercase Letter')
+        .trim().escape()
+]
+
+app.post('/api/users/:id/vms', createVmValidate, (req, res) => {
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() })
+    }
+
     console.log("-----------------------------")
     console.log("create new vm")
     console.log(req.body)
@@ -333,8 +361,6 @@ app.post('/api/users/:id/vms', (req, res) => {
             .then(user => {
                 // create new VM db entry
                 const vm = new VM({
-                    // Should filter this entry
-                    // Verify that all the technologies that the user choosed are available and working
                     ...req.body,
                     owner: user._id,
                     status: 0
