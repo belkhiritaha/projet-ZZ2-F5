@@ -260,7 +260,6 @@ app.delete('/api/users', (req, res) => {
 
 // Login user
 app.post('/api/users/login', (req, res) => {
-    console.log(req.body)
     User.findOne({username: req.body.username})
     .then(async (user) => {
         if (user) {
