@@ -13,18 +13,13 @@ def retrieve_json_file():
     if data['VMname'] != "":
         res.append(data['VMname'])
 
-    for key, value in data['VMservices']['db'].items():
-        if value == True:
-            res.append(key)
+    for key in data['VMservices']:
 
-    for key, value in data['VMservices']['web'].items():
-        if value == True:
-            res.append(key)
-               
-    for key, value in data['VMservices']['other'].items():
-        if value == True:
-            res.append(key)
+        for clef, value in data['VMservices'][key].items():
+            if value == True:
+                res.append(clef)
 
     f.close()
     return res
 
+print(retrieve_json_file())
