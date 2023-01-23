@@ -5,9 +5,7 @@ import mongoose from 'mongoose'
 //import { generateNewCookie } from "../APIdatabase/app";
 
 // The token should change in every connexion
-//
 const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6IjYzYjc0OTQ3ZTYyNzZmMmQ4NGUzNWE4OSIsImlhdCI6MTY3MzcyMzE1OCwiZXhwIjoxNjczODA5NTU4fQ.S0h1ioqleErq5gPWoENbGDWKvT85icacmRstoeH6K1E";
-
 
 const jwt = require('jsonwebtoken')
 
@@ -70,7 +68,7 @@ describe("Verify token", () => {
 */
 
 describe("Login user", () => {
-    test("should return 200 if the user exists in the database and a cookie had been generated", async () => {
+    test("should return 200 if the user exists in the database", async () => {
         const response = await request(app)
                                 .post("/api/users/login")
                                 .send({username: "abcd", passwd: "abcd"})
@@ -82,6 +80,13 @@ describe("Login user", () => {
                                 .post("/api/users/login")
                                 .send({username: "admin", passwd: "4475"})
         expect(response.status).toEqual(404)
+    })
+
+    test("should return 400 if the password given was incorrect", async () => {
+        const response = await request(app)
+                                .post("/api/users/login")
+                                .send({username: "abcd", passwd: "abc"})
+        expect(response.status).toEqual(400)
     })
 
     test("should return 400 if no user info were given", async () => {
@@ -164,8 +169,8 @@ describe("Create user", () => {
         const response = await request(app)
                                 .post("/api/users")
                                 .send({
-                                    username: "test 2",
-                                    passwd: "test",
+                                    username: "Test",
+                                    passwd: "Test1234",
                                 })
         expect(response.status).toEqual(201)
         expect(response.text).not.toBeUndefined()
@@ -181,6 +186,17 @@ describe("Create user", () => {
         expect(response.status).toEqual(400)
         expect(response.error).not.toBeUndefined()
     })
+
+    test("should respond with a 422 status code", async () => {
+        const response = await request(app)
+                                .post("/api/users")
+                                .send({
+                                    username: "Test",
+                                    passwd: "Test",
+                                })
+        expect(response.status).toEqual(422)
+        expect(response.error).not.toBeUndefined()
+    })
 })
 
 
@@ -189,8 +205,8 @@ describe("Update the user's data", () => {
         const response = await request(app)
                                 .put("/api/users/63b74947e6276f2d84e35a89")
                                 .send({
-                                    username: "test 1.2",
-                                    passwd: "test",
+                                    email: "test@example.com",
+                                    passwd: "Teest1234",
                                 })
         expect(response.status).toEqual(200)
         expect(response.text).not.toBeUndefined()
@@ -204,6 +220,17 @@ describe("Update the user's data", () => {
                                 .put("/api/users/63b74947e62764e35a89")
                                 .send({})
         expect(response.status).toEqual(400)
+        expect(response.error).not.toBeUndefined()
+    })
+
+    test("should respond with a 422 status code", async () => {
+        const response = await request(app)
+                                .put("/api/users/63b74947e6276f2d84e35a89")
+                                .send({
+                                    email: "test@example.com",
+                                    passwd: "Test",
+                                })
+        expect(response.status).toEqual(422)
         expect(response.error).not.toBeUndefined()
     })
 })
@@ -288,6 +315,7 @@ describe("Create new vm", () => {
                                 .set('Authorization', `Basic ${TOKEN}`)
                                 .send({
                                     name: "Ubuntu-vm",
+                                    status: 1,
                                     description: "New vm",
                                 })
         expect(response.status).toEqual(201)
@@ -300,6 +328,18 @@ describe("Create new vm", () => {
                                 .set('Authorization', `Basic ${TOKEN}`)
                                 .send()
         expect(response.status).toEqual(401)
+        expect(response.error).not.toBeUndefined()
+    })
+
+    test("should respond with a 422 status code", async () => {
+        const response = await request(app)
+                                .post("/api/users/63b74947e6276f2d84e35a89/vms")
+                                .set('Authorization', `Basic ${TOKEN}`)
+                                .send({
+                                    status: "example.com",
+                                    description: "Modified vm"
+                                })
+        expect(response.status).toEqual(422)
         expect(response.error).not.toBeUndefined()
     })
 })
@@ -350,6 +390,18 @@ describe("Update vm", () => {
                                     description: "Modified vm",
                                 })
         expect(response.status).toEqual(401)
+        expect(response.error).not.toBeUndefined()
+    })
+
+    test("should respond with a 422 status code", async () => {
+        const response = await request(app)
+                                .put("/api/users/63b74947e6276f2d84e35a89/vms/63b75277e8a80538ce17af6f")
+                                .set('Authorization', `Basic ${TOKEN}`)
+                                .send({
+                                    status: "example.com",
+                                    description: "Modified vm"
+                                })
+        expect(response.status).toEqual(422)
         expect(response.error).not.toBeUndefined()
     })
 })
@@ -505,9 +557,17 @@ describe("Reset vm database", () => {
 
 /*
 describe("Delete user by ID", () => {
+    test("should require authorization", async () => {
+        const response = await request(app)
+                                .delete("/api/users/63b74947e6276f2d84e35a89")
+        expect(response.status).toEqual(401)
+        expect(response.text).toBe(`{\"error\":\"Not authorized\"}`)
+    })
+
     test("should respond with a 200 status code", async () => {
         const response = await request(app)
                                 .delete("/api/users/63b74947e6276f2d84e35a89")
+                                .set('Authorization', `Basic ${TOKEN}`)
         expect(response.status).toEqual(200)
         expect(response.text).not.toBeUndefined()
         expect(response.body).toEqual({
@@ -518,6 +578,7 @@ describe("Delete user by ID", () => {
     test("should respond with a 400 status code", async () => {
         const response = await request(app)
                                 .delete("/api/users/63b603ba0591a0289")
+                                .set('Authorization', `Basic ${TOKEN}`)
         expect(response.status).toEqual(400)
         expect(response.error).not.toBeUndefined()
     })
@@ -533,6 +594,13 @@ describe("Reset user database", () => {
         expect(response.body).toEqual({
             message: "The user database has been deleted !"
         })
+    })
+
+    test("should respond with a 400 status code", async () => {
+        const response = await request(app)
+                                .delete("/api/user")
+        expect(response.status).toEqual(400)
+        expect(response.error).not.toBeUndefined()
     })
 })
 */

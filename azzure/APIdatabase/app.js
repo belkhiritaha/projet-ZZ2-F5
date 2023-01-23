@@ -231,7 +231,25 @@ app.post('/api/users', registerValidate, (req, res) => {
 
 
 // UPDATE the user's data
-app.put('/api/users/:id', (req, res) => {
+const updateValidate = [
+    check('email', 'Email Must Be an Email Address')
+        .isEmail().trim().escape().normalizeEmail(),
+    check('passwd')
+        .isLength({ min: 8 })
+        .withMessage('Password Must Be at Least 8 Characters')
+        .matches('[0-9]').withMessage('Password Must Contain a Number')
+        .matches('[A-Z]').withMessage('Password Must Contain an Uppercase Letter')
+        .trim().escape()
+]
+
+app.put('/api/users/:id', updateValidate, (req, res) => {
+    // Check the data entry (valid username, email and 8-length password -- if given)
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() })
+    }
+
     User.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'The data of the user has been modified !' }))
         .catch(error => res.status(400).json({ error }))
@@ -239,9 +257,15 @@ app.put('/api/users/:id', (req, res) => {
 
 // DELETE user by ID
 app.delete('/api/users/:id', (req, res) => {
-    User.deleteOne({_id: req.params.id})
-        .then(user => res.status(200).json({ message: 'The user has been deleted !' }))
-        .catch(error => res.status(400).json({ error }))
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            return res.status(401).json({ error: 'Not authorized' })
+        }
+
+        User.deleteOne({_id: req.params.id})
+            .then(user => res.status(200).json({ message: 'The user has been deleted !' }))
+            .catch(error => res.status(400).json({ error }))
+    })
 })
 
 
@@ -338,7 +362,6 @@ const createVmValidate = [
         .isNumeric()
         .withMessage('Status Must Be a Number')
         .isIn([0, 1]).withMessage('Status must have a value of 0 or 1')
-        .matches('[A-Z]').withMessage('Password Must Contain an Uppercase Letter')
         .trim().escape()
 ]
 
@@ -380,7 +403,23 @@ app.post('/api/users/:id/vms', createVmValidate, (req, res) => {
 
 
 // update vm
-app.put('/api/users/:id/vms/:vmid', (req, res) => {
+const updateVmValidate = [
+    check('name').trim().escape(),
+    check('description').trim().escape(),
+    check('status')
+        .isNumeric()
+        .withMessage('Status Must Be a Number')
+        .isIn([0, 1]).withMessage('Status must have a value of 0 or 1')
+        .trim().escape()
+]
+
+app.put('/api/users/:id/vms/:vmid', updateVmValidate, (req, res) => {
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() })
+    }
+    
     console.log("-----------------------------")
     console.log("update an existing vm")
     console.log(req.body)
