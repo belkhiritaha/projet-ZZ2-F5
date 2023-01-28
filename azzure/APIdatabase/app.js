@@ -88,6 +88,7 @@ async function decipherToken(token) {
     })
 }
 
+
 // Verify token and return user id
 async function verifyToken(token) {
     await new Promise(r => setTimeout(r, 1000));
@@ -183,10 +184,17 @@ app.get('/api/users/:id', (req, res) => {
     })
 })
 
+
 // Create user : Register
 const registerValidate = [
     check('username', 'Username must not be empty')
-        .notEmpty(),
+        .notEmpty()
+        .custom(async (value) => {
+            const user = await User.findOne({ username: value });
+            if (user) {
+              throw new Error('Username already in use');
+            }
+        }),
     check('email', 'Email Must Be an Email Address')
         .isEmail().trim().escape().normalizeEmail(),
     check('passwd')
@@ -230,11 +238,20 @@ app.post('/api/users', registerValidate, (req, res) => {
 })
 
 
-// UPDATE the user's data
+// UPDATE the user's data : In this case, the infos are optional
 const updateValidate = [
+    check('username', 'Username must be unique')
+        .optional()
+        .custom(async (value) => {
+            const user = await User.findOne({ username: value });
+            if (user) {
+              throw new Error('Username already in use');
+            }
+        }),
     check('email', 'Email Must Be an Email Address')
-        .isEmail().trim().escape().normalizeEmail(),
+        .optional().isEmail().trim().escape().normalizeEmail(),
     check('passwd')
+        .optional()
         .isLength({ min: 8 })
         .withMessage('Password Must Be at Least 8 Characters')
         .matches('[0-9]').withMessage('Password Must Contain a Number')
@@ -242,18 +259,47 @@ const updateValidate = [
         .trim().escape()
 ]
 
-app.put('/api/users/:id', updateValidate, (req, res) => {
+app.put('/api/users/:id', updateValidate, async (req, res) => {
     // Check the data entry (valid username, email and 8-length password -- if given)
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() })
     }
+    const user = await User.findOne({ _id: req.params.id })
+    
+    const actualUsername = user.username
+    const actualEmail = user.email
+    const actualPasswd = user.passwd
 
-    User.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'The data of the user has been modified !' }))
+    let NewUsername = req.body.username
+    let NewEmail = req.body.email
+    let NewPasswd = req.body.passwd
+    
+    if (NewUsername === undefined) {
+        NewUsername = actualUsername
+    }
+
+    if (NewEmail === undefined) {
+        NewEmail = actualEmail
+    }
+
+    if (NewPasswd === undefined) {
+        NewPasswd = actualPasswd
+    } else {
+        const hashedPassword = await bcrypt.hash(NewPasswd, saltRounds)
+        NewPasswd = hashedPassword
+    }
+
+    User.updateOne({ _id: req.params.id }, {
+        _id: req.params.id,
+        username: NewUsername,
+        email: NewEmail,
+        passwd: NewPasswd
+    }).then(() => res.status(200).json({ message: 'The data of the user has been modified !' }))
         .catch(error => res.status(400).json({ error }))
 })
+
 
 // DELETE user by ID
 app.delete('/api/users/:id', (req, res) => {
@@ -281,6 +327,7 @@ app.delete('/api/users', (req, res) => {
     });
     res.status(200).json({ message: 'The user database has been deleted !' })
 })
+
 
 // Login user
 app.post('/api/users/login', (req, res) => {
@@ -349,6 +396,7 @@ app.get('/api/users/:id/vms/:vmid', (req, res) => {
             .catch(error => res.status(404).json({ error }))
     })
 })
+
 
 // create new vm
 const createVmValidate = [

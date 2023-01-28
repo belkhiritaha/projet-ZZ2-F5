@@ -2,6 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import NavbarBasicExample from './navbar';
 
+
 function Register() {
     let username = '';
     let email = '';
@@ -65,6 +66,10 @@ function Register() {
                     <Form.Group className="mb-3" controlId="formBasicPassword">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Password" onChange={handlePasswordChange}/>
+                        <Form.Text id="passwordHelpBlock" muted>
+                            Your password must be at least 8 characters long, contain at least one uppercase letter
+                            and al least one number numbers.
+                        </Form.Text>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicCheckbox">
                         <Form.Check type="checkbox" label="Stay Signed In" />

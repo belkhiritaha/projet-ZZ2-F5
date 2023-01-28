@@ -15,6 +15,11 @@ const VM = require("../APIdatabase/VM.models")
 
 const userID = "63b74947e6276f2d84e35a89"
 
+const usetTest = {
+    username: "userTest",
+    email: "userTest@gmail.com",
+    passwd: "Test1234"
+}
 
 /* Close database connection after each test */ 
 afterAll(async () => {
@@ -71,7 +76,7 @@ describe("Login user", () => {
     test("should return 200 if the user exists in the database", async () => {
         const response = await request(app)
                                 .post("/api/users/login")
-                                .send({username: "abcd", passwd: "abcd"})
+                                .send({username: "userTest", passwd: "Test1234"})
         expect(response.status).toEqual(200)
     })
 
@@ -82,14 +87,14 @@ describe("Login user", () => {
         expect(response.status).toEqual(404)
     })
 
-    test("should return 400 if the password given was incorrect", async () => {
+    test("should return 400 if the password given is incorrect", async () => {
         const response = await request(app)
                                 .post("/api/users/login")
-                                .send({username: "abcd", passwd: "abc"})
+                                .send({username: "userTest", passwd: "abc"})
         expect(response.status).toEqual(400)
     })
 
-    test("should return 400 if no user info were given", async () => {
+    test("should return 400 if no user info is given", async () => {
         const response = await request(app)
         .post("/api/users/login")
         .send()
