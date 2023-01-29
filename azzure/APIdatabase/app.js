@@ -266,38 +266,45 @@ app.put('/api/users/:id', updateValidate, async (req, res) => {
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() })
     }
-    const user = await User.findOne({ _id: req.params.id })
     
-    const actualUsername = user.username
-    const actualEmail = user.email
-    const actualPasswd = user.passwd
+    verifyAuth(req, res, async (userID) => {
+        if (userID != req.params.id) {
+            return res.status(401).json({ error: 'Not authorized' })
+        }
 
-    let NewUsername = req.body.username
-    let NewEmail = req.body.email
-    let NewPasswd = req.body.passwd
-    
-    if (NewUsername === undefined) {
-        NewUsername = actualUsername
-    }
+        const user = await User.findOne({ _id: req.params.id })
+        
+        const actualUsername = user.username
+        const actualEmail = user.email
+        const actualPasswd = user.passwd
 
-    if (NewEmail === undefined) {
-        NewEmail = actualEmail
-    }
+        let NewUsername = req.body.username
+        let NewEmail = req.body.email
+        let NewPasswd = req.body.passwd
+        
+        if (NewUsername === undefined) {
+            NewUsername = actualUsername
+        }
 
-    if (NewPasswd === undefined) {
-        NewPasswd = actualPasswd
-    } else {
-        const hashedPassword = await bcrypt.hash(NewPasswd, saltRounds)
-        NewPasswd = hashedPassword
-    }
+        if (NewEmail === undefined) {
+            NewEmail = actualEmail
+        }
 
-    User.updateOne({ _id: req.params.id }, {
-        _id: req.params.id,
-        username: NewUsername,
-        email: NewEmail,
-        passwd: NewPasswd
-    }).then(() => res.status(200).json({ message: 'The data of the user has been modified !' }))
-        .catch(error => res.status(400).json({ error }))
+        if (NewPasswd === undefined) {
+            NewPasswd = actualPasswd
+        } else {
+            const hashedPassword = await bcrypt.hash(NewPasswd, saltRounds)
+            NewPasswd = hashedPassword
+        }
+
+        User.updateOne({ _id: req.params.id }, {
+            _id: req.params.id,
+            username: NewUsername,
+            email: NewEmail,
+            passwd: NewPasswd
+        }).then(() => res.status(200).json({ message: 'The data of the user has been modified !' }))
+            .catch(error => res.status(400).json({ error }))
+    })
 })
 
 
@@ -405,7 +412,7 @@ const createVmValidate = [
     check('description', 'Description must not be empty')
         .notEmpty().trim().escape(),
     check('status')
-        .notEmpty()
+        .optional()
         .isNumeric()
         .withMessage('Status Must Be a Number')
         .isIn([0, 1]).withMessage('Status must have a value of 0 or 1')
@@ -451,9 +458,10 @@ app.post('/api/users/:id/vms', createVmValidate, (req, res) => {
 
 // update vm
 const updateVmValidate = [
-    check('name').trim().escape(),
-    check('description').trim().escape(),
+    check('name').optional().trim().escape(),
+    check('description').optional().trim().escape(),
     check('status')
+        .optional()
         .isNumeric()
         .withMessage('Status Must Be a Number')
         .isIn([0, 1]).withMessage('Status must have a value of 0 or 1')
@@ -597,4 +605,4 @@ app.delete('/api/users/:id/vms', (req, res) => {
 // ########### API ROUTES ###########
 
 
-module.exports = app
+module.exports = app, generateNewCookie
