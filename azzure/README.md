@@ -16,8 +16,9 @@ Then run:
 -The backend API runs on port 8001.
 
 # Running the tests
-`npm test`
-(Tests are yet to be written.)
+`npm test` 
+- If you run the tests and a lot of them fail, don't freak out (It's normal), you'll just have to change userIDs and vmIDs according to what you have on your local database.
+- We are currently working to solve that problem and make the process automatic.
 
 # Building the app
 `npm run build`
