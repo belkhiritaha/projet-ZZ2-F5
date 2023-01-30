@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 import sys
-from create_app import *
-from create_kube_files import create_kube_files
-from start_docker import start_docker
-from docker_management.retrieve_json_file import retrieve_json_file
+from kube_management import *
 from docker_management import *
 
 def main():

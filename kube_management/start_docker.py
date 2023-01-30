@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import subprocess
 from pathlib import Path
-from error import *
+from kube_management.error import *
 
 def start_docker(user, app):
     path_user = Path('users/' + user + '/')

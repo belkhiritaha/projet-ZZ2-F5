@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import subprocess
-from error import *
+from kube_management.error import *
 from pathlib import Path
 import glob
 
