@@ -3,9 +3,9 @@ import sys
 from kube_management import *
 from docker_management import *
 
-def main():
+def main(json_name):
 
-    res = retrieve_json_file()
+    res = retrieve_json_file(json_name)
 
     #Création du dossier application dans le dossier du user
     try:
@@ -45,5 +45,4 @@ def main():
 
 #To start the main fonction, with the parameters
 if __name__ == '__main__':
-
-    main()
+    main(sys.argv[1])

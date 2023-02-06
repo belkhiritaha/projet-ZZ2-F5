@@ -1,10 +1,10 @@
 import json
 
 
-def retrieve_json_file():
+def retrieve_json_file(json_name):
     res  = []
 
-    with open('test.json') as f:
+    with open(json_name) as f:
         data = json.load(f)
 
     if data['VMid'] != "":
@@ -22,4 +22,4 @@ def retrieve_json_file():
     f.close()
     return res
 
-print(retrieve_json_file())
+#print(retrieve_json_file())
