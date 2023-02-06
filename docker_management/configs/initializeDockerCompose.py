@@ -1,6 +1,6 @@
 
-def initializeDockerCompose (contenu, version):
+def initializeDockerCompose (contenu):
 
-    contenu.append({'version': version})
+    contenu.append({'version': "3"})
 
     contenu[0]['services'] = False

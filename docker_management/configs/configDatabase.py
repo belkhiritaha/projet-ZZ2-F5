@@ -1,31 +1,25 @@
 
-def configDatabaseEnvVar (contenu, technology):
-
+def configDatabase(contenu, technology):
 
     if technology == "influxdb":
 
-        contenu[0]['services'][technology]['environment'] = ['INFLUXDB_DB=influx',
-                                                             'INFLUXDB_ADMIN_USER=$USER',
-                                                             'INFLUXDB_ADMIN_PASSWORD=$USER']
-
-
-
-def configDatabase(contenu, technology, pathToVolume):
+        technology2 = "influxdb:2.1.1"
+        pathToVolume = 'influxdb-storage:/var/lib/influxdb2:rw'
 
     contenu[0]['services'] = {
                                 technology: 
                                     {
-                                        'image' : technology, 
-                                        'container_name': technology,
+                                        'image': technology2, 
+                                        'volumes': [pathToVolume],
+                                        'env_file': ['.env'],
+                                        'entrypoint': '["./entrypoint.sh"]',
                                         'restart': 'always', 
-                                        'hostname': technology, 
-                                        'ports': ['8086:8086'],
-                                        'volumes': [pathToVolume]
+                                        'ports': ["8086:8086"],
+                                        'labels': {'kompose.service.type':'nodeport'}
                                      }
                              }
 
 
-    configDatabaseEnvVar(contenu, technology)
 
 
 #Formatiser la path ou on veut garder la database

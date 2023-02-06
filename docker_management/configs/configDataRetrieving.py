@@ -1,26 +1,16 @@
 
-#def configDataRetrievingEnvVar (contenu, technology):
+def configDataRetrieving (contenu, technology, database):
 
-    #if technology == "telegraf":
+    if technology == "telegraf":
 
-    #    contenu[0]['services'][technology]['environment'] = ['INFLUXDB_DB=influx',
-    #                                                         'INFLUXDB_ADMIN_USER=$USER',
-    #                                                         'INFLUXDB_ADMIN_PASSWORD=$USER']
-
-    #print("VRAIMENT")
-
-
-def configDataRetrieving (contenu, technology, database, pathToDataRetrievingConfigFile):
-
+        technology2 = "telegraf:1.19"
 
     contenu[0]['services'][technology] = {
-                              'image': technology, 
-                              'container_name': technology, 
+                              'image': technology2, 
+                              'env_file': ['.env'],
                               'restart': 'always',
-                              'depends_on': [database],                     # le système de database est nécessaire 
-                              'links': [database], 
-                              'volumes': [pathToDataRetrievingConfigFile],   # la path du fichier de config de récupération de data
-                              'ports': ['8125:8125']
+                              'depends_on': [database],            # le système de database est nécessaire pour le système de data retrieving
+                              'ports': ["5000:5000"],
+                              'labels': {'kompose.service.type': 'nodeport'}
                              }
-
-    #configDataRetrievingEnvVar(contenu, technology)                      
+                   
