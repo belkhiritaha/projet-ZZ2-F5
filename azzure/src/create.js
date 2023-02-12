@@ -1,94 +1,118 @@
 import React, { useState } from 'react';
-import Card from 'react-bootstrap/Card';
-import Collapse from 'react-bootstrap/Collapse';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
-import UploadForm, { Switch } from './form';
-import { JsonEditor as Editor } from 'jsoneditor-react';
+import UploadForm from './form';
 
-import JSONInput from 'react-json-editor-ajrm';
-import locale    from 'react-json-editor-ajrm/locale/en';
 
-import 'jsoneditor-react/es/editor.min.css';
 import './card.css'
 import './create.css'
+import { json } from 'react-router-dom';
 
 
 function CreateForm(props) {
 
     const [state, setConfig] = useState({
-        VMid: 0,
-        VMname: "test",
-        VMdesc: "test",
-        VMram: "test",
-        VMcpu: "test",
-        VMdisk: "test",
-        VMnetwork: "test",
-        VMimage: "test",
-        VMservices: {
-            db: {
-                influxdb: false,
-                mongodb: false,
-                mysql: false,
-                postgresql: false,
-                redis: false,
-                mariadb: false,
-                sqlite: false,
-                oracle: false,
-            },
-            web: {
-                grafana: false,
-                nodered: false,
-                apache: false,
-                nginx: false,
-                tomcat: false,
-            },
-            other: {
-                mqtt: false,
-                ssh: false,
-                http: false,
-                https: false,
-                ftp: false,
-            }
-        }
+        name: "test",
+        description: "test",
+        ram: "1",
+        cpu: "1",
+        disk: "1",
+        network: "test",
+        os: "Ubuntu",
+        services: ["ssh"],
     });
-
-    console.log("state", state);
-
 
 
     function setState(name, value) {
         state[name] = value;
     }
 
-    function setServicesState(name, field) {
-        const value = !state.VMservices[name][field];
-        state.VMservices[name][field] = value;
-        console.log("set " + name + " " + field + " to " + value);
+    function setServicesState(field) {
+        // if field in services
+        if (state.services.includes(field)) {
+            // remove field from services
+            state.services = state.services.filter(item => item !== field);
+        } else {
+            // add field to services
+            state.services.push(field);
+        }
     }
 
-    function getCurrentConfig() {
-        // return state to string
-        console.log(JSON.stringify(state));
-        return JSON.stringify(state);
+    function showError(id) {
+        document.getElementById(id).classList.add("shake");
+
+        // add p element with error message
+        document.getElementById(id).innerHTML = "Error creating VM";
+        setTimeout(() => {
+            document.getElementById(id).classList.remove("shake");
+        }
+            , 500);
+
+        setTimeout(() => {
+            document.getElementById(id).innerHTML = "";
+        }
+            , 5000);
     }
+
+    function showSuccess(id) {
+        console.log(document.getElementById(id))
+        document.getElementById(id).style.color = "green";
+        document.getElementById(id).innerHTML = "VM created successfully";
+        setTimeout(() => {
+            document.getElementById(id).innerHTML = "";
+            document.getElementById(id).style.color = "red";
+        }
+            , 5000);
+    }
+
+
+    function onSubmitManual(event, id) {
+        event.preventDefault();
+
+        // get textarea value
+        const textarea = document.getElementById("jsonFormTextArea").value;
+        let jsonData = {};
+        try {
+            jsonData = JSON.parse(textarea);
+        }
+        catch (error) {
+            showError("error");
+            return false;
+        }
+
+        if (jsonData.name === "" || jsonData.description === "" || jsonData.ram === "" || jsonData.cpu === "" || jsonData.disk === "" || jsonData.network === "" || jsonData.os === "") {
+            showError("error");
+            return false;
+        }
+        else {
+            const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
+            const cookieValue = sessionCookie.split('=')[1];
+            fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${cookieValue}`
+                },
+                body: JSON.stringify(jsonData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    showSuccess("error");
+                })
+                .catch(error => {
+                    showError("error");
+                });
+        }
+        return true;
+    }
+
 
     function onsubmit(event, id) {
         event.preventDefault();
-        console.log("submitted");
 
         // check if VMram, VMcpu, VMdisk are numbers and if all fields are filled
-        if (isNaN(state.VMram) || isNaN(state.VMcpu) || isNaN(state.VMdisk) || state.VMid === 0 || state.VMname === "" || state.VMdesc === "" || state.VMnetwork === "" || state.VMimage === "") {
+        if (isNaN(state.ram) || isNaN(state.cpu) || isNaN(state.disk) || state.name === "" || state.description === "" || state.network === "" || state.os === "") {
             document.getElementById(id).classList.add("shake");
-            console.log(isNaN(state.VMram));
-            console.log(isNaN(state.VMcpu));
-            console.log(isNaN(state.VMdisk));
-            console.log(state.VMid === 0);
-            console.log(state.VMname === "");
-            console.log(state.VMdesc === "");
-            console.log(state.VMnetwork === "");
-            console.log(state.VMimage === "");
-            
 
             // add p element with error message
             document.getElementById("error").innerHTML = "Please fill all fields with valid values";
@@ -105,25 +129,25 @@ function CreateForm(props) {
             return false;
         }
         else {
-            // // send to localhost:8000
-    
-            fetch('http://localhost:8000/create', {
+            const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
+            const cookieValue = sessionCookie.split('=')[1];
+            fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${cookieValue}`,
+                    "Content-Type": "application/json"
                 },
-                body: getCurrentConfig(),
-            }).then(response => response.json())
+                body: JSON.stringify(state)
+            })
+                .then(response => response.json())
                 .then(data => {
-                    console.log('Success:', data);
+                    console.log(data);
                 })
-                .catch((error) => {
-                    console.error('Error:', error);
+                .catch(error => {
+                    console.log(error);
                 });
         }
-        console.log(state);
         return true;
-
     }
 
     return (
@@ -131,20 +155,19 @@ function CreateForm(props) {
             <h1>Create a VM</h1>
             <hr />
             <div style={{ width: "80%", margin: "auto", textAlign: "center", justifyContent: "space-between" }}>
-                <h2>From an existing configuration file:</h2>
-                <UploadForm style={{ margin: "5%" }} />
-                <Editor
-                    value={state}
-                    onChange={
-                        (value) => {
-                            console.log(value);
-                            setConfig(value);
-                        }
-                    }
-                />
+                <h2>Customize your own VM:</h2>
+
+                <Form>
+                <Form.Group className="mb-3" controlId="jsonFormTextArea">
+                    <Form.Control as="textarea" defaultValue={JSON.stringify(state, null, 2)}
+                                 placeholder="Insert a valid JSON config" rows={15} />
+                </Form.Group>
+                </Form>
+
+
                 <Button id="button" onClick={
                     (event) => {
-                        onsubmit(event, "button");
+                        onSubmitManual(event, "button");
                     }
                 }
                     style={{ margin: "5%" }} variant="primary" type="submit">
@@ -159,64 +182,64 @@ function CreateForm(props) {
                 <Form style={{ margin: "5%" }}>
                     <Form.Group controlId="VMname">
                         <Form.Label>VM Name</Form.Label>
-                        <Form.Control onChange={e => { setState("VMname", e.target.value) }} type="text" placeholder="Enter VM name" />
+                        <Form.Control onChange={e => { setState("name", e.target.value) }} type="text" placeholder="Enter VM name" />
                     </Form.Group>
 
                     <Form.Group controlId="VMdesc">
                         <Form.Label>VM Description</Form.Label>
-                        <Form.Control onChange={e => { setState("VMdesc", e.target.value) }} type="text" placeholder="Enter VM name" />
+                        <Form.Control onChange={e => { setState("description", e.target.value) }} type="text" placeholder="Enter VM name" />
                     </Form.Group>
 
                     <Form.Group controlId="VMram">
                         <Form.Label>RAM</Form.Label>
-                        <Form.Control onChange={e => { setState("VMram", parseInt(e.target.value)) }} type="text" placeholder="Enter RAM" />
+                        <Form.Control onChange={e => { setState("ram", parseInt(e.target.value)) }} type="text" placeholder="Enter RAM" />
                     </Form.Group>
 
                     <Form.Group controlId="VMcpu">
                         <Form.Label>Number of CPUs</Form.Label>
-                        <Form.Control onChange={e => { setState("VMcpu", parseInt(e.target.value)) }} type="text" placeholder="Enter number of CPUs" />
+                        <Form.Control onChange={e => { setState("cpu", parseInt(e.target.value)) }} type="text" placeholder="Enter number of CPUs" />
                     </Form.Group>
 
                     <Form.Group controlId="VMdisk">
                         <Form.Label>Storage</Form.Label>
-                        <Form.Control onChange={e => { setState("VMdisk", parseInt(e.target.value)) }} type="text" placeholder="Enter storage" />
+                        <Form.Control onChange={e => { setState("disk", parseInt(e.target.value)) }} type="text" placeholder="Enter storage" />
                     </Form.Group>
 
                     <Form.Group controlId="VMnetwork">
                         <Form.Label>Network</Form.Label>
-                        <Form.Control onChange={e => { setState("VMnetwork", e.target.value) }} type="text" placeholder="Enter network" />
+                        <Form.Control onChange={e => { setState("network", e.target.value) }} type="text" placeholder="Enter network" />
                     </Form.Group>
 
                     <Form.Group controlId="VMos">
                         <Form.Label>OS</Form.Label>
-                        <Form.Control onChange={e => { setState("VMimage", e.target.value) }} type="text" placeholder="Enter OS" />
+                        <Form.Control onChange={e => { setState("os", e.target.value) }} type="text" placeholder="Enter OS" />
                     </Form.Group>
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMdb">
                         <h3>Databases:</h3>
-                        <Form.Check onChange={e => { setServicesState("db", "influxdb") }} type="switch" id="custom-switch" label="InfluxDB" />
-                        <Form.Check onChange={e => { setServicesState("db", "mongodb") }} type="switch" id="custom-switch" label="MongoDB" />
-                        <Form.Check onChange={e => { setServicesState("db", "mysql") }} type="switch" id="custom-switch" label="MySQL" />
-                        <Form.Check onChange={e => { setServicesState("db", "postgresql") }} type="switch" id="custom-switch" label="PostgreSQL" />
-                        <Form.Check onChange={e => { setServicesState("db", "redis") }} type="switch" id="custom-switch" label="Redis" />
+                        <Form.Check onChange={e => { setServicesState("influxdb") }} type="switch" id="custom-switch" label="InfluxDB" />
+                        <Form.Check onChange={e => { setServicesState("mongodb") }} type="switch" id="custom-switch" label="MongoDB" />
+                        <Form.Check onChange={e => { setServicesState("mysql") }} type="switch" id="custom-switch" label="MySQL" />
+                        <Form.Check onChange={e => { setServicesState("postgresql") }} type="switch" id="custom-switch" label="PostgreSQL" />
+                        <Form.Check onChange={e => { setServicesState("redis") }} type="switch" id="custom-switch" label="Redis" />
                     </Form.Group>
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMweb">
                         <h3>Web servers:</h3>
-                        <Form.Check onChange={e => { setServicesState("web", "grafana") }} type="switch" id="custom-switch" label="Grafana" />
-                        <Form.Check onChange={e => { setServicesState("web", "nodered") }} type="switch" id="custom-switch" label="Node-RED" />
-                        <Form.Check onChange={e => { setServicesState("web", "apache") }} type="switch" id="custom-switch" label="Apache" />
-                        <Form.Check onChange={e => { setServicesState("web", "nginx") }} type="switch" id="custom-switch" label="Nginx" />
-                        <Form.Check onChange={e => { setServicesState("web", "tomcat") }} type="switch" id="custom-switch" label="Tomcat" />
+                        <Form.Check onChange={e => { setServicesState("grafana") }} type="switch" id="custom-switch" label="Grafana" />
+                        <Form.Check onChange={e => { setServicesState("nodered") }} type="switch" id="custom-switch" label="Node-RED" />
+                        <Form.Check onChange={e => { setServicesState("apache") }} type="switch" id="custom-switch" label="Apache" />
+                        <Form.Check onChange={e => { setServicesState("nginx") }} type="switch" id="custom-switch" label="Nginx" />
+                        <Form.Check onChange={e => { setServicesState("tomcat") }} type="switch" id="custom-switch" label="Tomcat" />
                     </Form.Group>
 
                     <Form.Group style={{ margin: "5%" }} controlId="VMother">
                         <h3>Other:</h3>
-                        <Form.Check onChange={e => { setServicesState("other", "mqtt") }} type="switch" id="custom-switch" label="MQTT" />
-                        <Form.Check onChange={e => { setServicesState("other", "ssh") }} type="switch" id="custom-switch" label="SSH" />
-                        <Form.Check onChange={e => { setServicesState("other", "http") }} type="switch" id="custom-switch" label="HTTP" />
-                        <Form.Check onChange={e => { setServicesState("other", "https") }} type="switch" id="custom-switch" label="HTTPS" />
-                        <Form.Check onChange={e => { setServicesState("other", "ftp") }} type="switch" id="custom-switch" label="FTP" />
+                        <Form.Check onChange={e => { setServicesState("mqtt") }} type="switch" id="custom-switch" label="MQTT" />
+                        <Form.Check onChange={e => { setServicesState("ssh") }} type="switch" id="custom-switch" label="SSH" />
+                        <Form.Check onChange={e => { setServicesState("http") }} type="switch" id="custom-switch" label="HTTP" />
+                        <Form.Check onChange={e => { setServicesState("https") }} type="switch" id="custom-switch" label="HTTPS" />
+                        <Form.Check onChange={e => { setServicesState("ftp") }} type="switch" id="custom-switch" label="FTP" />
                     </Form.Group>
 
 

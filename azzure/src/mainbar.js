@@ -1,60 +1,24 @@
-import React, { useState, useTransition } from 'react';
+import React, { useState } from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import './mainbar.css';
 import Card from 'react-bootstrap/Card';
 import Collapse from 'react-bootstrap/Collapse';
-import ListGroup from 'react-bootstrap/ListGroup';
-import UploadForm, { Switch } from './form';
-import Fade from 'react-bootstrap/Fade';
 import './card.css'
-import { Form } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
 import CreateForm from './create';
 import Manage from './manage';
+import Cli from './cli';
 
-function MainbarItem(props) {
-    return (
-        <Col class={props.class}>
-            <a href={props.link}>{props.name}</a>
-        </Col>
-    );
-}
 
 function Mainbar(props) {
     // shown menu state
     const [menu, setMenu] = useState(props.page);
 
-    switch (props.page) {
-        case 'home':
-            console.log('home');
-            // setMenu('home');
-            break;
-        case 'create':
-            console.log('create');
-            // setMenu('create');
-            break;
-        case 'manage':
-            console.log('manage');
-            // setMenu('manage');
-            break;
-        default:
-            console.log('home');
-            setMenu('home');
-    }
-
-    const rowContent = [];
-    // menu items
-
 
     function CardItem(props) {
 
         function handleCardClick(id) {
-            // change props.open to true
-            console.log(id);
-            console.log(menu);
-            //this.setState({open: "true"});
             if (menu !== "home") {
                 setMenu("home");
             }
@@ -66,7 +30,7 @@ function Mainbar(props) {
                     setMenu('manage');
                 }
                 else if (id == 3) {
-                    setMenu('run');
+                    setMenu('cli');
                 }
                 else if (id == 4) {
                     setMenu('view');
@@ -77,8 +41,6 @@ function Mainbar(props) {
             }
         }
 
-
-        const nbItems = props.nbFields;
 
         return (
             <Card onClick={() => { handleCardClick(props.card_id) }} style={{ width: '18rem', margin: 'auto', textAlign: 'center' }}>
@@ -94,13 +56,29 @@ function Mainbar(props) {
     let isHomeActive = (menu == 'home');
     let isCreateActive = (menu == 'create');
     let isManageActive = (menu == 'manage');
-    let isRunActive = (menu == 'run');
+    let isRunActive = (menu == 'cli');
     let isViewActive = (menu == 'view');
     let isDashboardActive = (menu == 'dashboard');
 
+    // if user undefined, show login and register
+    if (props.user == undefined) {
+        return (
+            <Container>
+                <Row>
+                    <div id="home">
+                        <h1>Welcome to aZZure</h1>
+                        <p>aZZure is a cloud computing platform that allows you to create, manage and run virtual machines geared towards IoT.</p>
+                        <p>It is a project for the ZZ2 year at ISIMA.</p>
+                        <p>To access all its cool features, you need to login first.</p>
+                    </div>
+                </Row>
+            </Container>
+        );
+    }
+
     return (
         <>
-            <Col xs={10}>
+            <Col xs={12}>
                 <Container style={{ textAlign: "center" }}>
                     <h1>aZZure</h1>
                     <h2>Clermont INP's IoT VM Manager</h2>
@@ -112,7 +90,7 @@ function Mainbar(props) {
                             <CardItem  card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" />
                             <Collapse  in={isCreateActive}>
                                 <div className="col">
-                                    <CreateForm />
+                                    <CreateForm {...props} />
                                 </div>
                             </Collapse>
                         </div>
@@ -123,7 +101,7 @@ function Mainbar(props) {
                             <CardItem  card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" />
                             <Collapse  in={isManageActive}>
                                 <div className="col">
-                                    <Manage />
+                                    <Manage {...props}/>
                                 </div>
                             </Collapse>
                         </div>
@@ -131,7 +109,12 @@ function Mainbar(props) {
 
                     <Collapse  in={(isHomeActive || isRunActive)}>
                         <div className="col">
-                            <CardItem  card_id='3' title="Run a VM" text="Run a VM" img="fas fa-play" />
+                            <CardItem  card_id='3' title="Run a CLI" text="Run a CLI" img="fas fa-terminal" />
+                            <Collapse  in={isRunActive}>
+                                <div className="col">
+                                    <Cli {...props}/>
+                                </div>
+                            </Collapse>
                         </div>
                     </Collapse>
 
