@@ -66,10 +66,13 @@ function Mainbar(props) {
             <Container>
                 <Row>
                     <div id="home">
-                        <h1>Welcome to aZZure</h1>
-                        <p>aZZure is a cloud computing platform that allows you to create, manage and run virtual machines geared towards IoT.</p>
-                        <p>It is a project for the ZZ2 year at ISIMA.</p>
-                        <p>To access all its cool features, you need to login first.</p>
+                        <h1>Welcome to aZZure 👋</h1>
+                        <div className='body-text'>
+                            <p>aZZure is a cloud computing platform that allows you to create, manage and run </p>
+                            <p>virtual machines geared towards IoT.</p>
+                            <p>It is a project for the ZZ2 year at ISIMA.</p>
+                            <p>To access all its cool features, you need to <strong><a href='/login'>login</a></strong> first.</p>
+                        </div>
                     </div>
                 </Row>
             </Container>

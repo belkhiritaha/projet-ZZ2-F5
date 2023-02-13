@@ -10,3 +10,33 @@
 .row {
     transition: all 1s;
 }
+
+#home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+h1 {
+    font-size: 45px !important;
+    align-self: stretch;
+    text-align: center;
+    color: black;
+}
+
+.body-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    color: black;
+    font-size: 20px;
+}
+
+strong {
+    color: #156EBF;
+    text-decoration: underline;
+}
