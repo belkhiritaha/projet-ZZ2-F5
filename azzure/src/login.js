@@ -81,20 +81,20 @@ function Login() {
     return (
         <>
             <NavbarBasicExample />
-            <div className='container'>
+            <div className='login-container'>
                 <h2>Login</h2>
-                <Form onSubmit={onsubmit}>
+                <Form className='login-body' onSubmit={onsubmit}>
                     <Form.Group className="mb-3" controlId="formBasicUsername">
-                        <Form.Label>Enter username :</Form.Label>
-                        <Form.Control type="text" placeholder="Username..." onChange={handleUsernameChange} />
+                        <Form.Label className='login-text'>Enter username :</Form.Label>
+                        <Form.Control className='name' type="text" placeholder="Username..." onChange={handleUsernameChange} />
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Enter password :</Form.Label>
-                        <Form.Control type="password" placeholder="******" onChange={handlePasswordChange} />
+                        <Form.Label className='login-text'>Enter password :</Form.Label>
+                        <Form.Control className='name' type="password" placeholder="******" onChange={handlePasswordChange} />
                     </Form.Group>
 
-                    <Button variant="primary" type="submit">
+                    <Button className='submit-button' variant="primary" type="submit">
                         Submit
                     </Button>
                     <p id='error' style={{color: "red"}}></p>

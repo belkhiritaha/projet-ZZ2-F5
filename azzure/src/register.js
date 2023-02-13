@@ -1,7 +1,8 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import NavbarBasicExample from './navbar';
-
+import './login.css';
+import './register.css';
 
 function Register() {
     let username = '';
@@ -47,35 +48,29 @@ function Register() {
     return (
         <>
             <NavbarBasicExample />
-            <div style={{ width: '50%', margin: 'auto', marginTop: '5%' }} className="container">
-                <h1>Register</h1>
-                <Form onSubmit={onsubmit}>
+            <div className="login-container">
+                <h2>Register</h2>
+                <Form className='login-body' onSubmit={onsubmit}>
                     <Form.Group className="mb-3" controlId="formBasicUsername">
-                        <Form.Label>Username</Form.Label>
-                        <Form.Control type="username" placeholder="Enter username" onChange={handleUsernameChange}/>
+                        <Form.Label className='login-text'>Enter username :</Form.Label>
+                        <Form.Control className='name-register' type="username" placeholder="Username..." onChange={handleUsernameChange}/>
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" onChange={handleEmailChange}/>
-                        <Form.Text className="text-muted">
-                            We'll never share your email with anyone else.
-                        </Form.Text>
+                        <Form.Label className='login-text'>Enter email address :</Form.Label>
+                        <Form.Control className='name-register' type="email" placeholder="Email" onChange={handleEmailChange}/>
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" onChange={handlePasswordChange}/>
+                        <Form.Label className='login-text'>Enter password :</Form.Label>
+                        <Form.Control className='name-register' type="password" placeholder="********" onChange={handlePasswordChange}/>
                         <Form.Text id="passwordHelpBlock" muted>
-                            Your password must be at least 8 characters long, contain at least one uppercase letter
+                            <br />Your password must be at least 8 characters long, contain at least one uppercase letter
                             and al least one number numbers.
                         </Form.Text>
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                        <Form.Check type="checkbox" label="Stay Signed In" />
-                    </Form.Group>
 
-                    <Button variant="primary" type="submit">
+                    <Button className='submit-button' variant="primary" type="submit">
                         Submit
                     </Button>
                 </Form>

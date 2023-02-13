@@ -1,12 +1,41 @@
-/*.container {
+.login-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-}*/
+    margin-top: 50px;
+}
 
+h2 {
+    font-size: 40px;
+    text-transform: uppercase;
+}
 
+.login-body {
+    margin-top: 30px;
+}
+
+.login-text {
+    font-size: 24px;
+}
+
+.mb-3 {
+    margin-top: 8px !important;
+}
+
+.name {
+    width: 400px !important;
+    height: 40px !important;
+    background-color: white !important;
+    border-radius: 10px;
+    border: 1px solid black !important;
+}
+
+.submit-button {
+    margin-top: 10px;
+    color: #156EBF;
+}
 
 
 
