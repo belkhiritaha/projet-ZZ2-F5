@@ -226,69 +226,11 @@ function Manage(props) {
 
     // state
     const [open, setOpen] = useState(false);
-    const [VMs, setVMs] = useState([]);
-    const [refresh, setRefresh] = useState(false);
-
-    let response;
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
 
 
     // functions
-    async function getAllVMs() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "http://localhost:8000/api/vm/list/0", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        await xhr.send(null);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                response = JSON.parse(xhr.responseText);
-                console.log("the response, ", response);
-                setVMs(response);
-
-                console.log('this is it', VMs);
-            }
-        }
-    }
-        // return {
-        //     VMs: [
-        //         {
-        //             name: "test",
-        //             desc: "test",
-        //             ram: "test",
-        //             cpu: "test",
-        //             disk: "test",
-        //             network: "test",
-        //             image: "test",
-        //             services: {
-        //                 db: {
-        //                     influxdb: false,
-        //                     mongodb: false,
-        //                     mysql: false,
-        //                     postgresql: false,
-        //                     redis: false,
-        //                     mariadb: false,
-        //                     sqlite: false,
-        //                     oracle: false,
-        //                 },
-        //                 web: {
-        //                     grafana: false,
-        //                     nodered: false,
-        //                     apache: false,
-        //                     nginx: false,
-        //                     tomcat: false,
-        //                 },
-        //                 other: {
-        //                     mqtt: false,
-        //                     ssh: false,
-        //                     http: false,
-        //                     https: false,
-        //                     ftp: false,
-        //                 }
-        //             }
-        //         }
-        //     ]
-        // };
     function refreshVms() {
         getAllVMs(props.user).then((data) => {
             let newCards = [];
@@ -305,81 +247,6 @@ function Manage(props) {
         });
     }
 
-    function refreshVMs() {
-        getAllVMs();
-        console.log("cms", VMs);
-        // setVMs([
-        //     {
-        //         name: "My Super VM 1",
-        //         desc: "My super vm to test my super IOT project",
-        //         ram: "1024",
-        //         cpu: "1",
-        //         disk: "10",
-        //         network: "bridge",
-        //         image: "ubuntu",
-        //         services: {
-        //             db: {
-        //                 influxdb: false,
-        //                 mongodb: false,
-        //                 mysql: false,
-        //                 postgresql: false,
-        //                 redis: true,
-        //                 mariadb: false,
-        //                 sqlite: false,
-        //                 oracle: false,
-        //             },
-        //             web: {
-        //                 grafana: false,
-        //                 nodered: false,
-        //                 apache: false,
-        //                 nginx: true,
-        //                 tomcat: false,
-        //             },
-        //             other: {
-        //                 mqtt: false,
-        //                 ssh: false,
-        //                 http: true,
-        //                 https: false,
-        //                 ftp: false,
-        //             }
-        //         }
-        //     },
-        //     {
-        //         name: "My Super VM 2",
-        //         desc: "My super vm to test my super IOT project",
-        //         ram: "1024",
-        //         cpu: "1",
-        //         disk: "10",
-        //         network: "bridge",
-        //         image: "ubuntu",
-        //         services: {
-        //             db: {
-        //                 influxdb: false,
-        //                 mongodb: false,
-        //                 mysql: false,
-        //                 postgresql: false,
-        //                 redis: true,
-        //                 mariadb: false,
-        //                 sqlite: false,
-        //                 oracle: false,
-        //             },
-        //             web: {
-        //                 grafana: false,
-        //                 nodered: false,
-        //                 apache: false,
-        //                 nginx: true,
-        //                 tomcat: false,
-        //             },
-        //             other: {
-        //                 mqtt: false,
-        //                 ssh: false,
-        //                 http: true,
-        //                 https: false,
-        //                 ftp: false,
-        //             }
-        //         }
-        //     }
-        // ]);
     useEffect(() => {
         const userVms = props.user.vms;
         let newCards = [];
@@ -404,7 +271,6 @@ function Manage(props) {
         )
     }
 
-    console.log("vms: " , VMs);
 
     return (
         <div style={{ margin: "auto", textAlign: "center", alignContent: "space-between" }}>
@@ -420,6 +286,5 @@ function Manage(props) {
 
 
 };
-}
 
 export default Manage;

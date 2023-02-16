@@ -280,37 +280,63 @@ app.get('/api/users/:id/vms/:vmid', (req, res) => {
     })
 })
 
+async function createVm(body){
+    console.log("ok2");
+    return new Promise((resolve)=>{
+       exec("./script.sh", (error, stdout, stderr) => {
+        if (error) {
+                console.log(`error: ${error.message}`);
+                resolve("-1");
+            }
+        if (stderr) {
+                console.log(`stderr: ${stderr}`);
+            resolve("-1");
+            }
+        else{
+            console.log(stdout)
+            let VMid=stdout;
+            console.log("vm id : " + VMid);
+            resolve(VMid);}
+        })
+    });
+};
 
 // create new vm
-app.post('/api/users/:id/vms', (req, res) => {
+app.post('/api/users/:id/vms', async (req, res) => {
     console.log("-----------------------------")
     console.log("create new vm")
     console.log(req.body)
+    // mettre le body sous .json et transferer dans le script. 
     verifyAuth(req, res, (userID) => {
-        if (userID != req.params.id) {
+        if (userID !== req.params.id) {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
         User.findOne({_id: req.params.id})
-            .then(user => {
-                // create new VM db entry
-                const vm = new VM({
-                    ...req.body,
-                    owner: user._id,
-                    status: 0
+            .then(async user => { 
+                await createVm(req.body).then(async x=>{
+                    let docker_id =JSON.parse(x);
+                    console.log(docker_id); 
+                    const vm = new VM({
+                        ...req.body,
+                        docker_id : docker_id, 
+                        owner: user._id,
+                        status: 0 
+                    })
+                    vm.save()
+                        .then(() => console.log("Succesfully added vm to database"))
+                        .catch(error => console.log(error))
+                    // add vm to user's list
+                    user.listVMs.push(vm._id)
+                    user.save()
+                        .then(() => res.status(201).json({ message: 'A new vm has arrived !' }))
+                        .catch(error => res.status(400).json({ error }))
                 })
-                vm.save()
-                    .then(() => console.log("Succesfully added vm to database"))
-                    .catch(error => console.log(error))
-                // add vm to user's list
-                user.listVMs.push(vm._id)
-                user.save()
-                    .then(() => res.status(201).json({ message: 'A new vm has arrived !' }))
-                    .catch(error => res.status(400).json({ error }))
             })
             .catch(error => res.status(404).json({ error }))
     })
 })
+
 
 
 // update vm
