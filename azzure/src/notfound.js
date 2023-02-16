@@ -3,7 +3,6 @@ import NavbarBasicExample from './navbar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
 import Sidebar from './sidebar';
-import Mainbar from './mainbar';
 
 function NotFound(props) {
     // return navbar

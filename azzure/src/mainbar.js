@@ -9,6 +9,7 @@ import './card.css'
 import CreateForm from './create';
 import Manage from './manage';
 import Cli from './cli';
+import Navbar from 'react-bootstrap/Navbar';
 
 
 function Mainbar(props) {
@@ -82,15 +83,14 @@ function Mainbar(props) {
     return (
         <>
             <Col xs={12}>
-                <Container style={{ textAlign: "center" }}>
-                    <h1>aZZure</h1>
-                    <h2>Clermont INP's IoT VM Manager</h2>
+                <Container className='welcome-title' style={{ textAlign: "center"}}>
+                    <Navbar.Brand>Welcome, {props.user.username} 👋</Navbar.Brand>
                 </Container>
 
-                <Row>
+                <Row className='cols'>
                     <Collapse  in={(isHomeActive || isCreateActive)}>
                         <div className="col">
-                            <CardItem  card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" />
+                            <CardItem card_id='1' title="Create a VM" text="Create a customized VM to store and process your IoT data" img="fas fa-cloud-upload-alt" />
                             <Collapse  in={isCreateActive}>
                                 <div className="col">
                                     <CreateForm {...props} />
@@ -101,7 +101,7 @@ function Mainbar(props) {
 
                     <Collapse  in={(isHomeActive || isManageActive)}>
                         <div className="col">
-                            <CardItem  card_id='2' title="Manage your VMs" text="Manage your VMs" img="fas fa-desktop" />
+                            <CardItem  card_id='2' title="Manage your VMs" text="Manage VMs" img="fas fa-desktop" />
                             <Collapse  in={isManageActive}>
                                 <div className="col">
                                     <Manage {...props}/>
@@ -112,7 +112,7 @@ function Mainbar(props) {
 
                     <Collapse  in={(isHomeActive || isRunActive)}>
                         <div className="col">
-                            <CardItem  card_id='3' title="Run a CLI" text="Run a CLI" img="fas fa-terminal" />
+                            <CardItem card_id='3' title="Run a CLI" text="Run CLI" img="fas fa-terminal" />
                             <Collapse  in={isRunActive}>
                                 <div className="col">
                                     <Cli {...props}/>
@@ -121,15 +121,15 @@ function Mainbar(props) {
                         </div>
                     </Collapse>
 
-                    <Collapse  in={(isHomeActive || isViewActive)}>
+                    <Collapse in={(isHomeActive || isViewActive)}>
                         <div className="col">
-                            <CardItem  card_id='4' title="View your VMs" text="View your VMs" img="fas fa-eye" />
+                            <CardItem card_id='4' title="View your VMs" text="View VMs" img="fas fa-eye" />
                         </div>
                     </Collapse>
 
                     <Collapse  in={(isHomeActive || isDashboardActive)}>
                         <div className="col">
-                            <CardItem  card_id='5' title="Dashboard" text="Dashboard" img="fas fa-chart-line" />
+                            <CardItem  card_id='5' title="Dashboard" text="Visualize your VMs" img="fas fa-chart-line" />
                         </div>
                     </Collapse>
 

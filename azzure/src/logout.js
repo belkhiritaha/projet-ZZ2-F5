@@ -1,4 +1,5 @@
 import NavbarBasicExample from "./navbar";
+import "./logout.css"
 
 function Logout() {
     let cookies = document.cookie.split("; ");
@@ -9,9 +10,9 @@ function Logout() {
     return (
         <>
             <NavbarBasicExample />
-            <div className='container'>
+            <div className='logout-container'>
                 <h2>Logout</h2>
-                <p>You have been logged out.</p>
+                <p className='logout-body'>You have been logged out ! <br /> See you soon 👋</p>
             </div>
         </>
     );

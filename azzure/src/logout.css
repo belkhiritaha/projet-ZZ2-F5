@@ -1,0 +1,18 @@
+.logout-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 60px;
+}
+
+h2 {
+    font-size: 40px;
+    text-transform: uppercase;
+}
+
+.logout-body {
+    margin-top: 40px;
+    font-size: 25px;
+}

@@ -41,3 +41,17 @@ strong {
     color: #156EBF;
     text-decoration: underline;
 }
+
+.welcome-title {
+    font-size: 2rem;
+    margin-top: 50px;
+}
+
+.cols {
+    margin-top: 50px !important;
+}
+
+.col {
+    color: #156EBF !important;
+    text-decoration: black !important;
+}
