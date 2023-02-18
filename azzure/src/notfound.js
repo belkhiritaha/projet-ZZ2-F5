@@ -1,22 +1,16 @@
 import './App.css';
 import NavbarBasicExample from './navbar';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row'
-import Sidebar from './sidebar';
+import './sidebar';
 
 function NotFound(props) {
     // return navbar
     return (
         <>
             <NavbarBasicExample />
-            <Container fluid>
-                <Row>
-                    <Sidebar />
-
-                    <h1>404</h1>
-                    <h2>Page not found</h2>
-                </Row>
-            </Container>
+            <div className='not-found'>
+                    <img src='https://img.freepik.com/premium-vector/website-page-found-error-robot-character-broken-chatbot-mascot-disabled-site-technical-work_502272-1888.jpg' alt=''/>
+                    <h1>Page not found</h1>
+            </div>
         </>
     );
 }

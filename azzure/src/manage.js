@@ -142,8 +142,8 @@ function Manage(props) {
 
         return (
             <div className="manage-card">
-                <div style={{ textAlign: "center", margin: "5%" }} key={props.VM.name}>
-                    <Card>
+                <div style={{ textAlign: "center", margin: "5%", color: 'black' }} key={props.VM.name}>
+                    <Card className="card">
                         <Card.Header>
                             <div className='row'>
                                 <h3 className="mr-sm-2">
@@ -176,12 +176,13 @@ function Manage(props) {
                             <Card.Body>
                                 <Form onSubmit={() => { this.event.preventDefault(); }}>
                                     <Form.Group>
-                                        <h3>Description</h3>
-                                        <Form.Control onChange={e => { props.VM.description = e.target.value }} type="text" placeholder="Enter description" defaultValue={props.VM.description} />
+                                        <h3 style={{ fontSize: '35px', fontWeight: 'bold' }}>Description</h3>
+                                        <Form.Control onChange={e => { props.VM.description = e.target.value }} type="text" placeholder="Enter description..." />
                                     </Form.Group>
                                     <Form.Group>
+                                        <br />
                                         <Form.Group>
-                                            <h3>Database</h3>
+                                            <h3 style={{ fontSize: '35px', fontWeight: 'bold' }}>Databases :</h3>
                                             <Form.Check type="switch" label="InfluxDB" defaultChecked={props.VM.services.includes("influxdb")} onChange={() => { updateService("influxdb") }} />
                                             <Form.Check type="switch" label="MongoDB" defaultChecked={props.VM.services.includes("mongodb")} onChange={() => { updateService("mongodb") }} />
                                             <Form.Check type="switch" label="MySQL" defaultChecked={props.VM.services.includes("mysql")} onChange={() => { updateService("mysql") }} />
@@ -191,25 +192,27 @@ function Manage(props) {
                                             <Form.Check type="switch" label="SQLite" defaultChecked={props.VM.services.includes("sqlite")} onChange={() => { updateService("sqlite") }} />
                                             <Form.Check type="switch" label="Oracle" defaultChecked={props.VM.services.includes("oracle")} onChange={() => { updateService("oracle") }} />
                                         </Form.Group>
+                                        <br />
                                         <Form.Group>
-                                            <h3>Web</h3>
+                                            <h3 style={{ fontSize: '35px', fontWeight: 'bold' }}>Web servers :</h3>
                                             <Form.Check type="switch" label="Grafana" defaultChecked={props.VM.services.includes("grafana")} onChange={() => { updateService("grafana") }} />
                                             <Form.Check type="switch" label="Node-RED" defaultChecked={props.VM.services.includes("nodered")} onChange={() => { updateService("nodered") }} />
                                             <Form.Check type="switch" label="Apache" defaultChecked={props.VM.services.includes("apache")} onChange={() => { updateService("apache") }} />
                                             <Form.Check type="switch" label="Nginx" defaultChecked={props.VM.services.includes("nginx")} onChange={() => { updateService("nginx") }} />
                                             <Form.Check type="switch" label="Tomcat" defaultChecked={props.VM.services.includes("php")} onChange={() => { updateService("tomcat") }} />
                                         </Form.Group>
+                                        <br />
                                         <Form.Group>
-                                            <h3>Other</h3>
+                                            <h3 style={{ fontSize: '35px', fontWeight: 'bold' }}>Other services :</h3>
                                             <Form.Check type="switch" label="MQTT" defaultChecked={props.VM.services.includes("mqtt")} onChange={() => { updateService("mqtt") }} />
                                             <Form.Check type="switch" label="SSH" defaultChecked={props.VM.services.includes("ssh")} onChange={() => { updateService("ssh") }} />
                                             <Form.Check type="switch" label="HTTP" defaultChecked={props.VM.services.includes("http")} onChange={() => { updateService("http") }} />
                                             <Form.Check type="switch" label="HTTPS" defaultChecked={props.VM.services.includes("https")} onChange={() => { updateService("https") }} />
                                             <Form.Check type="switch" label="FTP" defaultChecked={props.VM.services.includes("ftp")} onChange={() => { updateService("ftp") }} />
                                         </Form.Group>
-
+                                        <br />
                                         <Form.Group>
-                                            <Button variant="primary" type="submit" onClick={editVM}>
+                                            <Button className='submit-button' variant="primary" type="submit" onClick={editVM}>
                                                 Submit
                                             </Button>
                                             <h3 id={props.VM._id + "error"} style={{ color: "red" }}></h3>

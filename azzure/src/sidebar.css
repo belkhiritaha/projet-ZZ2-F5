@@ -18,3 +18,9 @@
     transform: translate3d(-5px, 5px, 0);
     transition: all 0.1s ease-in-out;
 }
+
+.not-found{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
