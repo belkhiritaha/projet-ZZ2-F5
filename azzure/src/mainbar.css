@@ -19,12 +19,11 @@
     margin-top: 50px;
 }
 
-h1 {
+.welcome-title {
     font-size: 40px !important;
     align-self: stretch;
     text-align: center;
     color: black;
-    text-transform: uppercase;
 }
 
 .body-text {

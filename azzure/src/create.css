@@ -22,3 +22,19 @@
         transform: translate3d(4px, 0, 0);
     }
 }
+
+.hr {
+    color: black !important;
+}
+
+.login-text {
+    color: black !important;
+}
+
+.bold {
+    font-weight: 600;
+}
+
+.resize {
+    font-size: 1.1rem;
+}

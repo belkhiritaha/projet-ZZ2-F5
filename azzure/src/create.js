@@ -153,9 +153,9 @@ function CreateForm(props) {
     return (
         <div className="col" style={{ width: "100%", margin: "auto", textAlign: "center", justifyContent: "space-between" }}>
             <h1>Create a VM</h1>
-            <hr />
+            <hr className='hr'/>
             <div style={{ width: "80%", margin: "auto", textAlign: "center", justifyContent: "space-between" }}>
-                <h2>Customize your own VM:</h2>
+                <h1>Customize your VM :</h1>
 
                 <Form>
                 <Form.Group className="mb-3" controlId="jsonFormTextArea">
@@ -165,7 +165,7 @@ function CreateForm(props) {
                 </Form>
 
 
-                <Button id="button" onClick={
+                <Button className='submit-button' id="button" onClick={
                     (event) => {
                         onSubmitManual(event, "button");
                     }
@@ -175,75 +175,79 @@ function CreateForm(props) {
                 </Button>
                 <p id="error" style={{ color: "red" }}></p>
             </div>
-            <hr />
+            <hr className='hr'/>
 
-            <h2>From scratch</h2>
-            <div style={{ width: "50%", margin: "auto", textAlign: "center" }}>
+            <h1>Or configure it from scratch :</h1>
+            <div className='login-container' style={{ width: "50%", margin: "auto", textAlign: "center" }}>
                 <Form style={{ margin: "5%" }}>
                     <Form.Group controlId="VMname">
-                        <Form.Label>VM Name</Form.Label>
-                        <Form.Control onChange={e => { setState("name", e.target.value) }} type="text" placeholder="Enter VM name" />
+                        <Form.Label className='login-text bold'>VM name :</Form.Label>
+                        <Form.Control className='name' onChange={e => { setState("name", e.target.value) }} type="text" placeholder="Enter VM name" />
                     </Form.Group>
 
                     <Form.Group controlId="VMdesc">
-                        <Form.Label>VM Description</Form.Label>
-                        <Form.Control onChange={e => { setState("description", e.target.value) }} type="text" placeholder="Enter VM name" />
+                        <Form.Label className='login-text bold'>VM description :</Form.Label>
+                        <Form.Control className='name' onChange={e => { setState("description", e.target.value) }} type="text" placeholder="Enter VM name" />
                     </Form.Group>
 
                     <Form.Group controlId="VMram">
-                        <Form.Label>RAM</Form.Label>
-                        <Form.Control onChange={e => { setState("ram", parseInt(e.target.value)) }} type="text" placeholder="Enter RAM" />
+                        <Form.Label className='login-text bold'>RAM :</Form.Label>
+                        <Form.Control className='name' onChange={e => { setState("ram", parseInt(e.target.value)) }} type="text" placeholder="Enter RAM" />
                     </Form.Group>
 
                     <Form.Group controlId="VMcpu">
-                        <Form.Label>Number of CPUs</Form.Label>
-                        <Form.Control onChange={e => { setState("cpu", parseInt(e.target.value)) }} type="text" placeholder="Enter number of CPUs" />
+                        <Form.Label className='login-text bold'>Number of CPUs :</Form.Label>
+                        <Form.Control className='name' onChange={e => { setState("cpu", parseInt(e.target.value)) }} type="text" placeholder="Enter number of CPUs" />
                     </Form.Group>
 
                     <Form.Group controlId="VMdisk">
-                        <Form.Label>Storage</Form.Label>
-                        <Form.Control onChange={e => { setState("disk", parseInt(e.target.value)) }} type="text" placeholder="Enter storage" />
+                        <Form.Label className='login-text bold'>Storage :</Form.Label>
+                        <Form.Control className='name' onChange={e => { setState("disk", parseInt(e.target.value)) }} type="text" placeholder="Enter storage" />
                     </Form.Group>
 
                     <Form.Group controlId="VMnetwork">
-                        <Form.Label>Network</Form.Label>
-                        <Form.Control onChange={e => { setState("network", e.target.value) }} type="text" placeholder="Enter network" />
+                        <Form.Label className='login-text bold'>Network :</Form.Label>
+                        <Form.Control className='name' onChange={e => { setState("network", e.target.value) }} type="text" placeholder="Enter network" />
                     </Form.Group>
 
                     <Form.Group controlId="VMos">
-                        <Form.Label>OS</Form.Label>
-                        <Form.Control onChange={e => { setState("os", e.target.value) }} type="text" placeholder="Enter OS" />
+                        <Form.Label className='login-text bold'>OS :</Form.Label>
+                        <Form.Control className='name' onChange={e => { setState("os", e.target.value) }} type="text" placeholder="Enter OS" />
                     </Form.Group>
 
-                    <Form.Group style={{ margin: "5%" }} controlId="VMdb">
-                        <h3>Databases:</h3>
-                        <Form.Check onChange={e => { setServicesState("influxdb") }} type="switch" id="custom-switch" label="InfluxDB" />
-                        <Form.Check onChange={e => { setServicesState("mongodb") }} type="switch" id="custom-switch" label="MongoDB" />
-                        <Form.Check onChange={e => { setServicesState("mysql") }} type="switch" id="custom-switch" label="MySQL" />
-                        <Form.Check onChange={e => { setServicesState("postgresql") }} type="switch" id="custom-switch" label="PostgreSQL" />
-                        <Form.Check onChange={e => { setServicesState("redis") }} type="switch" id="custom-switch" label="Redis" />
+                    <br /><br />
+
+                    <Form.Group className='login-text' style={{ margin: "5%" }} controlId="VMdb">
+                        <h3 className='bold'>Databases :</h3>
+                        <Form.Check className='resize' onChange={e => { setServicesState("influxdb") }} type="switch" id="custom-switch" label="InfluxDB" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("mongodb") }} type="switch" id="custom-switch" label="MongoDB" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("mysql") }} type="switch" id="custom-switch" label="MySQL" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("postgresql") }} type="switch" id="custom-switch" label="PostgreSQL" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("redis") }} type="switch" id="custom-switch" label="Redis" />
                     </Form.Group>
 
-                    <Form.Group style={{ margin: "5%" }} controlId="VMweb">
-                        <h3>Web servers:</h3>
-                        <Form.Check onChange={e => { setServicesState("grafana") }} type="switch" id="custom-switch" label="Grafana" />
-                        <Form.Check onChange={e => { setServicesState("nodered") }} type="switch" id="custom-switch" label="Node-RED" />
-                        <Form.Check onChange={e => { setServicesState("apache") }} type="switch" id="custom-switch" label="Apache" />
-                        <Form.Check onChange={e => { setServicesState("nginx") }} type="switch" id="custom-switch" label="Nginx" />
-                        <Form.Check onChange={e => { setServicesState("tomcat") }} type="switch" id="custom-switch" label="Tomcat" />
+                    <br />
+                    <Form.Group className='login-text' style={{ margin: "5%" }} controlId="VMweb">
+                        <h3 className='bold'>Web servers :</h3>
+                        <Form.Check className='resize' onChange={e => { setServicesState("grafana") }} type="switch" id="custom-switch" label="Grafana" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("nodered") }} type="switch" id="custom-switch" label="Node-RED" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("apache") }} type="switch" id="custom-switch" label="Apache" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("nginx") }} type="switch" id="custom-switch" label="Nginx" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("tomcat") }} type="switch" id="custom-switch" label="Tomcat" />
                     </Form.Group>
 
-                    <Form.Group style={{ margin: "5%" }} controlId="VMother">
-                        <h3>Other:</h3>
-                        <Form.Check onChange={e => { setServicesState("mqtt") }} type="switch" id="custom-switch" label="MQTT" />
-                        <Form.Check onChange={e => { setServicesState("ssh") }} type="switch" id="custom-switch" label="SSH" />
-                        <Form.Check onChange={e => { setServicesState("http") }} type="switch" id="custom-switch" label="HTTP" />
-                        <Form.Check onChange={e => { setServicesState("https") }} type="switch" id="custom-switch" label="HTTPS" />
-                        <Form.Check onChange={e => { setServicesState("ftp") }} type="switch" id="custom-switch" label="FTP" />
+                    <br />
+                    <Form.Group className='login-text' style={{ margin: "5%" }} controlId="VMother">
+                        <h3 className='bold'>Other services :</h3>
+                        <Form.Check className='resize' onChange={e => { setServicesState("mqtt") }} type="switch" id="custom-switch" label="MQTT" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("ssh") }} type="switch" id="custom-switch" label="SSH" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("http") }} type="switch" id="custom-switch" label="HTTP" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("https") }} type="switch" id="custom-switch" label="HTTPS" />
+                        <Form.Check className='resize' onChange={e => { setServicesState("ftp") }} type="switch" id="custom-switch" label="FTP" />
                     </Form.Group>
 
 
-                    <Button id="button1" onClick={
+                    <Button className='submit-button' id="button1" onClick={
                         (event) => {
                             onsubmit(event, "button1");
                         }
