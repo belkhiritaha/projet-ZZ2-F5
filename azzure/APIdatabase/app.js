@@ -3,6 +3,10 @@ const app = express()
 
 const jwt = require('jsonwebtoken')
 
+const util = require('util');
+const { exec } = require('child_process');
+const execPromise = util.promisify(exec);
+
 const mongoose = require('mongoose')
 const User = require("./user.models")
 const Cookie = require("./cookies.models")
@@ -280,25 +284,18 @@ app.get('/api/users/:id/vms/:vmid', (req, res) => {
     })
 })
 
-async function createVm(body){
-    console.log("ok2");
-    return new Promise((resolve)=>{
-       exec("./script.sh", (error, stdout, stderr) => {
-        if (error) {
-                console.log(`error: ${error.message}`);
-                resolve("-1");
-            }
-        if (stderr) {
-                console.log(`stderr: ${stderr}`);
-            resolve("-1");
-            }
-        else{
-            console.log(stdout)
-            let VMid=stdout;
-            console.log("vm id : " + VMid);
-            resolve(VMid);}
-        })
-    });
+async function createVm(body) {
+  console.log("ok2");
+  try {
+    const { stdout } = await execPromise("./script.sh");
+    console.log(stdout);
+    const VMid = stdout.trim();
+    console.log("vm id : " + VMid);
+    return VMid;
+  } catch (error) {
+    console.log(`error: ${error.message}`);
+    throw error;
+  }
 };
 
 // create new vm
@@ -326,7 +323,7 @@ app.post('/api/users/:id/vms', async (req, res) => {
                     vm.save()
                         .then(() => console.log("Succesfully added vm to database"))
                         .catch(error => console.log(error))
-                    // add vm to user's list
+                    
                     user.listVMs.push(vm._id)
                     user.save()
                         .then(() => res.status(201).json({ message: 'A new vm has arrived !' }))

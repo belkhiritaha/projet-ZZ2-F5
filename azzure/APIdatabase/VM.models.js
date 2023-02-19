@@ -10,7 +10,8 @@ const vmSchema = new mongoose.Schema ({
     status: { type: Number, required: true },
     os: { type: String },
     services: { type: Array, required: true },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    docker_id:{ type: String}
 })
 
 const vms = mongoose.model("vm", vmSchema)
