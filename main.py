@@ -16,7 +16,7 @@ def main(json_name):
 
     #Création du docker-compose
     try:
-            create_env(res[0], res[1], "passwd")
+            #create_env(res[0], res[1], "passwd")
             create_docker_compose(res)
     except:
         print("An exception occurred")

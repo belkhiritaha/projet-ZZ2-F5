@@ -16,6 +16,7 @@ def create_docker_compose(res):
 
     contenu = []
 
+    # creation of THE DOCKER-COMPOSE FILE
     initializeDockerCompose(contenu)
 
     configDatabase(contenu, res[2])
@@ -31,12 +32,20 @@ def create_docker_compose(res):
                             res[2]+'-storage': None
                             }
  
+    # move the docker-compose file in the good directory
     path = subprocess.run(["pwd"])
 
-    fichier = open("users/"+res[0]+"/"+ res[1] +"/docker-compose.yml","w+") 
+    fichier = open("users/"+ res[0] +"/"+ res[1] +"/docker-compose.yml","w+") 
 
     yaml.dump_all(contenu, fichier, sort_keys=False)
 
     fichier.close() 
 
+    # copy the entreypoint.sh file in the good directory
+
+    subprocess.run(["cp", "docker_management/prerequisite/entrypoint.sh", "users/"+ res[0] +"/"+ res[1] +"/entrypoint.sh"])
+
+    # copy the .env file in the good directory
+
+    subprocess.run(["cp", "docker_management/prerequisite/.env", "users/"+ res[0] +"/"+ res[1] +"/.env"])
 

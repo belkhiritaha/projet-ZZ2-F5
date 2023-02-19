@@ -12,7 +12,7 @@ def configDatabase(contenu, technology):
                                         'image': technology2, 
                                         'volumes': [pathToVolume],
                                         'env_file': ['.env'],
-                                        'entrypoint': '["./entrypoint.sh"]',
+                                        #'entrypoint': '["./entrypoint.sh"]',
                                         'restart': 'always', 
                                         'ports': ["8086:8086"],
                                         'labels': {'kompose.service.type':'nodeport'}
