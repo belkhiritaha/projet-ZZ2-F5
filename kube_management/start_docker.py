@@ -14,7 +14,8 @@ def start_docker(user, app):
                     if (path_docker_files.exists()):
                         if (path_docker_files.is_dir()):
                             #Start the docker into K8s
-                            kubectl = subprocess.run(["kubectl", "apply", "-f", path_docker_files], capture_output=True, text=True)
+                            namespace = subprocess.run(["kubectl create namespace "+user+app], shell=True, capture_output=True, text=True)
+                            kubectl = subprocess.run(["kubectl", "apply", "-f", path_docker_files, "--namespace="+user+app], capture_output=True, text=True)
                             if kubectl.stderr != "":
                                 raise KubectlError(kubectl.stderr)
                             service = subprocess.run(["minikube service --all | grep http"], shell=True, capture_output=True, text=True)
