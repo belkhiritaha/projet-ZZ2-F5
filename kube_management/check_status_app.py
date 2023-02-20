@@ -22,3 +22,5 @@ def isAllRunning(user, app):
             return False
     print("All pods are running")
     return True
+
+print(isAllRunning("topin", "banger"))
