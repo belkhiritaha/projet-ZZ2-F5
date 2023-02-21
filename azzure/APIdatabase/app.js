@@ -30,7 +30,7 @@ app.use(express.json())
 
 
 // ########### DATABASE SETUP ###########
-let db = "mongodb://localhost:27017/aZZure_DB";
+let db = "mongodb://mongo:27017/aZZure_DB";
 
 mongoose.connect(db, { 
     useNewUrlParser: true, 

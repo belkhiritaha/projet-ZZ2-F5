@@ -1,0 +1,50 @@
+image: node
+
+services:
+  - mongo
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  PRODUCTION_DOMAIN: azzure.surge.sh
+
+build frontend:
+  stage: build
+  script:
+    - cd azzure
+    - npm install
+    - ls -l
+    - CI=false npm run build
+  artifacts:
+    paths:
+      - ./azzure/public
+
+build backend:
+  stage: build
+  image: docker:stable
+  services:
+    - docker:dind
+  script:
+    - docker build -t backend .
+  artifacts:
+    untracked: false
+
+test artifact:
+  image: alpine
+  stage: test
+  script:
+    - grep -q "React App" ./azzure/public/index.html    
+ 
+deploy production:
+  stage: deploy
+  script:
+    - npm install --global surge
+    - surge --project ./azzure/public --domain $PRODUCTION_DOMAIN
+  variables:
+    DOMAIN: $PRODUCTION_DOMAIN
+  environment:
+    name: production
+    url: https://$PRODUCTION_DOMAIN
