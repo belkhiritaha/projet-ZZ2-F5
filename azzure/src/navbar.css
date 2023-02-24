@@ -5,15 +5,14 @@
 
 .logo-container {
     margin-top: 15px;
-    margin-right: 1150px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
 .header-links {
-    display: flex;
-    justify-content: space-between;
+    margin-top: 35px;
+    margin-left: 750PX;
 }
 
 .logo {
@@ -60,19 +59,20 @@
 
 .logged-logo-container {
     margin-top: 15px;
-    margin-right: 250px;
+    margin-right: 150px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
 .link {
-    margin-left: 30px !important;
+    margin-left: 10px !important;
     font-size: 25px !important;
-    color: #156EBF !important;
+    color: white !important;
 }
 
 .link:hover {
+    color: #156EBF !important;
     text-decoration: underline;
     text-decoration-color: #156EBF;
     text-decoration-thickness: 2px;
@@ -100,5 +100,53 @@
 @keyframes animate  {
     to  {
         background-position: 200% center;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .header-links {
+        margin-left: 800px;
+    }
+
+    .logged-logo-container {
+        margin-right: 50px;
+    }
+}
+
+@media screen and (min-width: 1000px) and (max-width: 2000) {
+    .header-links {
+        margin-left: 650px;
+    }
+    
+    .logged-logo-container {
+        margin-right: 10px;
+    }
+}
+
+
+@media screen and (min-width: 800px) and (max-width: 1000px) {
+    .header-links {
+        margin-left: 400px;
+    }
+}
+
+@media screen and (min-width: 600px) and (max-width: 800px) {
+    .header-links {
+        margin-top: 15px;
+        margin-left: 350px;
+    }
+}
+
+@media screen and (min-width: 500px) and (max-width: 600px) {
+    .header-links {
+        margin-top: 15px;
+        margin-left: 250px;
+    }
+}
+
+@media screen and (min-width: 400px) and (max-width: 500px) {
+    .header-links {
+        margin-top: 15px;
+        margin-left: 180px;
     }
 }
