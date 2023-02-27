@@ -10,7 +10,8 @@ const execPromise = util.promisify(exec);
 const mongoose = require('mongoose')
 const User = require("./user.models")
 const Cookie = require("./cookies.models")
-const VM = require("./VM.models")
+const VM = require("./VM.models");
+const { throws } = require("assert");
 
 // ########### API SETUP ###########
 app.listen(8001, () => {
@@ -187,13 +188,40 @@ app.post('/api/users', (req, res) => {
     const user = new User({
         ...req.body
     })
-
-    user.save()
-        .then(() => res.status(201).json({ message: 'A new user has arrived !' }))
-        .catch(error => res.status(400).json({ error }))
+    User.findOne({username: (req.body.username)}).then(async user => {
+        if (user){ 
+            console.log( "error");
+            throw("User already exist"); 
+        }
+        else{
+            try{
+                 await createUser(req.body).then(()=>{
+                    user.save()
+                    .then(() => res.status(201).json({ message: 'A new user has arrived !' }))
+                    .catch(error => res.status(400).json({ error }))
+                    
+                console.log("Succesfully added user to database");
+                })
+            }catch(error){throw error; }
+        }
+    })
+    .catch(error=>res.status(400).json(error) )
         
-    console.log("Succesfully added user to database");
 })
+
+    
+
+async function createUser(body) {
+    console.log("ok2");
+    try {
+      const { stdout } = await execPromise("python3 kube_management/create_user.py " + body.username);
+      console.log(stdout);
+    } catch (error) {
+      console.log(`error: ${error.message}`);
+      throw error;
+    }
+};
+
 
 
 // UPDATE the user's data
@@ -287,7 +315,7 @@ app.get('/api/users/:id/vms/:vmid', (req, res) => {
 async function createVm(body) {
   console.log("ok2");
   try {
-    const { stdout } = await execPromise("./script.sh");
+    const { stdout } = await execPromise("./kube_management/create_app. py"  + body);
     console.log(stdout);
     const VMid = stdout.trim();
     console.log("vm id : " + VMid);
@@ -311,7 +339,7 @@ app.post('/api/users/:id/vms', async (req, res) => {
         }
         User.findOne({_id: req.params.id})
             .then(async user => { 
-                await createVm(req.body).then(async x=>{
+                try{await createVm(stringify(req.body)).then(async x=>{
                     let docker_id =JSON.parse(x);
                     console.log(docker_id); 
                     const vm = new VM({
@@ -327,14 +355,14 @@ app.post('/api/users/:id/vms', async (req, res) => {
                     user.listVMs.push(vm._id)
                     user.save()
                         .then(() => res.status(201).json({ message: 'A new vm has arrived !' }))
-                        .catch(error => res.status(400).json({ error }))
-                })
+                        .catch(error => res.status(400).json({ error }))}
+                        
+                    )}
+                    catch (error){throw error; }
             })
             .catch(error => res.status(404).json({ error }))
     })
 })
-
-
 
 // update vm
 app.put('/api/users/:id/vms/:vmid', (req, res) => {
@@ -391,6 +419,19 @@ app.delete('/api/users/:id/vms/:vmid', (req, res) => {
             })
     })
 })
+
+async function deleteVm(id_docker) {
+    console.log("Deleting app " + id_docker);
+    try {
+      const { stdout } = await execPromise("./script.sh");
+      console.log(stdout);
+      let success = stdout.trim();
+      return success ;
+    } catch (error) {
+      console.log(`error: ${error.message}`);
+      throw error;
+    }
+  };
 
 
 // start vm
