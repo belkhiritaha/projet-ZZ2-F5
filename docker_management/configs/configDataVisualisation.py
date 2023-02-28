@@ -17,4 +17,3 @@ def configDataVisualisation(contenu, technology, database):
 
 
 
-#formatiser le path de la techno qu'on veut pour visualiser la data
