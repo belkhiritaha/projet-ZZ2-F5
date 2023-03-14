@@ -103,6 +103,7 @@ describe("Login user", () => {
 })
 
 
+
 describe("GET all users", () => {
     test("should require authorization", async () => {
         const response = await request(app)
@@ -563,7 +564,7 @@ describe("Reset vm database", () => {
         expect(response.status).toEqual(401)
         expect(response.error).not.toBeUndefined()
     })
-})
+})/*
 
 /*
 describe("Delete user by ID", () => {
@@ -594,7 +595,7 @@ describe("Delete user by ID", () => {
     })
 })
 
-
+*/
 describe("Reset user database", () => {
     test("should respond with a 200 status code", async () => {
         const response = await request(app)
@@ -613,4 +614,4 @@ describe("Reset user database", () => {
         expect(response.error).not.toBeUndefined()
     })
 })
-*/
+

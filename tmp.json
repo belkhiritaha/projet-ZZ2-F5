@@ -1,0 +1,37 @@
+{
+    "owner": "63ffa5a85809d2a40fa04d3a",
+    "VMid": "6401c31db982a3e1db0edd54",
+    "VMname": "TOTO",
+    "VMdesc": "!",
+    "VMram": "",
+    "VMcpu": "",
+    "VMdisk": "",
+    "VMnetwork": "",
+    "VMimage": "",
+    "VMservices": {
+        "db": {
+            "influxdb": false,
+            "mongodb": false,
+            "mysql": false,
+            "postgresql": false,
+            "redis": false,
+            "mariadb": false,
+            "sqlite": false,
+            "oracle": false
+        },
+        "web": {
+            "grafana": false,
+            "nodered": false,
+            "apache": false,
+            "nginx": false,
+            "tomcat": false
+        },
+        "other": {
+            "mqtt": false,
+            "ssh": false,
+            "http": false,
+            "https": false,
+            "ftp": false
+        }
+    }
+}
