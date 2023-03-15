@@ -147,10 +147,10 @@ function Manage(props) {
                         <Card.Header>
                             <div className='row'>
                                 <h3 className="mr-sm-2">
-                                    {props.VM.name}
+                                    {props.VM.VMname}
                                 </h3>
                                 <h5 className="mr-sm-2">
-                                    {props.VM.description}
+                                    {props.VM.VMdesc}
                                 </h5>
                                 <h5 className="mr-sm-2">
                                     {props.VM.status === 0 ? "Stopped" : "Running"}

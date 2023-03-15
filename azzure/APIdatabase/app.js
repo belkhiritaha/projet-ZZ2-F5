@@ -241,9 +241,6 @@ app.post('/api/users', registerValidate, (req, res) => {
                 email: email,
                 passwd: hash
             })
-
-            console.log(req.body)
-            console.log(user)
             user.save()
                 .then(async () => {
                     console.log(user._id.toString())
@@ -577,14 +574,6 @@ app.put('/api/users/:id/vms/:vmid', (req, res) => {
     })
 
 })
-function updateStatus(userID, vmID) {
-    try {
-
-
-    } catch (error) {
-        throw error;
-    }
-}
 
 app.get('/api/users/:id/vms/:vmid/status', async (req, res) => {
     verifyAuth(req, res, async (userID) => {
@@ -622,9 +611,9 @@ app.delete('/api/users/:id/vms/:vmid', async (req, res) => {
         User.findOne({ _id: req.params.id })
             .then(async user => {
                 try {
-                    vm = VM.findOne({ _id: req.params.vmid })
-
-                    await deleteVm(userID, req.params.vmid + vm.VMname).then(() => {
+                    VM.findOne({ _id: req.params.vmid }).then (async(vm)=>{
+                        console.log(userID , "                    ",  req.params.vmid+vm.VMname)
+                    await deleteVm(userID, vm._id.toString() + vm.VMname).then(() => {
                         // remove vm from user's list
                         user.listVMs.pull(req.params.vmid)
                         user.save()
@@ -632,6 +621,7 @@ app.delete('/api/users/:id/vms/:vmid', async (req, res) => {
                         // remove vm from database
                         VM.deleteOne({ _id: req.params.vmid })
                             .then(() => res.status(200).json({ message: 'The vm has been deleted !' }))
+                        })
                     })
                 } catch (error) {
                     console.log(error);

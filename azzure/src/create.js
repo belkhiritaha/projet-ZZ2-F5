@@ -111,10 +111,10 @@ function CreateForm(props) {
             const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
             const cookieValue = sessionCookie.split('=')[1];
             const fetchBody = {
-                VMname: state.name,
-                VMdesc: state.description,
+                VMname: jsonData.name,
+                VMdesc: jsonData.description,
                 services: [],
-                VMservices: state.VMservices,
+                VMservices: jsonData.VMservices,
             }
             fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
                 method: 'POST',

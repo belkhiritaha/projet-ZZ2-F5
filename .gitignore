@@ -1,5 +1,6 @@
 kube_files/
-
+users/
+tmp.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
