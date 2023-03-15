@@ -48,4 +48,4 @@ def create_docker_compose(res):
     # copy the .env file in the good directory
 
     subprocess.run(["cp", "../docker_management/prerequisite/.env", "../users/"+ res[0] +"/"+ res[1] +"/.env"])
-
+    return 0 

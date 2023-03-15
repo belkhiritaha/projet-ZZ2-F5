@@ -27,6 +27,31 @@ async function getUser() {
     })
 }
 
+async function getVmStatus(user) {
+    return new Promise((resolve, reject) => {
+        // get cookie
+        if (document.cookie) {
+            // get cookie
+            const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
+            const cookieValue = sessionCookie.split('=')[1];
+            fetch(`http://localhost:8001/api/users/${user.id}/vms/status`, {
+                method: 'GET',
+                headers: {
+                    "Authorization": `Bearer ${cookieValue}`,
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        }
+    })
+}
+
+
 async function getAllVMs(user) {
     return new Promise((resolve, reject) => {
         // get cookie
@@ -64,4 +89,4 @@ function App(props) {
     );
 }
 
-export { App, getUser, getAllVMs };
+export { App, getUser, getAllVMs,getVmStatus};

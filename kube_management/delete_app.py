@@ -1,6 +1,6 @@
 import subprocess
 from pathlib import Path
-
+import sys
 
 #supprimer une app
 def delete_app(user, app):
@@ -25,5 +25,4 @@ def delete_app(user, app):
 
     #supprimer le dossier de l'app
     subprocess.run(["rm", "-r", path_app])
-
-delete_app("toto","banger")
+    return 0 

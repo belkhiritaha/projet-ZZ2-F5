@@ -18,7 +18,7 @@ def start_docker(user, app):
                             kubectl = subprocess.run(["kubectl", "apply", "-f", path_docker_files, "--namespace="+user+app], capture_output=True, text=True)
                             if kubectl.stderr != "":
                                 raise KubectlError(kubectl.stderr)
-                            service = subprocess.run(["minikube service --all | grep http"], shell=True, capture_output=True, text=True)
+                            service = subprocess.run(["minikube service --all | grep http"], shell=True, capture_output=True ,text=True)
                             print(service.stdout)
                         else : raise DirectoryError("This app kube_files doesn't correspond to a directory")
                     else : raise DirectoryError("This app kube_files doesn't exists")

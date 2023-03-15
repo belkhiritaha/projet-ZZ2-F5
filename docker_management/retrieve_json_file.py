@@ -8,12 +8,12 @@ def retrieve_json_file(json_name):
         data = json.load(f)
 
     if data['owner'] != "":
-        res.append(data['owner'])
+            res.append(data['owner'])
 
     if data['VMid'] != "":
         
         res.append(data['VMid']+data['VMname'])
-
+    
     for key in data['VMservices']:
 
         for clef, value in data['VMservices'][key].items():
@@ -22,5 +22,3 @@ def retrieve_json_file(json_name):
 
     f.close()
     return res
-
-print(retrieve_json_file(sys.argv[1]))

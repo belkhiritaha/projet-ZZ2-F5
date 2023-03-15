@@ -2,13 +2,14 @@
 import sys
 from kube_management import *
 from docker_management import *
-
+import subprocess
 def main(json_name):
 
     res = retrieve_json_file(json_name)
 
     #Création du dossier application dans le dossier du user
     try:
+        print (res[0]+res[1])
         create_app(res[0], res[1])
     except DirectoryError as err:
         print(err.args[0])
@@ -20,7 +21,7 @@ def main(json_name):
     except:
         print("An exception occurred")
         return 1
-    
+    print ("Done1")
     #Création des kubes_files
     try:
         create_kube_files(res[0], res[1])
@@ -28,14 +29,13 @@ def main(json_name):
         print(err.args[0])
         return 1
     
-
+    print ("Done2")
     #Démarrage du docker dans minikube(K8s)
     try:
         start_docker(res[0], res[1])
     except KubectlError as err:
         print(err.args[0])
         return 1
-        
 
     print("All Successfull")
     return 0

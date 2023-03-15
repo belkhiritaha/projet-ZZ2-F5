@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import { Collapse } from 'react-bootstrap';
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { getAllVMs } from './App';
+import { getAllVMs, getVmStatus } from './App';
 
 function Cli(props) {
 
@@ -73,14 +73,14 @@ function Cli(props) {
                                         {commandHistory.map((command, index) => {
                                             return (
                                                 <div key={index} className='terminal-history-line'>
-                                                    <div className='terminal-prompt'>{user}@{vm.name.replace(/\s/g, '_')}:~$</div>
+                                                    <div className='terminal-prompt'>{user}@{vm.VMname.replace(/\s/g, '_')}:~$</div>
                                                     <div className='terminal-history-command'>{command}</div>
                                                 </div>
                                             );
                                         })}
                                     </div>
                                     <div className='terminal-line'>
-                                        <div className='terminal-prompt'>{user}@{vm.name.replace(/\s/g, '_')}:~$</div>
+                                        <div className='terminal-prompt'>{user}@{vm.VMname.replace(/\s/g, '_')}:~$</div>
 
                                         <input type='text' className='terminal-input' onKeyPress={(e) => {
                                             if (e.key === 'Enter') {
@@ -219,6 +219,18 @@ function Cli(props) {
             console.log(error);
         });
     }
+
+    setInterval(() => {
+        getVmStatus(props.user).then((data)=>{
+            let VMS=[];
+            data.forEach((vm)=>{
+                VMS.push(vm);
+            })
+            setVms(VMS);
+        }).catch((error)=>{
+            console.log(error);
+        });
+        }, 5000)
 
 
     return (

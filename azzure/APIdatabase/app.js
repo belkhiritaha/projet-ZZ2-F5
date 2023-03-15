@@ -16,6 +16,7 @@ const mongoose = require('mongoose')
 const User = require("./user.models")
 const Cookie = require("./cookies.models")
 const VM = require("./VM.models")
+const { TIMEOUT } = require("dns")
 
 // ########### API SETUP ###########
 app.listen(8001, () => {
@@ -211,10 +212,10 @@ const registerValidate = [
         .trim().escape()
 ]
 
-async function createUser(body) {
+async function createUser(userID) {
     console.log("Create the user file");
     try { 
-        const { stdout } = await execPromise("python3 ../kube_management/create_user.py " + body.username);
+        const { stdout } = await execPromise("python3 ../kube_management/create_user.py " + userID);
     } catch (error) {
       console.log(`error: ${error.message}`);
       throw error;
@@ -242,15 +243,20 @@ app.post('/api/users', registerValidate, (req, res) => {
             
             console.log(req.body)
             console.log(user)
-            try{
-                await createUser(req.body).then(()=>{
-                    user.save()
-                        .then(() => res.status(201).json({ message: 'A new user has arrived !' }))
-                        .catch(error => res.status(400).json({ error }))
-                                
-                    console.log("Succesfully added user to database");
+            user.save()
+                 .then(async () => {
+                    console.log(user._id.toString())
+                    try{ await createUser(user._id.toString()).then(()=>{
+                            res.status(201).json({ message: 'A new user has arrived !' })    
+                            })
+                        }catch(error){
+                            User.deleteOne({_id:user._id})
+                            console.log(error)
+                            throw error; }
                     })
-            }catch(error){throw error; }
+                    .catch(error =>
+                        res.status(400).json({ error }))
+                    console.log("Succesfully added user to database");
         })
         .catch(error => res.status(400).json({ error }))
 })
@@ -333,20 +339,19 @@ app.delete('/api/users/:id',async (req, res) => {
             return res.status(401).json({ error: 'Not authorized' })
         }
         try{
-            await deleteUser(req.params.username); 
-            User.deleteOne({_id: req.params.id})
+            await deleteUser(userID).then( User.deleteOne({_id: userID})
                 .then(user => res.status(200).json({ message: 'The user has been deleted !' }))
-                .catch(error => res.status(400).json({ error }))
-        }catch (error){console.log(error); 
+                .catch(error => res.status(400).json({ error }))); 
+        }catch (error){
         throw error; }
     })
 })
 
 
-async function deleteUser(username) {
-    console.log("Create the user file");
+async function deleteUser(userID) {
+    console.log("Delete the user file");
     try {    
-      const { stdout } = await execPromise("python3 ../kube_management/delete_user.py " + body.username);
+      await execPromise("python3 ../kube_management/delete_user.py " +userID);
     } catch (error) {
       console.log(`error: ${error.message}`);
       throw error;
@@ -355,11 +360,12 @@ async function deleteUser(username) {
 
 // reset user database
 app.delete('/api/users',async (req, res) => {
+    //condition d'authentification!!
     try {
         const users = await User.find();
         await users.map(async user => {
             try{
-                await deleteUser(user.username);
+                await deleteUser(user._id);
                 await users.deleteOne({_id:user._id});}
             catch (error){
                 throw error;}
@@ -370,23 +376,6 @@ app.delete('/api/users',async (req, res) => {
         console.log(error);
         res.status(400).json({ error });
       }
-    // User.forEach(async user => {
-    //     try {
-    //         await deleteUser(user.username); 
-    //         console.log( "User "+ user.username +" delete"); 
-    //     }
-    //     catch (error){console.log(error); 
-    //     throw error;}
-        
-    // });
-    // User.deleteMany({}, function(err) {
-    //     if (err) {
-    //         console.log(err);
-    //         res.status(400).json({ error })
-    //     }
-    //     console.log("Successful deletion");
-    // });
-    // res.status(200).json({ message: 'The user database has been deleted !' })
 })
 
 
@@ -491,7 +480,7 @@ async function createVm(body) {
     console.log("ok2");
     try {
       await writeInFile(body); 
-      const { stdout } = await execPromise("python3 ../main.py ../tmp.json");
+      const { stdout } = await execPromise("python3 ../main.py ../tmp.json",timeout= 10 );
       console.log(stdout);
       return ;
     } catch (error) {
@@ -518,28 +507,33 @@ app.post('/api/users/:id/vms', createVmValidate, async (req, res) => {
         }
         User.findOne({_id: req.params.id})
             .then(user => {
-                
                 const vm = new VM({
                     owner: user._id,
                     ...req.body,
                     status: 0
                 })
+                
                 vm.save()
                     .then(() => {console.log("Succesfully added vm to database");
                     VM.findOne({_id:vm._id}).then( async vmm => {
-                        let bodytemp={owner: user._id.toString(), ...req.body}; 
-                        bodytemp.VMid=vmm._id.toString();
-                        try { 
-                            //await createVm(bodytemp)
+                        let bodycreate={owner: vmm.owner.toString(), VMid:vmm._id.toString(),VMname: vmm.VMname, VMservices:req.body.VMservices};
+                        console.log(bodycreate)
+                        try {
+                            vmm.status= 1
+                            vmm.save()
+                            user.listVMs.push(vm._id)
+                            user.save()
+                                    .then(() => res.status(201).json({ message: 'A new vm has arrived !' }))
+                            await createVm(bodycreate)
+                                
+                            
+                            
                         }
                         catch(error){
-                            VM.deleteOne({_id:vm._id}).then(console.log(error))
+                            VM.deleteOne({_id:vmm._id}).then(console.log(error))
                             throw error;} 
                         });
-                        user.listVMs.push(vm._id)
-                            user.save()
-                                .then(() => res.status(201).json({ message: 'A new vm has arrived !' }))
-                                
+                       
                     })
             })
             .catch(error => res.status(404).json({ error }))
@@ -593,32 +587,26 @@ app.put('/api/users/:id/vms/:vmid', updateVmValidate, (req, res) => {
     })
 
 })
+function updateStatus( userID, vmID){
+    try{
+       
+
+    }catch(error){
+        throw error; 
+    }
+}
+
+app.get('/api/users/:id/vms/status',async (req,res)=>{
+    verifyAuth(req, res, (userID) => {
+        if (userID != req.params.id) {
+            console.log("Not authorized")
+            return res.status(401).json({ error: 'Not authorized' })
+        }
 
 
-// delete vm
-// app.delete('/api/users/:id/vms/:vmid', (req, res) => {
-//     console.log("-----------------------------")
-//     console.log("delete an existing vm")
-//     console.log(req.body)
-//     verifyAuth(req, res, (userID) => {
-//         if (userID != req.params.id) {
-//             console.log("Not authorized")
-//             return res.status(401).json({ error: 'Not authorized' })
-//         }
-//         User.findOne({_id: req.params.id})
-//             .then(user => {
-//                 // remove vm from user's list
-//                 user.listVMs.pull(req.params.vmid)
-//                 user.save()
-//                     .then(() => console.log("Succesfully removed vm from user's list"))
-//                     .catch(error => console.log(error))
-//                 // remove vm from database
-//                 VM.deleteOne({_id: req.params.vmid})
-//                     .then(() => res.status(200).json({ message: 'The vm has been deleted !' }))
-//                     .catch(error => res.status(404).json({ error }))
-//             })
-//     })
-// })
+    })
+})
+
 app.delete('/api/users/:id/vms/:vmid', async (req, res) => {
     console.log("-----------------------------")
     console.log("delete an existing vm")
@@ -632,7 +620,8 @@ app.delete('/api/users/:id/vms/:vmid', async (req, res) => {
             .then(async user => {
                 try{
                     vm=VM.findOne({_id : req.params.vmid})
-                    await deleteVm(user._id.toString(), vm._id.toString()+vm.VMname.toString())
+                    
+                    await deleteVm(userID, req.params.vmid+vm.VMname).then(()=>{
                     // remove vm from user's list
                     user.listVMs.pull(req.params.vmid)
                     user.save()
@@ -640,12 +629,25 @@ app.delete('/api/users/:id/vms/:vmid', async (req, res) => {
                     // remove vm from database
                     VM.deleteOne({_id: req.params.vmid})
                         .then(() => res.status(200).json({ message: 'The vm has been deleted !' }))
+                    })
                 }catch(error)
                 {console.log(error); 
                 throw (error)}
             }).catch(error => res.status(404).json({ error }))
     })
 })
+
+async function startVm(userID, vmID) {
+    console.log("ok2");
+    const data= require('../users/'+userID+'/backup/'+vmID+'.json')
+            try {const { stdout } = await execPromise("python3 ../main.py "+data,timeout= 10);
+            console.log(stdout);
+            return; 
+            } catch (error) {
+            console.log(`error: ${error.message}`);
+            throw error;
+            };
+    }
 
 // start vm
 app.post('/api/users/:id/vms/:vmid/start', (req, res) => {
@@ -658,16 +660,30 @@ app.post('/api/users/:id/vms/:vmid/start', (req, res) => {
             return res.status(401).json({ error: 'Not authorized' })
         }
         VM.findOne({_id: req.params.vmid})
-            .then(vm => {
-                // start vm
-                vm.status = 1
-                vm.save()
-                    .then(() => res.status(200).json({ message: 'The vm has been started !' }))
-                    .catch(error => res.status(400).json({ error }))
+            .then(async vm => {
+                try{
+                    await startVm(userID,vm._id.toString()+vm.VMname).then(()=>{
+                        vm.status = 1
+                        vm.save()
+                            .then(() => res.status(200).json({ message: 'The vm has been started !' }))
+                            .catch(error => res.status(400).json({ error })) })
+                    }catch(error){throw error; }
             })
             .catch(error => res.status(404).json({ error }))
     })
 })
+
+
+async function deleteVm(userID, vmID) {
+    console.log("ok2");
+    try {
+      console.log(userID,vmID )
+      await execPromise("python3 ../kube_management/delete_app_api.py "+ userID + " "+ vmID);
+    } catch (error) {
+      console.log(`error: ${error.message}`);
+      throw error;
+    }
+  };
 
 
 // stop vm
@@ -681,12 +697,16 @@ app.post('/api/users/:id/vms/:vmid/stop', (req, res) => {
             return res.status(401).json({ error: 'Not authorized' })
         }
         VM.findOne({_id: req.params.vmid})
-            .then(vm => {
-                // stop vm
-                vm.status = 0
-                vm.save()
-                    .then(() => res.status(200).json({ message: 'The vm has been stopped !' }))
-                    .catch(error => res.status(400).json({ error }))
+            .then(async vm => {
+                try{
+
+                    await deleteVm(userID, vm._id.toString()+vm.VMname).then(()=>{
+                        vm.status = 0
+                        vm.save()
+                            .then(() => res.status(200).json({ message: 'The vm has been stopped !' }))
+                            .catch(error => res.status(400).json({ error })) })
+                    }catch(error){throw error; }
+                
             })
             .catch(error => res.status(404).json({ error }))
     })

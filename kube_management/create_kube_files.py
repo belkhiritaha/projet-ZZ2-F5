@@ -14,6 +14,11 @@ def create_kube_files(user, app):
                     path_docker_compose = Path('../users/' + user + '/' + app + '/docker-compose.yml')
                     if (path_docker_compose.exists()):
                         path_docker_files = Path('../users/' + user + '/' + app + '/kube_files/')
+                        path_config=Path( '../users/' + user + '/backup/')#copy de la config dans backup 
+
+                        create_dirconf = subprocess.run(["mkdir", path_config])#copy de la config
+                        path_configfile=Path( '../users/' + user + '/backup/'+app+'.json')#copy de la config
+                        copy = subprocess.run(['cp'] + glob.glob('../tmp.json')  + [path_configfile], capture_output=True) #copy de la config
                         result = subprocess.run(["kompose", "convert", "-f", path_docker_compose], capture_output=True)
                         create_dir = subprocess.run(["mkdir", path_docker_files])
                         move = subprocess.run(['mv'] + glob.glob('*.yaml') + [path_docker_files], capture_output=True)

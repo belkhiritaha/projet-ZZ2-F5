@@ -15,3 +15,4 @@ def create_env(user, app, passwd):
 
     yaml.dump_all(data, fichier, sort_keys=False)
     fichier.close()
+    return 0 

@@ -1,13 +1,7 @@
 {
-    "Userid":"klkrefgfkjdqdda",
+    "owner":"klkrefgfkjdqdda",
     "VMid": "rregidsfk",
-    "VMname": "banger",
-    "VMdesc": "!",
-    "VMram": "",
-    "VMcpu": "",
-    "VMdisk": "",
-    "VMnetwork": "",
-    "VMimage": "",
+    "VMname": "routou",
     "VMservices": {
         "db": {
             "influxdb": true,
