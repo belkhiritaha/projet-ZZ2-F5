@@ -14,12 +14,35 @@ function CreateForm(props) {
     const [state, setConfig] = useState({
         name: "test",
         description: "test",
-        ram: "1",
-        cpu: "1",
-        disk: "1",
-        network: "test",
-        os: "Ubuntu",
-        services: ["ssh"],
+        VMservices: {
+            db: {
+                influxdb: true,
+                mongodb: false,
+                mysql: false,
+                postgresql: false,
+                redis: false,
+                mariadb: false,
+                sqlite: false,
+                oracle: false
+            },
+            web: {
+                grafana: true,
+                nodered: false,
+                apache: false,
+                nginx: false,
+                tomcat: false
+            },
+            retrieve: {
+                telegraf: true
+            },
+            other: {
+                mqtt: false,
+                ssh: false,
+                http: false,
+                https: false,
+                ftp: false
+            }
+        }
     });
 
 
@@ -87,13 +110,19 @@ function CreateForm(props) {
         else {
             const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
             const cookieValue = sessionCookie.split('=')[1];
+            const fetchBody = {
+                VMname: state.name,
+                VMdesc: state.description,
+                services: [],
+                VMservices: state.VMservices,
+            }
             fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${cookieValue}`
                 },
-                body: JSON.stringify(jsonData)
+                body: JSON.stringify(fetchBody)
             })
                 .then(response => response.json())
                 .then(data => {
@@ -131,13 +160,20 @@ function CreateForm(props) {
         else {
             const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
             const cookieValue = sessionCookie.split('=')[1];
+            const fetchBody = {
+                VMname: state.name,
+                VMdesc: state.description,
+                services: [],
+                VMservices: state.VMservices,
+            }
+            console.log(fetchBody);
             fetch(`http://localhost:8001/api/users/${props.user.id}/vms`, {
                 method: 'POST',
                 headers: {
                     "Authorization": `Bearer ${cookieValue}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(state)
+                body: JSON.stringify(fetchBody)
             })
                 .then(response => response.json())
                 .then(data => {

@@ -1,4 +1,4 @@
-const  express = require("express")
+const express = require("express")
 const app = express()
 
 const jwt = require('jsonwebtoken')
@@ -36,10 +36,10 @@ app.use(express.json())
 
 
 // ########### DATABASE SETUP ###########
-let db = "mongodb://localhost:27017/aZZure_DB";
+let db = "mongodb://localhost:27017/aZZure";
 
-mongoose.connect(db, { 
-    useNewUrlParser: true, 
+mongoose.connect(db, {
+    useNewUrlParser: true,
     useUnifiedTopology: true
 }, (err) => {
     if (!err) {
@@ -51,7 +51,7 @@ mongoose.connect(db, {
 
 const conSuccess = mongoose.connection
 conSuccess.once('open', _ => {
-  console.log('Database connected:', db)
+    console.log('Database connected:', db)
 })
 // ########### DATABASE SETUP ###########
 
@@ -61,7 +61,8 @@ conSuccess.once('open', _ => {
 // Generate new cookie object and save it in database
 function generateNewCookie(userIdentifier) {
     // generate new jwt token
-    const token = jwt.sign({ userIdentifier
+    const token = jwt.sign({
+        userIdentifier
     }, 'RANDOM TOKEN SECRET KEY', {
         expiresIn: '24h'
     });
@@ -89,7 +90,7 @@ async function decipherToken(token) {
                 resolve(decoded)
             }
         })
-    }).catch((err)  => {
+    }).catch((err) => {
         console.log("invalid token")
     })
 }
@@ -131,7 +132,7 @@ async function getUserFromToken(token) {
                         } else {
                             resolve(user)
                         }
-                    })                    
+                    })
                 }
             }
         })
@@ -184,7 +185,7 @@ app.get('/api/users/:id', (req, res) => {
         if (userID != req.params.id) {
             return res.status(401).json({ error: 'Not authorized' })
         }
-        User.findOne({_id: req.params.id})
+        User.findOne({ _id: req.params.id })
             .then(user => res.status(200).json(user))
             .catch(error => res.status(404).json({ error }))
     })
@@ -198,7 +199,7 @@ const registerValidate = [
         .custom(async (value) => {
             const user = await User.findOne({ username: value });
             if (user) {
-              throw new Error('Username already in use');
+                throw new Error('Username already in use');
             }
         }),
     check('email', 'Email Must Be an Email Address')
@@ -214,15 +215,15 @@ const registerValidate = [
 
 async function createUser(userID) {
     console.log("Create the user file");
-    try { 
+    try {
         const { stdout } = await execPromise("python3 ../kube_management/create_user.py " + userID);
     } catch (error) {
-      console.log(`error: ${error.message}`);
-      throw error;
+        console.log(`error: ${error.message}`);
+        throw error;
     }
 };
 
-app.post('/api/users', registerValidate, (req, res) => {   
+app.post('/api/users', registerValidate, (req, res) => {
     // Check the data entry (valid username and 8-length password)
     const errors = validationResult(req)
 
@@ -232,7 +233,7 @@ app.post('/api/users', registerValidate, (req, res) => {
 
     // Retrieve data
     const { username, email, passwd } = req.body
-    
+
     bcrypt.hash(passwd, saltRounds)
         .then(async hash => {
             const user = new User({
@@ -240,23 +241,25 @@ app.post('/api/users', registerValidate, (req, res) => {
                 email: email,
                 passwd: hash
             })
-            
+
             console.log(req.body)
             console.log(user)
             user.save()
-                 .then(async () => {
+                .then(async () => {
                     console.log(user._id.toString())
-                    try{ await createUser(user._id.toString()).then(()=>{
-                            res.status(201).json({ message: 'A new user has arrived !' })    
-                            })
-                        }catch(error){
-                            User.deleteOne({_id:user._id})
-                            console.log(error)
-                            throw error; }
-                    })
-                    .catch(error =>
-                        res.status(400).json({ error }))
-                    console.log("Succesfully added user to database");
+                    try {
+                        await createUser(user._id.toString()).then(() => {
+                            res.status(201).json({ message: 'A new user has arrived !' })
+                        })
+                    } catch (error) {
+                        User.deleteOne({ _id: user._id })
+                        console.log(error)
+                        throw error;
+                    }
+                })
+                .catch(error =>
+                    res.status(400).json({ error }))
+            console.log("Succesfully added user to database");
         })
         .catch(error => res.status(400).json({ error }))
 })
@@ -269,7 +272,7 @@ const updateValidate = [
         .custom(async (value) => {
             const user = await User.findOne({ username: value });
             if (user) {
-              throw new Error('Username already in use');
+                throw new Error('Username already in use');
             }
         }),
     check('email', 'Email Must Be an Email Address')
@@ -290,14 +293,14 @@ app.put('/api/users/:id', updateValidate, async (req, res) => {
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() })
     }
-    
+
     verifyAuth(req, res, async (userID) => {
         if (userID != req.params.id) {
             return res.status(401).json({ error: 'Not authorized' })
         }
 
         const user = await User.findOne({ _id: req.params.id })
-        
+
         const actualUsername = user.username
         const actualEmail = user.email
         const actualPasswd = user.passwd
@@ -305,7 +308,7 @@ app.put('/api/users/:id', updateValidate, async (req, res) => {
         let NewUsername = req.body.username
         let NewEmail = req.body.email
         let NewPasswd = req.body.passwd
-        
+
         if (NewUsername === undefined) {
             NewUsername = actualUsername
         }
@@ -333,72 +336,75 @@ app.put('/api/users/:id', updateValidate, async (req, res) => {
 
 
 // DELETE user by ID
-app.delete('/api/users/:id',async (req, res) => {
-    verifyAuth(req, res, async (userID) =>  {
+app.delete('/api/users/:id', async (req, res) => {
+    verifyAuth(req, res, async (userID) => {
         if (userID != req.params.id) {
             return res.status(401).json({ error: 'Not authorized' })
         }
-        try{
-            await deleteUser(userID).then( User.deleteOne({_id: userID})
+        try {
+            await deleteUser(userID).then(User.deleteOne({ _id: userID })
                 .then(user => res.status(200).json({ message: 'The user has been deleted !' }))
-                .catch(error => res.status(400).json({ error }))); 
-        }catch (error){
-        throw error; }
+                .catch(error => res.status(400).json({ error })));
+        } catch (error) {
+            throw error;
+        }
     })
 })
 
 
 async function deleteUser(userID) {
     console.log("Delete the user file");
-    try {    
-      await execPromise("python3 ../kube_management/delete_user.py " +userID);
+    try {
+        await execPromise("python3 ../kube_management/delete_user.py " + userID);
     } catch (error) {
-      console.log(`error: ${error.message}`);
-      throw error;
+        console.log(`error: ${error.message}`);
+        throw error;
     }
 };
 
 // reset user database
-app.delete('/api/users',async (req, res) => {
+app.delete('/api/users', async (req, res) => {
     //condition d'authentification!!
     try {
         const users = await User.find();
         await users.map(async user => {
-            try{
+            try {
                 await deleteUser(user._id);
-                await users.deleteOne({_id:user._id});}
-            catch (error){
-                throw error;}
+                await users.deleteOne({ _id: user._id });
+            }
+            catch (error) {
+                throw error;
+            }
         })
         console.log("Successful deletion");
         res.status(200).json({ message: 'The user database has been deleted !' });
-        }catch (error) {
+    } catch (error) {
         console.log(error);
         res.status(400).json({ error });
-      }
+    }
 })
 
 
 // Login user
 app.post('/api/users/login', (req, res) => {
-    User.findOne({username: req.body.username})
-    .then(async (user) => {
-        if (user) {
-            const match = await bcrypt.compare(req.body.passwd, user.passwd)
-            if (match)  {
-                const cookie = generateNewCookie(user._id)
-                res.status(200).json({ message: 'The user has been logged in !', cookie: cookie })
-                console.log("The user has been logged in !");
+    User.findOne({ username: req.body.username })
+        .then(async (user) => {
+            if (user) {
+                const match = await bcrypt.compare(req.body.passwd, user.passwd)
+                if (match) {
+                    const cookie = generateNewCookie(user._id)
+                    res.status(200).json({ message: 'The user has been logged in !', cookie: cookie })
+                    console.log("The user has been logged in !");
+                } else {
+                    res.status(400).json({ message: 'The password is incorrect !' })
+                    console.log("The password is incorrect !");
+                }
             } else {
-                res.status(400).json({ message: 'The password is incorrect !' })
-                console.log("The password is incorrect !");
-            }   
-        } else {
-            res.status(404).json({ message: 'The user has not been found !' })
-            console.log("The user has not been found !");
-        }
-    })
-    .catch(error => res.status(400).json({ error }))
+                res.status(404).json({ message: 'The user has not been found !' })
+                console.log("The user has not been found !");
+            }
+        })
+        .catch(error => res.status(400).json({ error }))
 })
 
 
@@ -407,7 +413,7 @@ app.get('/api/users/token/:token', async (req, res) => {
     const token = req.params.token
     const user = await getUserFromToken(token).catch(err => console.log(err))
     if (user) {
-        res.status(200).json({ username : user.username , id: user._id})
+        res.status(200).json({ username: user.username, id: user._id })
     } else {
         res.status(404).json({ message: 'The user has not been found !' })
     }
@@ -421,7 +427,7 @@ app.get('/api/users/:id/vms', (req, res) => {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-        User.findOne({_id: req.params.id})
+        User.findOne({ _id: req.params.id })
             .then(user => {
                 const vmIds = user.listVMs
                 VM.find({ _id: { $in: vmIds } })
@@ -441,7 +447,7 @@ app.get('/api/users/:id/vms/:vmid', (req, res) => {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-        VM.findOne({_id: req.params.vmid})
+        VM.findOne({ _id: req.params.vmid })
             .then(vm => res.status(200).json(vm))
             .catch(error => res.status(404).json({ error }))
     })
@@ -449,47 +455,37 @@ app.get('/api/users/:id/vms/:vmid', (req, res) => {
 
 
 // create new vm
-const createVmValidate = [
-    check('name', 'name must not be empty')
-        .notEmpty().trim().escape(),
-    //check('description', 'Description must not be empty')
-        //.notEmpty().trim().escape(),
-    check('status')
-        .optional()
-        .isNumeric()
-        .withMessage('Status Must Be a Number')
-        .isIn([0, 1]).withMessage('Status must have a value of 0 or 1')
-        .trim().escape()
-]
 
-
-async function writeInFile(body){
+async function writeInFile(body) {
     try {
         await fs.writeFile('../tmp.json', JSON.stringify(body), err => {
-        if (err) {
-        console.error(err);
-        throw err ;
-        }
-        console.log('Data written to file');
-    });}
-    catch(error){console.log(error);
-    throw error;}
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            console.log('Data written to file');
+        });
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
 }
 
 async function createVm(body) {
     console.log("ok2");
     try {
-      await writeInFile(body); 
-      const { stdout } = await execPromise("python3 ../main.py ../tmp.json",timeout= 10 );
-      console.log(stdout);
-      return ;
+        await writeInFile(body);
+        const { stdout } = await execPromise("python3 ../main.py ../tmp.json", timeout = 10);
+        console.log(stdout);
+        return;
     } catch (error) {
-      console.log(`error: ${error.message}`);
-      throw error;
+        console.log(`error: ${error.message}`);
+        throw error;
     }
-  };
+};
 
-app.post('/api/users/:id/vms', createVmValidate, async (req, res) => {
+app.post('/api/users/:id/vms', async (req, res) => {
     // const errors = validationResult(req)
 
     // if (!errors.isEmpty()) {
@@ -505,35 +501,39 @@ app.post('/api/users/:id/vms', createVmValidate, async (req, res) => {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-        User.findOne({_id: req.params.id})
+        User.findOne({ _id: req.params.id })
             .then(user => {
                 const vm = new VM({
                     owner: user._id,
                     ...req.body,
                     status: 0
                 })
-                
+
                 vm.save()
-                    .then(() => {console.log("Succesfully added vm to database");
-                    VM.findOne({_id:vm._id}).then( async vmm => {
-                        let bodycreate={owner: vmm.owner.toString(), VMid:vmm._id.toString(),VMname: vmm.VMname, VMservices:req.body.VMservices};
-                        console.log(bodycreate)
-                        try {
-                            vmm.status= 1
-                            vmm.save()
-                            user.listVMs.push(vm._id)
-                            user.save()
+                    .then(() => {
+                        console.log("Succesfully added vm to database");
+                        VM.findOne({ _id: vm._id }).then(async vmm => {
+                            let bodycreate = { owner: vmm.owner.toString(), VMid: vmm._id.toString(), VMname: vmm.VMname, VMservices: req.body.VMservices };
+                            console.log(bodycreate)
+                            try {
+                                vmm.status = 1
+                                vmm.save()
+                                user.listVMs.push(vm._id)
+                                user.save()
+                                    .then()
+                                createVm(bodycreate)
                                     .then(() => res.status(201).json({ message: 'A new vm has arrived !' }))
-                            await createVm(bodycreate)
-                                
-                            
-                            
-                        }
-                        catch(error){
-                            VM.deleteOne({_id:vmm._id}).then(console.log(error))
-                            throw error;} 
+                                    .catch(error => res.status(400).json({ error }))
+
+
+
+                            }
+                            catch (error) {
+                                VM.deleteOne({ _id: vmm._id }).then(console.log(error))
+                                throw error;
+                            }
                         });
-                       
+
                     })
             })
             .catch(error => res.status(404).json({ error }))
@@ -542,24 +542,14 @@ app.post('/api/users/:id/vms', createVmValidate, async (req, res) => {
 
 
 // update vm
-const updateVmValidate = [
-    check('name').optional().trim().escape(),
-    check('description').optional().trim().escape(),
-    check('status')
-        .optional()
-        .isNumeric()
-        .withMessage('Status Must Be a Number')
-        .isIn([0, 1]).withMessage('Status must have a value of 0 or 1')
-        .trim().escape()
-]
 
-app.put('/api/users/:id/vms/:vmid', updateVmValidate, (req, res) => {
+app.put('/api/users/:id/vms/:vmid', (req, res) => {
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() })
     }
-    
+
     console.log("-----------------------------")
     console.log("update an existing vm")
     console.log(req.body)
@@ -569,7 +559,7 @@ app.put('/api/users/:id/vms/:vmid', updateVmValidate, (req, res) => {
             return res.status(401).json({ error: 'Not authorized' })
         }
 
-        VM.findOne({_id: req.params.vmid})
+        VM.findOne({ _id: req.params.vmid })
             .then(vm => {
                 // loop through body params
                 for (const key in req.body) {
@@ -579,7 +569,7 @@ app.put('/api/users/:id/vms/:vmid', updateVmValidate, (req, res) => {
                 }
 
                 vm.save()
-                    .then(() => {console.log(vm.name); res.status(200).json({ message: 'The vm has been updated !' })})
+                    .then(() => { console.log(vm.name); res.status(200).json({ message: 'The vm has been updated !' }) })
                     .catch(err => res.status(400).json({ error: err }))
             }
             )
@@ -587,25 +577,38 @@ app.put('/api/users/:id/vms/:vmid', updateVmValidate, (req, res) => {
     })
 
 })
-function updateStatus( userID, vmID){
-    try{
-       
+function updateStatus(userID, vmID) {
+    try {
 
-    }catch(error){
-        throw error; 
+
+    } catch (error) {
+        throw error;
     }
 }
 
-app.get('/api/users/:id/vms/status',async (req,res)=>{
-    verifyAuth(req, res, (userID) => {
+app.get('/api/users/:id/vms/:vmid/status', async (req, res) => {
+    verifyAuth(req, res, async (userID) => {
         if (userID != req.params.id) {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-
-
+        VM.findOne({ _id: req.params.vmid })
+            .then(async vm => {
+                const vmName = vm.VMname
+                console.log("ok")
+                try {
+                    const { stdout } = await execPromise("python3 ../kube_management/check_status_app.py " + req.params.id + " " + req.params.vmid + vmName, timeout = 10);
+                    console.log("python3 ../kube_management/check_status_app.py " + req.params.id + " " + req.params.vmid + vmName);
+                    console.log(stdout);
+                    return;
+                } catch (error) {
+                    console.log(`error: ${error.message}`);
+                    throw error;
+                }
+            })
+    }
+    )   
     })
-})
 
 app.delete('/api/users/:id/vms/:vmid', async (req, res) => {
     console.log("-----------------------------")
@@ -616,38 +619,40 @@ app.delete('/api/users/:id/vms/:vmid', async (req, res) => {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-        User.findOne({_id: req.params.id})
+        User.findOne({ _id: req.params.id })
             .then(async user => {
-                try{
-                    vm=VM.findOne({_id : req.params.vmid})
-                    
-                    await deleteVm(userID, req.params.vmid+vm.VMname).then(()=>{
-                    // remove vm from user's list
-                    user.listVMs.pull(req.params.vmid)
-                    user.save()
-                        .then(() => console.log("Succesfully removed vm from user's list"))
-                    // remove vm from database
-                    VM.deleteOne({_id: req.params.vmid})
-                        .then(() => res.status(200).json({ message: 'The vm has been deleted !' }))
+                try {
+                    vm = VM.findOne({ _id: req.params.vmid })
+
+                    await deleteVm(userID, req.params.vmid + vm.VMname).then(() => {
+                        // remove vm from user's list
+                        user.listVMs.pull(req.params.vmid)
+                        user.save()
+                            .then(() => console.log("Succesfully removed vm from user's list"))
+                        // remove vm from database
+                        VM.deleteOne({ _id: req.params.vmid })
+                            .then(() => res.status(200).json({ message: 'The vm has been deleted !' }))
                     })
-                }catch(error)
-                {console.log(error); 
-                throw (error)}
+                } catch (error) {
+                    console.log(error);
+                    throw (error)
+                }
             }).catch(error => res.status(404).json({ error }))
     })
 })
 
 async function startVm(userID, vmID) {
     console.log("ok2");
-    const data= require('../users/'+userID+'/backup/'+vmID+'.json')
-            try {const { stdout } = await execPromise("python3 ../main.py "+data,timeout= 10);
-            console.log(stdout);
-            return; 
-            } catch (error) {
-            console.log(`error: ${error.message}`);
-            throw error;
-            };
-    }
+    const data = require('../users/' + userID + '/backup/' + vmID + '.json')
+    try {
+        const { stdout } = await execPromise("python3 ../main.py " + data, timeout = 10);
+        console.log(stdout);
+        return;
+    } catch (error) {
+        console.log(`error: ${error.message}`);
+        throw error;
+    };
+}
 
 // start vm
 app.post('/api/users/:id/vms/:vmid/start', (req, res) => {
@@ -659,15 +664,16 @@ app.post('/api/users/:id/vms/:vmid/start', (req, res) => {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-        VM.findOne({_id: req.params.vmid})
+        VM.findOne({ _id: req.params.vmid })
             .then(async vm => {
-                try{
-                    await startVm(userID,vm._id.toString()+vm.VMname).then(()=>{
+                try {
+                    await startVm(userID, vm._id.toString() + vm.VMname).then(() => {
                         vm.status = 1
                         vm.save()
                             .then(() => res.status(200).json({ message: 'The vm has been started !' }))
-                            .catch(error => res.status(400).json({ error })) })
-                    }catch(error){throw error; }
+                            .catch(error => res.status(400).json({ error }))
+                    })
+                } catch (error) { throw error; }
             })
             .catch(error => res.status(404).json({ error }))
     })
@@ -677,13 +683,13 @@ app.post('/api/users/:id/vms/:vmid/start', (req, res) => {
 async function deleteVm(userID, vmID) {
     console.log("ok2");
     try {
-      console.log(userID,vmID )
-      await execPromise("python3 ../kube_management/delete_app_api.py "+ userID + " "+ vmID);
+        console.log(userID, vmID)
+        await execPromise("python3 ../kube_management/delete_app_api.py " + userID + " " + vmID);
     } catch (error) {
-      console.log(`error: ${error.message}`);
-      throw error;
+        console.log(`error: ${error.message}`);
+        throw error;
     }
-  };
+};
 
 
 // stop vm
@@ -696,17 +702,18 @@ app.post('/api/users/:id/vms/:vmid/stop', (req, res) => {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-        VM.findOne({_id: req.params.vmid})
+        VM.findOne({ _id: req.params.vmid })
             .then(async vm => {
-                try{
+                try {
 
-                    await deleteVm(userID, vm._id.toString()+vm.VMname).then(()=>{
+                    await deleteVm(userID, vm._id.toString() + vm.VMname).then(() => {
                         vm.status = 0
                         vm.save()
                             .then(() => res.status(200).json({ message: 'The vm has been stopped !' }))
-                            .catch(error => res.status(400).json({ error })) })
-                    }catch(error){throw error; }
-                
+                            .catch(error => res.status(400).json({ error }))
+                    })
+                } catch (error) { throw error; }
+
             })
             .catch(error => res.status(404).json({ error }))
     })
@@ -723,7 +730,7 @@ app.delete('/api/users/:id/vms', (req, res) => {
             console.log("Not authorized")
             return res.status(401).json({ error: 'Not authorized' })
         }
-        User.findOne({_id: req.params.id})
+        User.findOne({ _id: req.params.id })
             .then(user => {
                 // reset the vm database
                 user.listVMs = []
@@ -733,10 +740,10 @@ app.delete('/api/users/:id/vms', (req, res) => {
             })
             .catch(error => res.status(404).json({ error }))
 
-        VM.deleteMany({owner: userID})
+        VM.deleteMany({ owner: userID })
             .then(() => res.status(200).json({ message: 'The vm database has been reset !' }))
             .catch(error => res.status(400).json({ error }))
-        })
+    })
 })
 
 // ########### API ROUTES ###########

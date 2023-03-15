@@ -15,7 +15,8 @@ def retrieve_json_file(json_name):
         res.append(data['VMid']+data['VMname'])
     
     for key in data['VMservices']:
-
+        print(key)
+        print(data['VMservices'])
         for clef, value in data['VMservices'][key].items():
             if value == True:
                 res.append(clef)

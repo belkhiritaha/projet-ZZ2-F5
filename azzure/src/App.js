@@ -27,14 +27,14 @@ async function getUser() {
     })
 }
 
-async function getVmStatus(user) {
+async function getVmStatus(user, vmId) {
     return new Promise((resolve, reject) => {
         // get cookie
         if (document.cookie) {
             // get cookie
             const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('sessionCookie='));
             const cookieValue = sessionCookie.split('=')[1];
-            fetch(`http://localhost:8001/api/users/${user.id}/vms/status`, {
+            fetch(`http://localhost:8001/api/users/${user.id}/vms/${vmId}/status`, {
                 method: 'GET',
                 headers: {
                     "Authorization": `Bearer ${cookieValue}`,

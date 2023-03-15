@@ -1,5 +1,6 @@
 import subprocess
 from pathlib import Path
+import sys
 
 
 #afficher en détail le status d'une app
@@ -22,3 +23,10 @@ def isAllRunning(user, app):
             return False
     print("All pods are running")
     return True
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        check_status_app(sys.argv[1], sys.argv[2])
+    else:
+        print("Error: wrong number of arguments")

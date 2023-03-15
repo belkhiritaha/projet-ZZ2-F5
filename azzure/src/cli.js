@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import { Collapse } from 'react-bootstrap';
@@ -220,19 +220,21 @@ function Cli(props) {
         });
     }
 
-    setInterval(() => {
-        getVmStatus(props.user).then((data)=>{
-            let VMS=[];
-            data.forEach((vm)=>{
-                VMS.push(vm);
-            })
-            setVms(VMS);
-        }).catch((error)=>{
-            console.log(error);
-        });
-        }, 5000)
-
-
+    useEffect(() => {
+        setInterval(() => {
+            vms.forEach((vm) => {
+                getVmStatus(props.user, vm._id).then((data) => {
+                    if (data.status == 0) {
+                        setCardID(0);
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            });
+        }, 5000);
+    }, [vms]);
+    
+    
     return (
         <>
             <div style={{ textAlign: "center" }}>
