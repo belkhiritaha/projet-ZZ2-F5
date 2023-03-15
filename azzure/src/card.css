@@ -1,0 +1,27 @@
+.card:hover {
+    box-shadow: 10px 0 10px rgba(33,33,33,.2); 
+    transform: scale(1.02);
+    transform: translate3d(-5px, 5px, 0);
+    transition:all 0.1s ease-in-out;
+}
+
+.card {
+    margin-top: 0% !important;
+    margin-bottom: 5% !important;
+    cursor: pointer;
+}
+
+.list-group-item {
+    transition: 1s;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    transition:all 0.1s ease-in-out;
+}
+
+.i {
+    font-size: '5rem';
+    margin: 'auto';
+    margin-top: '1rem';
+}

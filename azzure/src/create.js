@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
-import UploadForm from './form';
 
 
 import './card.css'
 import './create.css'
-import { json } from 'react-router-dom';
 
 
 function CreateForm(props) {

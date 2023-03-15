@@ -1,6 +1,5 @@
 import './App.css';
 import NavbarBasicExample from './navbar';
-import './sidebar';
 
 function NotFound(props) {
     // return navbar
