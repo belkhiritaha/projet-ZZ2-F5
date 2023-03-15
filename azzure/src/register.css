@@ -1,0 +1,8 @@
+.name-register {
+    margin-left: 200px;
+    width: 400px !important;
+    height: 40px !important;
+    background-color: white !important;
+    border-radius: 10px;
+    border: 1px solid black !important;
+}
